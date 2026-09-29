@@ -1,0 +1,101 @@
+#if DEBUG
+using System;
+using System.Linq;
+using Avalonia.Controls;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
+using NebulaAuth.Core;
+
+namespace NebulaAuth;
+
+public partial class MainWindow
+{
+    /// <summary>
+    ///     Debug builds only: NEBULA_STYLE_GALLERY=1 replaces the main content with the style gallery
+    ///     (every mapped control style in the current theme, theme/language switchers, exemplar dialogs).
+    /// </summary>
+    private void ShowStyleGalleryIfRequested()
+    {
+        if (Environment.GetEnvironmentVariable("NEBULA_STYLE_GALLERY") != "1") return;
+        MainContent.Children.Clear();
+        MainContent.Children.Add(new global::NebulaAuth.Theme.StyleGallery());
+    }
+
+    /// <summary>
+    ///     Debug builds only, for screenshots without input: NEBULA_MAIN_DEMO is a comma-separated list of
+    ///     "select" (select the first account), "search" (type "a" into the search box: the filter selects the first match),
+    ///     "confirmations" (select the first account and show realistic fake confirmations of every type with placeholder
+    ///     images, no network), "expand" (expand the grouped market listings), "maac" (accounts 2-4 with
+    ///     auto-confirmation statuses), "blink" (update badge blink), "drop" (drag and drop overlay), "snackbar",
+    ///     "narrow" (minimum window width), "proxy" (assign the first proxy of proxies.json to the selected account),
+    ///     "menu" (open the first app bar menu), "submenu" (also its "Other" submenu), "groups" / "proxies" (open the groups /
+    ///     proxy drop-down), "context" (account context menu), "late" (open those popups 4 s after start),
+    ///     "update" (update dialog with a fake 1.8.4 release + changelog, no network), "remove" / "unlink" (remove mafile /
+    ///     remove authenticator confirmations; their results are ignored).
+    /// </summary>
+    private void ShowMainDemoIfRequested()
+    {
+        var demo = Environment.GetEnvironmentVariable("NEBULA_MAIN_DEMO");
+        if (string.IsNullOrWhiteSpace(demo)) return;
+        var parts = demo.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        Loaded += (_, _) => Dispatcher.UIThread.Post(() =>
+        {
+            if (ViewModel is not { } vm) return;
+            if (parts.Contains("select") || parts.Contains("confirmations"))
+                vm.SelectedMafile = vm.MaFiles.FirstOrDefault();
+            if (parts.Contains("proxy"))
+                vm.SelectedProxy = vm.Proxies.FirstOrDefault();
+            if (parts.Contains("search"))
+                vm.SearchText = "a";
+            if (parts.Contains("confirmations"))
+                vm.ShowDemoConfirmations();
+            if (parts.Contains("maac"))
+                vm.ShowDemoMaacStatuses();
+            if (parts.Contains("blink"))
+                StartUpdateBlink();
+            if (parts.Contains("drop"))
+                SetDropOverlayVisible(true);
+            if (parts.Contains("narrow"))
+                Width = MinWidth;
+            if (parts.Contains("snackbar"))
+                SnackbarController.SendSnackbar("Demo snackbar", TimeSpan.FromSeconds(30));
+            // Popups: "late" delays them by 4 s (frame captures of the open animation start before the popup exists)
+            void Popup(Action open)
+            {
+                if (parts.Contains("late")) DispatcherTimer.RunOnce(open, TimeSpan.FromSeconds(4));
+                else Dispatcher.UIThread.Post(open, DispatcherPriority.Background);
+            }
+
+            if ((parts.Contains("menu") || parts.Contains("submenu")) && MainMenu.Items.FirstOrDefault() is MenuItem firstMenu)
+                Popup(() =>
+                {
+                    firstMenu.Open();
+                    if (parts.Contains("submenu") && firstMenu.Items.OfType<MenuItem>().LastOrDefault() is { } other)
+                        DispatcherTimer.RunOnce(() => other.IsSubMenuOpen = true, TimeSpan.FromMilliseconds(600));
+                });
+            if (parts.Contains("groups"))
+                Popup(() => GroupsBox.IsDropDownOpen = true);
+            if (parts.Contains("proxies"))
+                Popup(() => ProxyBox.IsDropDownOpen = true);
+            if (parts.Contains("context"))
+                Popup(() => MafileContextMenu.Open(MafileListBox));
+            // Dialogs with demo content (results are ignored: nothing is removed / downloaded)
+            var account = vm.SelectedMafile?.AccountName ?? "alphaecho";
+            if (parts.Contains("update"))
+                _ = DialogService.Show(View.Dialogs.UpdateDialog.CreatePreview(null));
+            else if (parts.Contains("remove"))
+                _ = DialogService.Show(new View.Dialogs.ConfirmCancelDialog(
+                    View.Dialogs.ConfirmCancelDialog.RemoveMafileDemo(account)));
+            else if (parts.Contains("unlink"))
+                _ = DialogService.Show(new View.Dialogs.ConfirmCancelDialog(
+                    View.Dialogs.ConfirmCancelDialog.RemoveAuthenticatorDemo(account)));
+            if (parts.Contains("expand"))
+                Dispatcher.UIThread.Post(() =>
+                {
+                    foreach (var expander in ConfirmationsList.GetVisualDescendants().OfType<Expander>())
+                        expander.IsExpanded = true;
+                }, DispatcherPriority.Background);
+        }, DispatcherPriority.Background);
+    }
+}
+#endif

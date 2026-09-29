@@ -1,0 +1,27 @@
+<!-- NebulaAuth palette "DefaultTheme".
+     Only the 21 palette colors live here; brushes and all derived tokens (Semi/Ursa mapping) are built
+     from them at runtime by NebulaAuth.Theme.ThemeResources. Keys must stay identical in all 5 palettes. -->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Color x:Key="PrimaryColor">#794DFF</Color>
+    <Color x:Key="PrimaryContentColor">#eae7ff</Color>
+    <Color x:Key="SecondaryColor">#76717f</Color>
+    <Color x:Key="SecondaryContentColor">#ffffff</Color>
+    <Color x:Key="AccentColor">#3b82f6</Color>
+    <Color x:Key="AccentContentColor">#dbeafe</Color>
+    <Color x:Key="NeutralColor">#928f9e</Color>
+    <Color x:Key="NeutralContentColor">#141119</Color>
+    <Color x:Key="Base100Color">#282332</Color>
+    <Color x:Key="Base200Color">#1d1a26</Color>
+    <Color x:Key="Base300Color">#4a4456</Color>
+    <Color x:Key="BaseContentColor">#b8b6c0</Color>
+    <Color x:Key="BaseShadowColor">#1e1e24</Color>
+    <Color x:Key="InfoColor">#06b6d4</Color>
+    <Color x:Key="InfoContentColor">#cffafe</Color>
+    <Color x:Key="SuccessColor">#02ca4b</Color>
+    <Color x:Key="SuccessContentColor">#e1faf1</Color>
+    <Color x:Key="WarningColor">#fcaa1d</Color>
+    <Color x:Key="WarningContentColor">#fffae8</Color>
+    <Color x:Key="ErrorColor">#fb4141</Color>
+    <Color x:Key="ErrorContentColor">#fff5ed</Color>
+</ResourceDictionary>

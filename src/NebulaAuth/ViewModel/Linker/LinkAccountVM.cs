@@ -1,12 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 using AchiesUtilities.Web.Proxy;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NebulaAuth.Core;
@@ -231,7 +230,7 @@ public partial class LinkAccountVM : ObservableObject, ISmsCodeProvider, IPhoneN
 
     private void SetCurrentStep(LinkAccountStepVM step)
     {
-        Dispatcher.CurrentDispatcher.Invoke(() =>
+        Dispatcher.UIThread.Invoke(() =>
         {
             CurrentStep = step;
             Tip = CurrentStep.Tip;
@@ -245,10 +244,7 @@ public partial class LinkAccountVM : ObservableObject, ISmsCodeProvider, IPhoneN
             "https://achiez.github.io/NebulaAuth-Steam-Desktop-Authenticator-by-Achies/docs/{0}/LinkingTroubleshooting";
 
         var localized = string.Format(troubleshootingURI, LocManager.GetCurrentLanguageCode());
-        Process.Start(new ProcessStartInfo(new Uri(localized).ToString())
-        {
-            UseShellExecute = true
-        });
+        PlatformUtils.OpenUrl(new Uri(localized).ToString());
     }
 
     private static string GetLocalizationOrDefault(string key)

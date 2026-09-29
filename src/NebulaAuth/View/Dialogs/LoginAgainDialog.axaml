@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:core="using:NebulaAuth.Core"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:other="using:NebulaAuth.ViewModel.Other"
+             xmlns:model="using:NebulaAuth.Model"
+             mc:Ignorable="d"
+             x:Class="NebulaAuth.View.Dialogs.LoginAgainDialog"
+             x:DataType="other:LoginAgainVM"
+             MinWidth="380" MaxWidth="500">
+    <Grid RowDefinitions="Auto,Auto">
+        <nebulaAuth:DialogHeader Grid.Row="0"
+                                 IconKind="Login"
+                                 Title="{Tr LoginAgainDialog.Title}"
+                                 CloseParameter="{x:False}" />
+        <StackPanel Grid.Row="1" Classes="DialogBody">
+            <nebulaAuth:HintBox Severity="Warning"
+                                FontSize="13"
+                                IsVisible="{Binding ShowNoProxyWarning}"
+                                Text="{Tr LoginAgainDialog.NoProxyWarning}" />
+            <TextBox x:Name="PasswordField"
+                     Classes="clearButton"
+                     FontSize="14"
+                     Text="{Binding Password}"
+                     PlaceholderText="{Tr LoginAgainDialog.PasswordBox}">
+                <TextBox.InnerLeftContent>
+                    <mi:MaterialIcon Classes="InputIcon" Kind="Key" />
+                </TextBox.InnerLeftContent>
+            </TextBox>
+            <CheckBox FontSize="14"
+                      IsEnabled="{x:Static model:PHandler.IsPasswordSet}"
+                      IsChecked="{Binding SavePassword}"
+                      Content="{Tr LoginAgainDialog.SaveEncryptedPassword}" />
+            <StackPanel Classes="DialogActions">
+                <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                        Content="{Tr LoginAgainDialog.LoginButton}"
+                        IsEnabled="{Binding IsFormValid}"
+                        IsDefault="True"
+                        Command="{x:Static core:DialogService.CloseDialogCommand}"
+                        CommandParameter="{x:True}" />
+                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                        Content="{Tr LoginAgainDialog.CancelButton}"
+                        IsCancel="True"
+                        Command="{x:Static core:DialogService.CloseDialogCommand}"
+                        CommandParameter="{x:False}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

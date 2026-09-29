@@ -1,0 +1,214 @@
+<!--
+    Account linker wizard. The step templates live in UserControl.DataTemplates (the ContentControl picks the template
+    by the type of CurrentStep). Enter = CurrentStep.NextCommand and the focus of each new step (its element with class
+    "initialFocus", else its first TextBox) are handled by View/WizardKeyboard.cs.
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:linker="using:NebulaAuth.ViewModel.Linker"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d"
+             x:Class="NebulaAuth.View.LinkerView"
+             x:DataType="linker:LinkAccountVM"
+             MinWidth="400" MaxWidth="400">
+    <UserControl.Styles>
+        <!-- Centered step button rows, MinWidth 130 as MafileMoverView -->
+        <Style Selector="StackPanel.StepActions">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Spacing" Value="10" />
+            <Setter Property="Margin" Value="0,4,0,0" />
+        </Style>
+        <Style Selector="StackPanel.StepActions > Button">
+            <Setter Property="MinWidth" Value="130" />
+        </Style>
+        <Style Selector="StackPanel.StepActions > u|IconButton">
+            <Setter Property="MinWidth" Value="130" />
+        </Style>
+        <Style Selector="StackPanel.Step TextBox">
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+    </UserControl.Styles>
+
+    <UserControl.DataTemplates>
+        <!-- [1] Login / password / proxy -->
+        <DataTemplate DataType="linker:LinkAccountAuthStepVM" x:DataType="linker:LinkAccountAuthStepVM">
+            <StackPanel Classes="Step" Spacing="10">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <mi:MaterialIcon Kind="Login" IconSize="20" VerticalAlignment="Center" />
+                    <TextBlock Classes="Heading" VerticalAlignment="Center" Text="{Tr LinkerDialog.Authorization}" />
+                </StackPanel>
+                <TextBox Text="{Binding Login}" PlaceholderText="{Tr LinkerDialog.Login}">
+                    <TextBox.InnerLeftContent>
+                        <mi:MaterialIcon Classes="InputIcon" Kind="User" />
+                    </TextBox.InnerLeftContent>
+                </TextBox>
+                <TextBox Text="{Binding Password}" PlaceholderText="{Tr LinkerDialog.Password}">
+                    <TextBox.InnerLeftContent>
+                        <mi:MaterialIcon Classes="InputIcon" Kind="Key" />
+                    </TextBox.InnerLeftContent>
+                </TextBox>
+                <StackPanel Classes="Field">
+                    <TextBlock Classes="FieldLabel" Text="{Tr LinkerDialog.Proxy}" />
+                    <ComboBox Classes="clearButton" FontSize="13"
+                              ItemsSource="{Binding Proxies, Converter={StaticResource SnapshotListConverter}}"
+                              SelectedItem="{Binding SelectedProxy}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="x:Object">
+                                <TextBlock Text="{Binding Converter={StaticResource ProxyPairTextConverter}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Classes="StepActions">
+                    <!-- NextCommand runs the whole login/link flow: the spinner shows while logging in -->
+                    <u:IconButton Theme="{DynamicResource SolidIconButton}" Classes="Primary"
+                                  IsLoading="{Binding NextCommand.IsRunning}"
+                                  Command="{Binding NextCommand}"
+                                  Content="{Tr LinkerDialog.ProceedButton}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- [2] Steam Guard email code (login) -->
+        <DataTemplate DataType="linker:LinkAccountEmailAuthStepVM" x:DataType="linker:LinkAccountEmailAuthStepVM">
+            <StackPanel Classes="Step" Spacing="10">
+                <TextBox Text="{Binding EmailCode}" PlaceholderText="{Tr LinkerDialog.Code}">
+                    <TextBox.InnerLeftContent>
+                        <mi:MaterialIcon Classes="InputIcon" Kind="TwoFactorAuthentication" />
+                    </TextBox.InnerLeftContent>
+                </TextBox>
+                <StackPanel Classes="StepActions">
+                    <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                            Command="{Binding CancelCommand}"
+                            Content="{Tr LinkerDialog.CancelButton}" />
+                    <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                            Command="{Binding NextCommand}"
+                            Content="{Tr LinkerDialog.ProceedButton}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- [3] Phone number (empty = link without a phone) -->
+        <DataTemplate DataType="linker:LinkAccountPhoneStepVM" x:DataType="linker:LinkAccountPhoneStepVM">
+            <StackPanel Classes="Step" Spacing="10">
+                <TextBox Text="{Binding PhoneNumber}" PlaceholderText="{Tr LinkerDialog.PhoneNumber}">
+                    <TextBox.InnerLeftContent>
+                        <mi:MaterialIcon Classes="InputIcon" Kind="Phone" />
+                    </TextBox.InnerLeftContent>
+                </TextBox>
+                <StackPanel Classes="StepActions">
+                    <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                            Command="{Binding CancelCommand}"
+                            Content="{Tr LinkerDialog.CancelButton}" />
+                    <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                            Command="{Binding NextCommand}"
+                            Content="{Tr LinkerDialog.ProceedButton}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- [4] Confirm the link from the email (the instruction is the Tip) -->
+        <DataTemplate DataType="linker:LinkAccountConfirmEmailStepVM" x:DataType="linker:LinkAccountConfirmEmailStepVM">
+            <StackPanel Classes="StepActions">
+                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                        Command="{Binding CancelCommand}"
+                        Content="{Tr LinkerDialog.CancelButton}" />
+                <!-- No input on this step: focus Proceed (back from the email link, Enter confirms) -->
+                <Button Theme="{DynamicResource SolidButton}" Classes="Primary initialFocus"
+                        Command="{Binding NextCommand}"
+                        Content="{Tr LinkerDialog.ProceedButton}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- [5] SMS code -->
+        <DataTemplate DataType="linker:LinkAccountSmsStepVM" x:DataType="linker:LinkAccountSmsStepVM">
+            <StackPanel Classes="Step" Spacing="10">
+                <TextBox Text="{Binding SmsCode}" PlaceholderText="{Tr LinkerDialog.SmsCode}">
+                    <TextBox.InnerLeftContent>
+                        <mi:MaterialIcon Classes="InputIcon" Kind="Sms" />
+                    </TextBox.InnerLeftContent>
+                </TextBox>
+                <StackPanel Classes="StepActions">
+                    <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                            Command="{Binding CancelCommand}"
+                            Content="{Tr LinkerDialog.CancelButton}" />
+                    <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                            Command="{Binding NextCommand}"
+                            Content="{Tr LinkerDialog.ProceedButton}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- [6] Email code (add authenticator) -->
+        <DataTemplate DataType="linker:LinkAccountEmailCodeStepVM" x:DataType="linker:LinkAccountEmailCodeStepVM">
+            <StackPanel Classes="Step" Spacing="10">
+                <TextBox Text="{Binding EmailCode}" PlaceholderText="{Tr LinkerDialog.EmailCode}">
+                    <TextBox.InnerLeftContent>
+                        <mi:MaterialIcon Classes="InputIcon" Kind="Mailbox" />
+                    </TextBox.InnerLeftContent>
+                </TextBox>
+                <StackPanel Classes="StepActions">
+                    <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                            Command="{Binding CancelCommand}"
+                            Content="{Tr LinkerDialog.CancelButton}" />
+                    <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                            Command="{Binding NextCommand}"
+                            Content="{Tr LinkerDialog.ProceedButton}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- [7] Done: R-code + file name, copy R-code, finish -->
+        <DataTemplate DataType="linker:LinkAccountDoneStepVM" x:DataType="linker:LinkAccountDoneStepVM">
+            <StackPanel Spacing="12">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
+                    <mi:MaterialIcon Kind="Done" IconSize="26" VerticalAlignment="Center"
+                                     Foreground="{DynamicResource SuccessBrush}" />
+                    <TextBlock Classes="Heading" VerticalAlignment="Center" TextWrapping="Wrap"
+                               Text="{Tr LinkerDialog.MafileLinked}" />
+                </StackPanel>
+                <Border Background="{DynamicResource SuccessTintBrush}"
+                        BorderBrush="{DynamicResource SuccessBorderBrush}"
+                        BorderThickness="1" CornerRadius="10" Padding="12,10">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <mi:MaterialIcon Grid.Column="0" Kind="InfoCircleOutline" IconSize="22"
+                                         Margin="0,0,10,0" VerticalAlignment="Center"
+                                         Foreground="{DynamicResource SuccessBrush}" />
+                        <SelectableTextBlock Grid.Column="1" FontSize="13" TextWrapping="Wrap"
+                                             VerticalAlignment="Center"
+                                             Text="{Binding InnerTip}" />
+                    </Grid>
+                </Border>
+                <StackPanel Classes="StepActions">
+                    <Button Theme="{DynamicResource OutlineButton}" Command="{Binding CopyCodeCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <mi:MaterialIcon Kind="ContentCopy" IconSize="16" VerticalAlignment="Center" />
+                            <TextBlock VerticalAlignment="Center" Text="{Tr LinkerDialog.CopyRCodeButton}" />
+                        </StackPanel>
+                    </Button>
+                    <Button Theme="{DynamicResource SolidButton}" Classes="Primary initialFocus"
+                            Command="{Binding NextCommand}"
+                            Content="{Tr LinkerDialog.FinishButton}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.DataTemplates>
+
+    <Grid RowDefinitions="Auto,Auto">
+        <nebulaAuth:DialogHeader Grid.Row="0" IconKind="LinkBoxOutline" Title="{Tr LinkerDialog.Title}" />
+        <StackPanel Grid.Row="1" Classes="DialogBody">
+            <nebulaAuth:HintBox FontSize="13"
+                                IsVisible="{Binding Tip, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                Text="{Binding Tip}" />
+            <ContentControl x:Name="StepHost" Content="{Binding CurrentStep}" />
+            <nebulaAuth:HintBox FontSize="13" Severity="Error"
+                                IsVisible="{Binding Error, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                Text="{Binding Error}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

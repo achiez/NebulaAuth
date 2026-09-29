@@ -1,5 +1,4 @@
-﻿using System;
-using MaterialDesignThemes.Wpf;
+using System;
 
 namespace NebulaAuth.Core;
 
@@ -16,7 +15,7 @@ public class SnackbarController
     public static void SendSnackbar(string text, TimeSpan? duration = null)
     {
         duration ??= GetSnackbarTime(text);
-        MessageQueue.Enqueue(text, null, null, null, false, false, duration.Value);
+        MessageQueue.Enqueue(new SnackbarMessage(text, null, null, duration.Value));
     }
 
     /// <summary>
@@ -29,17 +28,7 @@ public class SnackbarController
         TimeSpan? duration = null)
     {
         duration ??= GetSnackbarTime(text);
-        Action<object?> argAction;
-        if (action == null)
-        {
-            argAction = _ => { };
-        }
-        else
-        {
-            argAction = _ => action();
-        }
-
-        MessageQueue.Enqueue(text, actionText, argAction, null, false, false, duration);
+        MessageQueue.Enqueue(new SnackbarMessage(text, actionText, action ?? (() => { }), duration.Value));
     }
 
     private static TimeSpan GetSnackbarTime(string str)

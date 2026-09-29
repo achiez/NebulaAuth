@@ -1,8 +1,9 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using System.Windows.Data;
 using AchiesUtilities.Web.Proxy;
+using Avalonia.Data.Converters;
 using NebulaAuth.Model.Entities;
 
 namespace NebulaAuth.Converters;
@@ -25,16 +26,15 @@ public class ProxyTextConverter : IValueConverter
     }
 }
 
-public class ProxyDataTextConverter : IValueConverter
+/// <summary>
+///     <c>KeyValuePair&lt;int, ProxyData&gt;</c> (an entry of <c>ProxyStorage.Proxies</c>) -> "Id: Address", for the
+///     Linker / MafileMover proxy ComboBox. A generic KeyValuePair cannot be a compiled-binding <c>x:DataType</c>.
+/// </summary>
+public class ProxyPairTextConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is not ProxyData p)
-        {
-            return string.Empty;
-        }
-
-        return $"{p.Protocol.ToString().ToLowerInvariant()}://{p.Address}:{p.Port}";
+        return value is KeyValuePair<int, ProxyData> p ? $"{p.Key}: {p.Value.Address}" : string.Empty;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -43,13 +43,16 @@ public class ProxyDataTextConverter : IValueConverter
     }
 }
 
+/// <summary>
+///     MultiBinding: [0] ProxyData, [1] bool display protocol, [2] bool display credentials.
+/// </summary>
 public class ProxyDataTextMultiConverter : IMultiValueConverter
 {
-    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
     {
-        var value = values[0] as ProxyData;
-        var displayProtocol = values.Length > 1 && values[1] is bool dp && dp;
-        var displayCredentials = values.Length > 2 && values[2] is bool dc && dc;
+        var value = values.Count > 0 ? values[0] as ProxyData : null;
+        var displayProtocol = values.Count > 1 && values[1] is true;
+        var displayCredentials = values.Count > 2 && values[2] is true;
         if (value == null)
         {
             return string.Empty;
@@ -74,10 +77,5 @@ public class ProxyDataTextMultiConverter : IMultiValueConverter
         }
 
         return sb.ToString();
-    }
-
-    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
     }
 }

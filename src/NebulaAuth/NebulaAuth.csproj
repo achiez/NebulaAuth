@@ -1,121 +1,70 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net8.0-windows7.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
+		<AssemblyName>NebulaAuth</AssemblyName>
+		<RootNamespace>NebulaAuth</RootNamespace>
 		<Nullable>enable</Nullable>
-		<UseWPF>true</UseWPF>
-		<UseWindowsForms>true</UseWindowsForms>
 		<LangVersion>latest</LangVersion>
-		<SatelliteResourceLanguages>en;ru;ua</SatelliteResourceLanguages>
-		<ApplicationIcon>Theme\lock.ico</ApplicationIcon>
-		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
-		<AssemblyVersion>1.8.5</AssemblyVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<AssemblyVersion>1.8.5</AssemblyVersion>
+		<ApplicationIcon>Theme\lock.ico</ApplicationIcon>
+		<SatelliteResourceLanguages>en;ru;ua</SatelliteResourceLanguages>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+		<!-- Invariant globalization (Linux without libicu): themes and ControlsLocale create cultures such as zh-CN -->
+		<PredefinedCulturesOnly>false</PredefinedCulturesOnly>
 	</PropertyGroup>
 
-
 	<ItemGroup>
-		<None Remove="Theme\1140x641.jpg" />
-		<None Remove="Theme\Background.png" />
-		<None Remove="Theme\lock.ico" />
-		<None Remove="Theme\SplashScreen.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Autoupdater.NET.Official" Version="1.9.2" />
-		<PackageReference Include="CodingSeb.Localization.JsonFileLoader" Version="1.4.0" />
-		<PackageReference Include="CodingSeb.Localization.WPF" Version="1.4.1" />
-		<PackageReference Include="CodingSebLocalization.Fody" Version="1.4.0" />
+		<PackageReference Include="Avalonia" Version="12.1.3" />
+		<PackageReference Include="Avalonia.Desktop" Version="12.1.3" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.3" />
+		<PackageReference Include="Avalonia.Controls.ColorPicker" Version="12.1.3" />
+		<PackageReference Include="Semi.Avalonia" Version="12.1.0.1" />
+		<PackageReference Include="Semi.Avalonia.ColorPicker" Version="12.1.0.1" />
+		<PackageReference Include="Irihi.Ursa" Version="2.2.0" />
+		<PackageReference Include="Irihi.Ursa.Themes.Semi" Version="2.2.0" />
+		<PackageReference Include="DialogHost.Avalonia" Version="0.12.3" />
+		<PackageReference Include="Material.Icons.Avalonia" Version="3.0.2" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Include="MaterialDesignThemes" Version="5.3.0" />
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+		<PackageReference Include="CodingSeb.Localization" Version="1.4.0" />
+		<PackageReference Include="CodingSeb.Localization.JsonFileLoader" Version="1.4.0" />
 		<PackageReference Include="NLog" Version="5.5.0" />
 		<PackageReference Include="NLog.Extensions.Logging" Version="5.5.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Resource Include="Theme\Background.png">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="Theme\Background_Old.jpg">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="Theme\lock.ico" />
-		<Resource Include="Theme\SplashScreen.png" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\SteamLibForked\SteamLibForked.csproj" />
 	</ItemGroup>
 
+	<!-- Images used by the UI (splash, background, icons) are embedded as avares:// resources -->
 	<ItemGroup>
-		<Compile Update="View\Dialogs\LoginAgainOnImportDialog.xaml.cs">
-			<SubType>Code</SubType>
-		</Compile>
-		<Compile Update="View\Dialogs\SdaPasswordDialog.xaml.cs">
-			<SubType>Code</SubType>
-		</Compile>
+		<AvaloniaResource Include="Theme\Background.png;Theme\SplashScreen.png;Theme\lock.ico" />
 	</ItemGroup>
 
+	<!-- Debug-only placeholder images of the confirmations demo (NEBULA_MAIN_DEMO=confirmations, ViewModel/MainVM.Demo.cs) -->
+	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+		<AvaloniaResource Include="Assets\Demo\*.png" />
+	</ItemGroup>
+
+	<!-- Debug-only style gallery (NEBULA_STYLE_GALLERY=1) -->
+	<ItemGroup Condition="'$(Configuration)' != 'Debug'">
+		<AvaloniaXaml Remove="Theme\StyleGallery.axaml" />
+		<Compile Remove="Theme\StyleGallery.axaml.cs" />
+	</ItemGroup>
+
+	<!-- Design sources (*.psd) stay in the project as plain None items (default globbing), never copied to output -->
 
 	<ItemGroup>
-		<None Update="Localization\codebehind.errors.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Localization\codebehind.other.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Localization\dialogs.setpasswords.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Localization\dialogs.mafilemover.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Localization\dialogs.export.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Localization\dialogs.update.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Localization\dialogs.sdapassword.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Localization\dialogs.encryptionpassword.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Localization\dialogs.linker.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Localization\dialogs.proxymanager.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Localization\dialogs.loginagain.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Localization\dialogs.settings.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Localization\dialogs.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Localization\global.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Localization\mainwindow.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Localization\views.loc.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		<None Update="Localization\*.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="NLog.config">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-	</ItemGroup>
-
-
-	<ItemGroup>
-		<Folder Include="Theme\Controls\" />
 	</ItemGroup>
 
 </Project>

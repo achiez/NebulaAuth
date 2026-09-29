@@ -1,0 +1,330 @@
+<!--
+    Item templates of the confirmations list in MainWindow (ItemTemplate="{StaticResource ConfirmationTemplates}").
+    ConfirmationTemplateSelector (View/ConfirmationTemplates.cs) takes the FIRST matching template, so derived types come
+    first and the base Confirmation template is last. Web images (avatar, market item) load through view:RemoteImage.Source.
+
+    Every row has the same layout (styles: MainWindow.axaml, "Confirmations list"):
+    [34 px tile: image or type icon] [title (+ muted caption)] [time, shared column width] [confirm] [cancel]
+    Rows are one line high (long names end with an ellipsis and show the full text in a tooltip), so the list reads as a
+    table with aligned columns.
+-->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:confirmations="using:SteamLib.SteamMobile.Confirmations"
+                    xmlns:entities="using:NebulaAuth.Model.Entities"
+                    xmlns:view="using:NebulaAuth.View"
+                    xmlns:vm="using:NebulaAuth.ViewModel"
+                    xmlns:mi="using:Material.Icons.Avalonia">
+
+    <view:ConfirmationTemplateSelector x:Key="ConfirmationTemplates">
+
+        <!-- Trade: partner avatar, "Trade with <name>", gift icon when nothing is received -->
+        <DataTemplate DataType="confirmations:TradeConfirmation">
+            <Border Classes="ConfRow">
+                <Grid Classes="ConfRow">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="ConfTime" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Classes="ConfTile">
+                        <Panel>
+                            <!-- Type icon until the avatar is loaded -->
+                            <mi:MaterialIcon Kind="AccountArrowRight"
+                                             IsVisible="{Binding #AvatarImage.Source, Converter={x:Static ObjectConverters.IsNull}}" />
+                            <Image x:Name="AvatarImage" Stretch="UniformToFill" view:RemoteImage.Source="{Binding UserAvatarUri}" />
+                        </Panel>
+                    </Border>
+                    <!-- Left-aligned "*,Auto": the badge follows the text, a long name is trimmed -->
+                    <Grid Grid.Column="1" Classes="ConfText" ColumnDefinitions="*,Auto" HorizontalAlignment="Left">
+                        <TextBlock Grid.Column="0" TextTrimming="CharacterEllipsis">
+                            <Run Text="{Tr MainWindow.ConfirmationTemplates.TradeWith, IsDynamic=False}" />
+                            <Run Text="{Binding UserName}" FontWeight="SemiBold" />
+                        </TextBlock>
+                        <mi:MaterialIcon Grid.Column="1" Classes="ConfBadge" Kind="Gift" IsVisible="{Binding IsReceiveNothing}" />
+                    </Grid>
+                    <TextBlock Grid.Column="2" Classes="ConfTime" Text="{Binding Time, StringFormat={}{0:t}}" />
+                    <StackPanel Grid.Column="3" Classes="ConfActions">
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Primary"
+                                Command="{Binding $parent[Window].((vm:MainVM)DataContext).ConfirmCommand}"
+                                CommandParameter="{Binding}">
+                            <mi:MaterialIcon Kind="Check" />
+                        </Button>
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Danger"
+                                Command="{Binding $parent[Window].((vm:MainVM)DataContext).CancelCommand}"
+                                CommandParameter="{Binding}">
+                            <mi:MaterialIcon Kind="Close" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- Several market listings grouped by MainVM.GetConfirmations: the header is a normal row ("Sell N pcs" + chevron),
+             the listings are indented under the title column -->
+        <DataTemplate DataType="entities:MarketMultiConfirmation">
+            <Expander Classes="ConfGroup"
+                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                      Padding="0" BorderThickness="0">
+                <Expander.Resources>
+                    <!-- Semi: bold, padded header with its own hover fill and the chevron at the far right; the row draws
+                         all of that itself so it lines up with the other rows -->
+                    <FontWeight x:Key="ExpanderHeaderFontWeight">Normal</FontWeight>
+                    <Thickness x:Key="ExpanderHeaderPadding">0</Thickness>
+                    <Thickness x:Key="ExpanderHeaderMargin">0</Thickness>
+                    <Thickness x:Key="ExpanderContentPadding">0</Thickness>
+                    <SolidColorBrush x:Key="ExpanderHeaderPointeroverBackground" Color="Transparent" />
+                    <SolidColorBrush x:Key="ExpanderHeaderPressedBackground" Color="Transparent" />
+                </Expander.Resources>
+                <Expander.Header>
+                    <Border Classes="ConfRow">
+                        <Grid Classes="ConfRow">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="ConfTime" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Classes="ConfTile">
+                                <mi:MaterialIcon Kind="CartArrowUp" />
+                            </Border>
+                            <Grid Grid.Column="1" Classes="ConfText" ColumnDefinitions="*,Auto" HorizontalAlignment="Left">
+                                <TextBlock Grid.Column="0" TextTrimming="CharacterEllipsis">
+                                    <Run Text="{Tr MainWindow.ConfirmationTemplates.Market, IsDynamic=False}" />
+                                    <Run Text="{Binding Confirmations.Count, Mode=OneWay}" />
+                                    <Run Text="{Tr Common.Abbreviations.Count.Items, IsDynamic=False}" />
+                                </TextBlock>
+                                <mi:MaterialIcon Grid.Column="1" Classes="ConfChevron" Kind="ChevronDown"
+                                                 Classes.expanded="{Binding $parent[Expander].IsExpanded}" />
+                            </Grid>
+                            <TextBlock Grid.Column="2" Classes="ConfTime" Text="{Binding Time, StringFormat={}{0:t}}" />
+                            <StackPanel Grid.Column="3" Classes="ConfActions">
+                                <Button Theme="{StaticResource GhostIconButton}" Classes="Primary"
+                                        ToolTip.Tip="{Tr MainWindow.ConfirmationTemplates.ConfirmAll}"
+                                        Command="{Binding $parent[Window].((vm:MainVM)DataContext).ConfirmCommand}"
+                                        CommandParameter="{Binding}">
+                                    <mi:MaterialIcon Kind="CheckAll" />
+                                </Button>
+                                <Button Theme="{StaticResource GhostIconButton}" Classes="Danger"
+                                        ToolTip.Tip="{Tr MainWindow.ConfirmationTemplates.CancelAll}"
+                                        Command="{Binding $parent[Window].((vm:MainVM)DataContext).CancelCommand}"
+                                        CommandParameter="{Binding}">
+                                    <mi:MaterialIcon Kind="Close" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Expander.Header>
+
+                <!-- Listings: a thin guide line under the header tile, rows start at the title column -->
+                <Border Classes="ConfChildren">
+                    <ScrollViewer MaxHeight="320"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl ItemsSource="{Binding Confirmations}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="confirmations:MarketConfirmation">
+                                    <Border Classes="ConfRow Child" ToolTip.Tip="{Binding ItemName}">
+                                        <Grid Classes="ConfRow" ColumnDefinitions="Auto,*,Auto">
+                                            <Border Grid.Column="0" Classes="ConfTile Small">
+                                                <Panel>
+                                                    <mi:MaterialIcon Kind="CartArrowUp"
+                                                                     IsVisible="{Binding #ItemImage.Source, Converter={x:Static ObjectConverters.IsNull}}" />
+                                                    <Image x:Name="ItemImage" Classes="Item" view:RemoteImage.Source="{Binding ItemImageUri}" />
+                                                </Panel>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Classes="ConfText">
+                                                <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding ItemName}" />
+                                                <TextBlock Classes="ConfCaption" Text="{Binding PriceString}"
+                                                           IsVisible="{Binding PriceString, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" Classes="ConfActions">
+                                                <Button Theme="{StaticResource GhostIconButton}" Classes="Primary"
+                                                        ToolTip.Tip="{Tr MainWindow.ConfirmationTemplates.ConfirmOne}"
+                                                        Command="{Binding $parent[Window].((vm:MainVM)DataContext).ConfirmCommand}"
+                                                        CommandParameter="{Binding}">
+                                                    <mi:MaterialIcon Kind="Check" />
+                                                </Button>
+                                                <Button Theme="{StaticResource GhostIconButton}" Classes="Danger"
+                                                        ToolTip.Tip="{Tr MainWindow.ConfirmationTemplates.CancelOne}"
+                                                        Command="{Binding $parent[Window].((vm:MainVM)DataContext).CancelCommand}"
+                                                        CommandParameter="{Binding}">
+                                                    <mi:MaterialIcon Kind="Close" />
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Border>
+            </Expander>
+        </DataTemplate>
+
+        <!-- Single market listing: item icon, name + price -->
+        <DataTemplate DataType="confirmations:MarketConfirmation">
+            <Border Classes="ConfRow" ToolTip.Tip="{Binding ItemName}">
+                <Grid Classes="ConfRow">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="ConfTime" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Classes="ConfTile">
+                        <Panel>
+                            <!-- Type icon until the item image is loaded (or when there is none) -->
+                            <mi:MaterialIcon Kind="CartArrowUp"
+                                             IsVisible="{Binding #ItemImage.Source, Converter={x:Static ObjectConverters.IsNull}}" />
+                            <Image x:Name="ItemImage" Classes="Item" view:RemoteImage.Source="{Binding ItemImageUri}" />
+                        </Panel>
+                    </Border>
+                    <StackPanel Grid.Column="1" Classes="ConfText">
+                        <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding ItemName}" />
+                        <TextBlock Classes="ConfCaption" Text="{Binding PriceString}"
+                                   IsVisible="{Binding PriceString, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                    </StackPanel>
+                    <TextBlock Grid.Column="2" Classes="ConfTime" Text="{Binding Time, StringFormat={}{0:t}}" />
+                    <StackPanel Grid.Column="3" Classes="ConfActions">
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Primary"
+                                Command="{Binding $parent[Window].((vm:MainVM)DataContext).ConfirmCommand}"
+                                CommandParameter="{Binding}">
+                            <mi:MaterialIcon Kind="Check" />
+                        </Button>
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Danger"
+                                Command="{Binding $parent[Window].((vm:MainVM)DataContext).CancelCommand}"
+                                CommandParameter="{Binding}">
+                            <mi:MaterialIcon Kind="Close" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- Account recovery -->
+        <DataTemplate DataType="confirmations:AccountRecoveryConfirmation">
+            <Border Classes="ConfRow">
+                <Grid Classes="ConfRow">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="ConfTime" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Classes="ConfTile">
+                        <mi:MaterialIcon Kind="LockOutline" />
+                    </Border>
+                    <TextBlock Grid.Column="1" Classes="ConfTitle" Text="{Tr MainWindow.ConfirmationTemplates.Recovery}" />
+                    <TextBlock Grid.Column="2" Classes="ConfTime" Text="{Binding Time, StringFormat={}{0:t}}" />
+                    <StackPanel Grid.Column="3" Classes="ConfActions">
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Primary"
+                                Command="{Binding $parent[Window].((vm:MainVM)DataContext).ConfirmCommand}"
+                                CommandParameter="{Binding}">
+                            <mi:MaterialIcon Kind="Check" />
+                        </Button>
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Danger"
+                                Command="{Binding $parent[Window].((vm:MainVM)DataContext).CancelCommand}"
+                                CommandParameter="{Binding}">
+                            <mi:MaterialIcon Kind="Close" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- Register Web API key -->
+        <DataTemplate DataType="confirmations:RegisterApiKeyConfirmation">
+            <Border Classes="ConfRow">
+                <Grid Classes="ConfRow">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="ConfTime" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Classes="ConfTile">
+                        <mi:MaterialIcon Kind="KeyLink" />
+                    </Border>
+                    <TextBlock Grid.Column="1" Classes="ConfTitle" Text="{Tr MainWindow.ConfirmationTemplates.ApiKey}" />
+                    <TextBlock Grid.Column="2" Classes="ConfTime" Text="{Binding Time, StringFormat={}{0:t}}" />
+                    <StackPanel Grid.Column="3" Classes="ConfActions">
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Primary"
+                                Command="{Binding $parent[Window].((vm:MainVM)DataContext).ConfirmCommand}"
+                                CommandParameter="{Binding}">
+                            <mi:MaterialIcon Kind="Check" />
+                        </Button>
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Danger"
+                                Command="{Binding $parent[Window].((vm:MainVM)DataContext).CancelCommand}"
+                                CommandParameter="{Binding}">
+                            <mi:MaterialIcon Kind="Close" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- Store purchase -->
+        <DataTemplate DataType="confirmations:PurchaseConfirmation">
+            <Border Classes="ConfRow">
+                <Grid Classes="ConfRow">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="ConfTime" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Classes="ConfTile">
+                        <mi:MaterialIcon Kind="ShopComplete" />
+                    </Border>
+                    <TextBlock Grid.Column="1" Classes="ConfTitle" Text="{Tr MainWindow.ConfirmationTemplates.Purchase}" />
+                    <TextBlock Grid.Column="2" Classes="ConfTime" Text="{Binding Time, StringFormat={}{0:t}}" />
+                    <StackPanel Grid.Column="3" Classes="ConfActions">
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Primary"
+                                Command="{Binding $parent[Window].((vm:MainVM)DataContext).ConfirmCommand}"
+                                CommandParameter="{Binding}">
+                            <mi:MaterialIcon Kind="Check" />
+                        </Button>
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Danger"
+                                Command="{Binding $parent[Window].((vm:MainVM)DataContext).CancelCommand}"
+                                CommandParameter="{Binding}">
+                            <mi:MaterialIcon Kind="Close" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- Any other confirmation type (base class: keep this template last) -->
+        <DataTemplate DataType="confirmations:Confirmation">
+            <Border Classes="ConfRow">
+                <Grid Classes="ConfRow">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="ConfTime" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Classes="ConfTile">
+                        <mi:MaterialIcon Kind="HelpCircleOutline" />
+                    </Border>
+                    <TextBlock Grid.Column="1" Classes="ConfTitle" Text="{Binding TypeName}" />
+                    <TextBlock Grid.Column="2" Classes="ConfTime" Text="{Binding Time, StringFormat={}{0:t}}" />
+                    <StackPanel Grid.Column="3" Classes="ConfActions">
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Primary"
+                                Command="{Binding $parent[Window].((vm:MainVM)DataContext).ConfirmCommand}"
+                                CommandParameter="{Binding}">
+                            <mi:MaterialIcon Kind="Check" />
+                        </Button>
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Danger"
+                                Command="{Binding $parent[Window].((vm:MainVM)DataContext).CancelCommand}"
+                                CommandParameter="{Binding}">
+                            <mi:MaterialIcon Kind="Close" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </view:ConfirmationTemplateSelector>
+</ResourceDictionary>

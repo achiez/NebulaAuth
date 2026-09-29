@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using CodingSeb.Localization;
 using CodingSeb.Localization.Loaders;
@@ -53,7 +52,7 @@ public static class LocManager
 
     public static void ReloadFiles()
     {
-        var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+        var baseDir = AppContext.BaseDirectory;
         var path = Path.Combine(baseDir, LOC_DIR);
         LocalizationLoader.Instance.AddDirectory(path);
     }

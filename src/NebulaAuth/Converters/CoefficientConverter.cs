@@ -1,10 +1,12 @@
-﻿using System;
+using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace NebulaAuth.Converters;
 
-[ValueConversion(typeof(double), typeof(double))]
+/// <summary>
+///     value * parameter (parameter parsed with the invariant culture, e.g. ConverterParameter=0.6).
+/// </summary>
 public class CoefficientConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)

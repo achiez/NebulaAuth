@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MaterialDesignThemes.Wpf;
 using NebulaAuth.Core;
 using NebulaAuth.View;
 
@@ -30,9 +29,9 @@ public partial class MainVM : ObservableObject
     [RelayCommand]
     private async Task OpenLinksView()
     {
-        CurrentDialogHost.CloseOnClickAway = true;
+        DialogService.CloseOnClickAway = true;
         var view = new LinksView();
-        await DialogHost.Show(view);
-        CurrentDialogHost.CloseOnClickAway = false;
+        await DialogService.Show(view);
+        DialogService.CloseOnClickAway = false;
     }
 }

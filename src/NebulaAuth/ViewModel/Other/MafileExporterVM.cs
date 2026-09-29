@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NebulaAuth.Core;
@@ -14,7 +13,7 @@ using NebulaAuth.Model.Mafiles;
 
 namespace NebulaAuth.ViewModel.Other;
 
-public partial class MafileExporterVM : ObservableObject
+public partial class MafileExporterVM : ObservableObject, IDisposable
 {
     public MafileExportTemplateVM? CurrentTemplate
     {
@@ -197,18 +196,13 @@ public partial class MafileExporterVM : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CurrentTemplateNotNull))]
-    private void OpenSelectDirectoryDialog()
+    private async Task OpenSelectDirectoryDialog()
     {
         if (CurrentTemplate == null) return;
-        var dialog = new FolderBrowserDialog
+        var selectedPath = await FileDialogs.PickFolderAsync();
+        if (selectedPath != null && CurrentTemplate != null)
         {
-            UseDescriptionForTitle = true,
-            ShowNewFolderButton = true
-        };
-        var result = dialog.ShowDialog();
-        if (result == DialogResult.OK)
-        {
-            CurrentTemplate!.Path = dialog.SelectedPath;
+            CurrentTemplate.Path = selectedPath;
         }
     }
 
@@ -311,6 +305,15 @@ public partial class MafileExporterVM : ObservableObject
     }
 
     #endregion
+
+    public void Dispose()
+    {
+        MafileExporterStorage.Templates.CollectionChanged -= OnTemplatesOnCollectionChanged;
+        if (_currentTemplate != null)
+        {
+            _currentTemplate.PropertyChanged -= OnCurrentTemplatePropertyChanged;
+        }
+    }
 }
 
 public partial class MafileExportTemplateVM : ObservableObject

@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Windows.Media;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NebulaAuth.Core;
@@ -139,7 +139,13 @@ public partial class SettingsVM : ObservableObject
     public Color? IconColor
     {
         get => Settings.IconColor;
-        set => Settings.IconColor = value;
+        set
+        {
+            // The color picker (non-nullable Color) stays bound while the indicator is off:
+            // only UseIcon may turn the indicator on
+            if (value != null && !UseIcon) return;
+            Settings.IconColor = value;
+        }
     }
 
     public bool UseIcon
@@ -148,9 +154,9 @@ public partial class SettingsVM : ObservableObject
         set
         {
             if (!value)
-                IconColor = null;
+                Settings.IconColor = null;
             else
-                IconColor = Color.FromRgb(202, 39, 39);
+                Settings.IconColor = Color.FromRgb(202, 39, 39);
 
             OnPropertyChanged();
             OnPropertyChanged(nameof(IconColor));

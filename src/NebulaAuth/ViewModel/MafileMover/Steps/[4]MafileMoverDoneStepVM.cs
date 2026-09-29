@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
-using System.Windows;
 using CommunityToolkit.Mvvm.Input;
 using NebulaAuth.Core;
 using NebulaAuth.Model;
+using NebulaAuth.Utility;
 
 namespace NebulaAuth.ViewModel.MafileMover;
 
@@ -46,7 +46,7 @@ public partial class MafileMoverDoneStepVM : MafileMoverStepVM
     {
         try
         {
-            Clipboard.SetText(_rCode);
+            ClipboardHelper.Set(_rCode);
         }
         catch (Exception ex)
         {

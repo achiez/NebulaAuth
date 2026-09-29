@@ -1,0 +1,247 @@
+<!--
+    NebulaAuth custom window chrome (no P/Invoke).
+
+    Usage: <Window Theme="{StaticResource NebulaWindow}" ...>
+
+    How it works (Avalonia 12):
+    - ExtendClientAreaToDecorationsHint=True. When the platform really extends the client area
+      (Window.IsExtendedIntoWindowDecorations = true: Windows, macOS; Linux X11 only with the experimental drawn decorations)
+      WindowDecorationMargin.Top is the title bar height.
+    - The window template draws the title band (TitleBarBackgroundBrush = Base300, centered title) in that top margin and marks it
+      WindowDecorationProperties.ElementRole="TitleBar": drag-move, double-click maximize, Aero snap and the system menu are
+      handled by the platform.
+    - Windows (and Linux drawn decorations): Avalonia renders WindowDrawnDecorations with NebulaWindowDecorations below:
+      our caption buttons (min / max-restore / close), wired by Avalonia through the PART_* names and ElementRole
+      (maximize = HTMAXBUTTON, so Windows 11 snap layouts work). Resize border, shadow and rounded corners stay native.
+    - macOS: native traffic lights are drawn by the OS on the left side of our title band.
+    - Linux (default X11): the client area is not extended, WindowDecorationMargin is 0, the band collapses and the window
+      manager draws its own decorations (see blockers).
+-->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <x:Double x:Key="NebulaTitleBarHeight">30</x:Double>
+
+    <!-- Thin caption glyphs (Windows 11 style), drawn with a 1px stroke -->
+    <StreamGeometry x:Key="NebulaCaptionMinimizeGlyph">M0,5 L10,5</StreamGeometry>
+    <StreamGeometry x:Key="NebulaCaptionMaximizeGlyph">M0.5,0.5 L9.5,0.5 L9.5,9.5 L0.5,9.5 Z</StreamGeometry>
+    <StreamGeometry x:Key="NebulaCaptionRestoreGlyph">M0.5,2.5 L7.5,2.5 L7.5,9.5 L0.5,9.5 Z M2.5,2.5 L2.5,0.5 L9.5,0.5 L9.5,7.5 L7.5,7.5</StreamGeometry>
+    <StreamGeometry x:Key="NebulaCaptionCloseGlyph">M0,0 L10,10 M10,0 L0,10</StreamGeometry>
+    <StreamGeometry x:Key="NebulaCaptionFullScreenGlyph">M0,3.5 L0,0 L3.5,0 M6.5,0 L10,0 L10,3.5 M10,6.5 L10,10 L6.5,10 M3.5,10 L0,10 L0,6.5</StreamGeometry>
+
+    <ControlTheme x:Key="NebulaCaptionButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource CaptionButtonForegroundBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Width" Value="46" />
+        <Setter Property="Height" Value="{StaticResource NebulaTitleBarHeight}" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="WindowDecorationProperties.ElementRole" Value="DecorationsElement" />
+        <Setter Property="Template">
+            <ControlTemplate TargetType="Button">
+                <Border Name="PART_Background" Background="{TemplateBinding Background}">
+                    <Path Name="PART_Glyph"
+                          Width="10" Height="10"
+                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                          Stretch="None"
+                          Data="{TemplateBinding Content}"
+                          Stroke="{TemplateBinding Foreground}"
+                          StrokeThickness="1" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.1" />
+            </Transitions>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource CaptionButtonHoverBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TitleBarForegroundBrush}" />
+        </Style>
+        <Style Selector="^:pressed">
+            <Setter Property="Background" Value="{DynamicResource CaptionButtonPressedBrush}" />
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Opacity" Value="0.4" />
+        </Style>
+        <Style Selector="^.Close:pointerover">
+            <Setter Property="Background" Value="{DynamicResource CaptionCloseHoverBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource CaptionCloseForegroundBrush}" />
+        </Style>
+        <Style Selector="^.Close:pressed">
+            <Setter Property="Background" Value="{DynamicResource CaptionClosePressedBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource CaptionCloseForegroundBrush}" />
+        </Style>
+    </ControlTheme>
+
+    <!-- Drawn decorations (Windows when the client area is extended; Linux only with X11 drawn decorations enabled) -->
+    <ControlTheme x:Key="NebulaWindowDecorations" TargetType="WindowDrawnDecorations">
+        <Setter Property="DefaultTitleBarHeight" Value="{StaticResource NebulaTitleBarHeight}" />
+        <Setter Property="DefaultFrameThickness" Value="1" />
+        <Setter Property="DefaultShadowThickness" Value="10" />
+        <Setter Property="Template">
+            <WindowDrawnDecorationsTemplate>
+                <WindowDrawnDecorationsContent>
+                    <WindowDrawnDecorationsContent.Underlay>
+                        <Panel Name="PART_UnderlayWrapper">
+                            <Border Name="PART_WindowBorder"
+                                    Background="{DynamicResource WindowBackgroundBrush}"
+                                    BorderBrush="{DynamicResource DialogBorderBrush}"
+                                    BorderThickness="{TemplateBinding FrameThickness}"
+                                    IsHitTestVisible="False" />
+                            <Panel Name="PART_TitleBar"
+                                   VerticalAlignment="Top"
+                                   Height="{TemplateBinding TitleBarHeight}"
+                                   Background="{DynamicResource TitleBarBackgroundBrush}"
+                                   IsVisible="{TemplateBinding HasTitleBar}"
+                                   WindowDecorationProperties.ElementRole="TitleBar" />
+                        </Panel>
+                    </WindowDrawnDecorationsContent.Underlay>
+
+                    <WindowDrawnDecorationsContent.Overlay>
+                        <Panel Name="PART_OverlayWrapper">
+                            <StackPanel Name="PART_OverlayPanel"
+                                        Height="{TemplateBinding TitleBarHeight}"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        IsVisible="{TemplateBinding HasTitleBar}"
+                                        Orientation="Horizontal">
+                                <Button Name="PART_FullScreenButton"
+                                        Theme="{StaticResource NebulaCaptionButton}"
+                                        Content="{StaticResource NebulaCaptionFullScreenGlyph}"
+                                        IsVisible="False"
+                                        WindowDecorationProperties.ElementRole="FullScreenButton" />
+                                <Button Name="PART_MinimizeButton"
+                                        Theme="{StaticResource NebulaCaptionButton}"
+                                        Content="{StaticResource NebulaCaptionMinimizeGlyph}"
+                                        WindowDecorationProperties.ElementRole="MinimizeButton" />
+                                <Button Name="PART_MaximizeButton"
+                                        Theme="{StaticResource NebulaCaptionButton}"
+                                        Content="{StaticResource NebulaCaptionMaximizeGlyph}"
+                                        WindowDecorationProperties.ElementRole="MaximizeButton" />
+                                <Button Name="PART_CloseButton"
+                                        Classes="Close"
+                                        Theme="{StaticResource NebulaCaptionButton}"
+                                        Content="{StaticResource NebulaCaptionCloseGlyph}"
+                                        WindowDecorationProperties.ElementRole="CloseButton" />
+                            </StackPanel>
+                        </Panel>
+                    </WindowDrawnDecorationsContent.Overlay>
+
+                    <WindowDrawnDecorationsContent.FullscreenPopover>
+                        <DockPanel Height="{StaticResource NebulaTitleBarHeight}"
+                                   VerticalAlignment="Top"
+                                   Background="{DynamicResource TitleBarBackgroundBrush}"
+                                   WindowDecorationProperties.ElementRole="TitleBar">
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                <Button Name="PART_PopoverFullScreenButton"
+                                        Theme="{StaticResource NebulaCaptionButton}"
+                                        Content="{StaticResource NebulaCaptionRestoreGlyph}"
+                                        WindowDecorationProperties.ElementRole="FullScreenButton" />
+                                <Button Name="PART_PopoverCloseButton"
+                                        Classes="Close"
+                                        Theme="{StaticResource NebulaCaptionButton}"
+                                        Content="{StaticResource NebulaCaptionCloseGlyph}"
+                                        WindowDecorationProperties.ElementRole="CloseButton" />
+                            </StackPanel>
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource TitleBarForegroundBrush}"
+                                       Text="{TemplateBinding Title}" />
+                        </DockPanel>
+                    </WindowDrawnDecorationsContent.FullscreenPopover>
+                </WindowDrawnDecorationsContent>
+            </WindowDrawnDecorationsTemplate>
+        </Setter>
+
+        <Style Selector="^:has-shadow">
+            <Style Selector="^ /template/ Panel#PART_UnderlayWrapper">
+                <Setter Property="Margin" Value="{TemplateBinding ShadowThickness}" />
+            </Style>
+            <Style Selector="^ /template/ Border#PART_WindowBorder">
+                <Setter Property="BoxShadow" Value="0 4 14 0 #50000000" />
+            </Style>
+            <Style Selector="^ /template/ Panel#PART_OverlayWrapper">
+                <Setter Property="Margin" Value="{TemplateBinding ShadowThickness}" />
+            </Style>
+        </Style>
+        <Style Selector="^:has-border">
+            <Style Selector="^ /template/ Panel#PART_TitleBar">
+                <Setter Property="Margin" Value="1,1,1,0" />
+            </Style>
+            <Style Selector="^ /template/ StackPanel#PART_OverlayPanel">
+                <Setter Property="Margin" Value="0,1,1,0" />
+            </Style>
+        </Style>
+        <Style Selector="^:maximized /template/ Button#PART_MaximizeButton">
+            <Setter Property="Content" Value="{StaticResource NebulaCaptionRestoreGlyph}" />
+        </Style>
+        <Style Selector="^:not(:has-minimize) /template/ Button#PART_MinimizeButton">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <Style Selector="^:not(:has-maximize) /template/ Button#PART_MaximizeButton">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <Style Selector="^:not(:has-fullscreen) /template/ Button#PART_PopoverFullScreenButton">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <Style Selector="^:fullscreen">
+            <Style Selector="^ /template/ StackPanel#PART_OverlayPanel">
+                <Setter Property="IsVisible" Value="False" />
+            </Style>
+            <Style Selector="^ /template/ Panel#PART_TitleBar">
+                <Setter Property="IsVisible" Value="False" />
+            </Style>
+        </Style>
+    </ControlTheme>
+
+    <!-- The window itself: Base200 background, title band in the extended top margin, content below it -->
+    <ControlTheme x:Key="NebulaWindow" TargetType="Window">
+        <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}" />
+        <Setter Property="TransparencyBackgroundFallback" Value="{DynamicResource WindowBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource WindowDefaultForeground}" />
+        <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
+        <Setter Property="FontWeight" Value="{DynamicResource DefaultFontWeight}" />
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFontFamily}" />
+        <Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
+        <Setter Property="ExtendClientAreaTitleBarHeightHint" Value="{StaticResource NebulaTitleBarHeight}" />
+        <Setter Property="WindowDecorationsTheme" Value="{StaticResource NebulaWindowDecorations}" />
+        <Setter Property="Template">
+            <ControlTemplate TargetType="Window">
+                <Panel>
+                    <Border Name="PART_TransparencyFallback" IsHitTestVisible="False" />
+                    <Border Background="{TemplateBinding Background}" IsHitTestVisible="False" />
+                    <Border Name="PART_TitleBand"
+                            VerticalAlignment="Top"
+                            Height="{Binding WindowDecorationMargin.Top, RelativeSource={RelativeSource TemplatedParent}}"
+                            Background="{DynamicResource TitleBarBackgroundBrush}"
+                            IsVisible="{TemplateBinding IsExtendedIntoWindowDecorations}"
+                            WindowDecorationProperties.ElementRole="TitleBar">
+                        <TextBlock Name="PART_Title"
+                                   Margin="140,0"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   IsHitTestVisible="False"
+                                   FontSize="15"
+                                   FontWeight="Medium"
+                                   TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource TitleBarForegroundBrush}"
+                                   Text="{TemplateBinding Title}" />
+                    </Border>
+                    <VisualLayerManager Name="PART_VisualLayerManager"
+                                        Margin="{TemplateBinding WindowDecorationMargin}">
+                        <ContentPresenter Name="PART_ContentPresenter"
+                                          Margin="{TemplateBinding Padding}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}" />
+                    </VisualLayerManager>
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^[IsActive=False] /template/ TextBlock#PART_Title">
+            <Setter Property="Opacity" Value="0.6" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

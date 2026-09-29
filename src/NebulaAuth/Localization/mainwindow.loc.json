@@ -191,6 +191,86 @@
         "tr": "Mafile silinsin mi?\r\nMafile 'mafiles_removed' klasörüne taşınacak\r\nBu işlem Steam Guard'ı hesaptan kaldırmaz",
         "kk": "Mafile жойылсын ба?\r\nMafile 'mafiles_removed' қалтасына көшіріледі\r\nБұл әрекет Steam Guard-ты аккаунттан алып тастамайды"
       },
+      "RemoveMafileTitle": {
+        "ru": "Удаление мафайла",
+        "en": "Remove mafile",
+        "zh": "删除 mafile",
+        "uk": "Видалення мафайлу",
+        "fr": "Supprimer le mafile",
+        "es": "Eliminar mafile",
+        "tr": "Mafile'ı kaldır",
+        "kk": "Mafile-ды жою"
+      },
+      "RemoveMafileText": {
+        "ru": "Мафайл будет перемещён в папку 'mafiles_removed'. Его можно вернуть оттуда в любой момент.",
+        "en": "The mafile will be moved to the 'mafiles_removed' folder. You can restore it from there at any time.",
+        "zh": "Mafile 将被移动到“mafiles_removed”文件夹。您可以随时从那里恢复它。",
+        "uk": "Мафайл буде переміщено до теки 'mafiles_removed'. Його можна повернути звідти будь-коли.",
+        "fr": "Le mafile sera déplacé dans le dossier 'mafiles_removed'. Vous pourrez l'y récupérer à tout moment.",
+        "es": "El mafile se moverá a la carpeta 'mafiles_removed'. Puedes restaurarlo desde allí en cualquier momento.",
+        "tr": "Mafile 'mafiles_removed' klasörüne taşınacak. Onu istediğiniz zaman oradan geri yükleyebilirsiniz.",
+        "kk": "Mafile 'mafiles_removed' қалтасына көшіріледі. Оны кез келген уақытта сол жерден қайтаруға болады."
+      },
+      "RemoveMafileHint": {
+        "ru": "Steam Guard НЕ удаляется с аккаунта.",
+        "en": "Steam Guard is NOT removed from the account.",
+        "zh": "此操作不会从账户中移除 Steam Guard。",
+        "uk": "Steam Guard НЕ видаляється з облікового запису.",
+        "fr": "Le Steam Guard n'est PAS supprimé du compte.",
+        "es": "Steam Guard NO se elimina de la cuenta.",
+        "tr": "Steam Guard hesaptan KALDIRILMAZ.",
+        "kk": "Steam Guard аккаунттан ЖОЙЫЛМАЙДЫ."
+      },
+      "RemoveMafileConfirm": {
+        "ru": "Удалить",
+        "en": "Remove",
+        "zh": "删除",
+        "uk": "Видалити",
+        "fr": "Supprimer",
+        "es": "Eliminar",
+        "tr": "Kaldır",
+        "kk": "Жою"
+      },
+      "RemoveAuthenticatorTitle": {
+        "ru": "Удаление аутентификатора",
+        "en": "Remove authenticator",
+        "zh": "移除身份验证器",
+        "uk": "Видалення автентифікатора",
+        "fr": "Supprimer l'authentificateur",
+        "es": "Eliminar el autenticador",
+        "tr": "Kimlik doğrulayıcıyı kaldır",
+        "kk": "Аутентификаторды жою"
+      },
+      "RemoveAuthenticatorText": {
+        "ru": "Steam Guard будет отвязан от аккаунта, а мафайл удалён навсегда.",
+        "en": "Steam Guard will be removed from the account and the mafile will be deleted permanently.",
+        "zh": "Steam Guard 将从账户中移除，mafile 将被永久删除。",
+        "uk": "Steam Guard буде відв'язано від облікового запису, а мафайл видалено назавжди.",
+        "fr": "Le Steam Guard sera retiré du compte et le mafile sera supprimé définitivement.",
+        "es": "Steam Guard se eliminará de la cuenta y el mafile se borrará permanentemente.",
+        "tr": "Steam Guard hesaptan kaldırılacak ve mafile kalıcı olarak silinecek.",
+        "kk": "Steam Guard аккаунттан ажыратылады, ал mafile біржола жойылады."
+      },
+      "RemoveAuthenticatorHint": {
+        "ru": "15 дней вы не сможете обмениваться и пользоваться торговой площадкой. Это действие нельзя отменить.",
+        "en": "For 15 days you will not be able to trade or use the Community Market. This cannot be undone.",
+        "zh": "15 天内您将无法交易或使用社区市场。此操作无法撤销。",
+        "uk": "15 днів ви не зможете обмінюватися та користуватися торговим майданчиком. Цю дію не можна скасувати.",
+        "fr": "Pendant 15 jours, vous ne pourrez ni échanger ni utiliser le marché de la communauté. Cette action est irréversible.",
+        "es": "Durante 15 días no podrás intercambiar ni usar el mercado de la comunidad. Esta acción no se puede deshacer.",
+        "tr": "15 gün boyunca takas yapamaz ve Topluluk Pazarı'nı kullanamazsınız. Bu işlem geri alınamaz.",
+        "kk": "15 күн бойы айырбастау жасай алмайсыз және қауымдастық нарығын пайдалана алмайсыз. Бұл әрекетті қайтару мүмкін емес."
+      },
+      "RemoveAuthenticatorConfirm": {
+        "ru": "Удалить аутентификатор",
+        "en": "Remove authenticator",
+        "zh": "移除身份验证器",
+        "uk": "Видалити автентифікатор",
+        "fr": "Supprimer",
+        "es": "Eliminar",
+        "tr": "Kaldır",
+        "kk": "Жою"
+      },
       "CantRemoveAlreadyExist": {
         "ru": "Не удалось переместить mafile, возможно в папке уже существует мафайл с таким именем.",
         "en": "Can't move mafile, maybe mafile with same name already exists in mafiles_removed folder.",

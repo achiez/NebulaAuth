@@ -17,7 +17,13 @@ public partial class MainVM
     public MaProxy? SelectedProxy
     {
         get => _selectedProxy;
-        set => SetProxy(value, false);
+        set
+        {
+            // The ComboBox writes null back when the account's proxy is not in Proxies (deleted or edited);
+            // that must not detach it. Detaching goes through RemoveProxyCommand.
+            if (value == null) return;
+            SetProxy(value, false);
+        }
     }
 
     public bool IsDefaultProxy => SelectedProxy == null && MaClient.DefaultProxy != null && SelectedMafile != null;
@@ -68,6 +74,12 @@ public partial class MainVM
             _internalProxyRefreshInProgress = false;
         }
 
+        // Re-sync from the account (bulk assignment may have changed it). Raising null first makes the ComboBox
+        // select the equal item of the refilled list.
+        var current = SelectedMafile?.Proxy;
+        _selectedProxy = null;
+        OnPropertyChanged(nameof(SelectedProxy));
+        SetProxy(current, true);
         CheckProxyExist();
     }
 

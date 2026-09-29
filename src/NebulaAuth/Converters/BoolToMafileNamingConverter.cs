@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace NebulaAuth.Converters;
 
@@ -15,6 +15,6 @@ public class BoolToMafileNamingConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 }

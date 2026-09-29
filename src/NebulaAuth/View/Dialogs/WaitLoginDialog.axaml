@@ -1,0 +1,22 @@
+<!--
+    Progress dialog shown while a login attempt is running (SessionHandler.OnLoginStarted, MainVM.LoginAgain,
+    MainVM_File.HandleAddMafileWithoutSession). There is no DialogHeader / close button: a login attempt cannot be
+    cancelled here. The dialog is closed from code once the attempt finishes (SessionHandler.OnLoginCompleted / the
+    callers' `finally`).
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="NebulaAuth.View.Dialogs.WaitLoginDialog"
+             MinWidth="320" MaxWidth="440">
+    <!-- Grid (Auto,*), not a horizontal StackPanel: the text column must be width-constrained so that
+         TextWrapping works within MaxWidth instead of clipping long translations at the right edge. -->
+    <Grid Classes="DialogBody" ColumnDefinitions="Auto,*" ColumnSpacing="14" VerticalAlignment="Center">
+        <ProgressBar Grid.Column="0" Theme="{DynamicResource ProgressRing}" IsIndeterminate="True"
+                     Width="28" Height="28" VerticalAlignment="Center" />
+        <TextBlock x:Name="MessageText" Grid.Column="1" Classes="DialogText" VerticalAlignment="Center"
+                   Text="{Tr WaitLoginDialog.Text}" />
+    </Grid>
+</UserControl>

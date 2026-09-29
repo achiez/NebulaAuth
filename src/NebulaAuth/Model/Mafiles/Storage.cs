@@ -151,7 +151,8 @@ public static class Storage
         for (var i = 0; i < MaFiles.Count; i++)
         {
             var existed = MaFiles[i];
-            if (ReferenceEquals(existed, data) || (existed.Filename != null && existed.Filename == data.Filename))
+            if (ReferenceEquals(existed, data) ||
+                (existed.Filename != null && existed.Filename.Equals(data.Filename, StringComparison.OrdinalIgnoreCase)))
             {
                 MaFiles[i] = data;
                 return;

@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using AchiesUtilities.Extensions;
 using CommunityToolkit.Mvvm.Input;
-using MaterialDesignThemes.Wpf;
-using Microsoft.Win32;
+using Material.Icons;
 using NebulaAuth.Core;
 using NebulaAuth.Model;
 using NebulaAuth.Model.Entities;
@@ -35,6 +31,11 @@ public partial class MainVM //File //TODO: Refactor
 
     public Settings Settings => Settings.Instance;
 
+    // File picker globs are case-sensitive on Linux (GTK / portals): match any case of ".mafile" there
+    private static readonly string[] MafilePatterns = OperatingSystem.IsLinux()
+        ? ["*.[mM][aA][fF][iI][lL][eE]"]
+        : ["*.mafile", "*.maFile"];
+
 
     [RelayCommand]
     private void OpenMafileFolder()
@@ -48,15 +49,16 @@ public partial class MainVM //File //TODO: Refactor
             mafilePath = Storage.TryGetMafilePath(mafile);
         }
 
-        if (mafilePath != null)
-        {
-            path = $"/select, \"{mafilePath}\"";
-        }
-
         try
         {
-            var processStartInfo = new ProcessStartInfo("explorer.exe", path);
-            Process.Start(processStartInfo);
+            if (mafilePath != null)
+            {
+                PlatformUtils.RevealFile(mafilePath);
+            }
+            else
+            {
+                PlatformUtils.OpenFolder(path);
+            }
         }
         catch (Exception ex)
         {
@@ -66,17 +68,13 @@ public partial class MainVM //File //TODO: Refactor
 
 
     [RelayCommand]
-    private Task AddMafile()
+    private async Task AddMafile()
     {
-        var dialog = new OpenFileDialog
+        var files = await FileDialogs.OpenFilesAsync("Mafile", MafilePatterns);
+        if (files.Length > 0)
         {
-            Filter = "Mafile|*.mafile;*.maFile",
-            Multiselect = false
-        };
-
-        return dialog.ShowDialog() == true
-            ? AddMafile([dialog.FileName])
-            : Task.CompletedTask;
+            await AddMafile(files);
+        }
     }
 
     //TODO: extract flow and refactor, this method is too long and does too many things
@@ -190,7 +188,7 @@ public partial class MainVM //File //TODO: Refactor
     private static bool HasImportConflict(Mafile mafile)
     {
         var fileName = MafilesStorageHelper.CreateMafileFileName(mafile, Settings.Instance.UseAccountNameAsMafileName);
-        return File.Exists(Path.Combine(Storage.MafilesDirectory, fileName));
+        return MafilesStorageHelper.FindExistingMafileName(fileName) != null;
     }
 
 
@@ -251,7 +249,7 @@ public partial class MainVM //File //TODO: Refactor
         }
 
         var waitDialog = new WaitLoginDialog();
-        var wait = DialogHost.Show(waitDialog);
+        var wait = DialogService.Show(waitDialog);
         try
         {
             await MaClient.LoginAgain(data, password, loginAgainVm.SavePassword);
@@ -312,7 +310,14 @@ public partial class MainVM //File //TODO: Refactor
     {
         if (SelectedMafile == null) return;
         var confirm =
-            await DialogsController.ShowConfirmCancelDialog(GetLocalization("RemoveMafileConfirmation"));
+            await DialogsController.ShowConfirmCancelDialog(new ConfirmDialogOptions(
+                GetLocalization("RemoveMafileTitle"),
+                SelectedMafile.AccountName,
+                MaterialIconKind.FileRemove,
+                GetLocalization("RemoveMafileText"),
+                GetLocalization("RemoveMafileHint"),
+                HintBoxSeverity.Warning,
+                GetLocalization("RemoveMafileConfirm")));
 
         if (!confirm) return;
         try
@@ -334,28 +339,18 @@ public partial class MainVM //File //TODO: Refactor
     private async Task OpenSettingsDialog()
     {
         var vm = new SettingsVM();
-        var view = new SettingsView(CurrentDialogHost)
+        var view = new SettingsView
         {
             DataContext = vm
         };
-        await DialogHost.Show(view);
+        await DialogService.Show(view);
     }
 
     [RelayCommand]
     private async Task PasteMafilesFromClipboard()
     {
-        StringCollection files;
-        try
-        {
-            files = Clipboard.GetFileDropList();
-        }
-        catch (Exception ex)
-        {
-            Shell.Logger.Error(ex);
-            return;
-        }
-
-        var arr = files.Cast<string>().ToArray();
+        // Errors are logged inside
+        var arr = await ClipboardHelper.GetFilesAsync();
         if (arr.All(p => !p.ContainsIgnoreCase("mafile"))) return;
 
 
@@ -380,11 +375,11 @@ public partial class MainVM //File //TODO: Refactor
     }
 
     [RelayCommand]
-    private void CopyMafile(object? mafile)
+    private async Task CopyMafile(object? mafile)
     {
         if (mafile is not Mafile maf) return;
         var path = Storage.TryGetMafilePath(maf);
-        if (ClipboardHelper.SetFiles([path]))
+        if (await ClipboardHelper.SetFilesAsync(path == null ? [] : [path]))
             SnackbarController.SendSnackbar(GetLocalization("MafileCopied"));
     }
 

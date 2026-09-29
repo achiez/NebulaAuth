@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using AchiesUtilities.Web.Models;
-using MaterialDesignThemes.Wpf;
+using Avalonia.Threading;
 using NebulaAuth.Core;
 using NebulaAuth.Model.Entities;
 using NebulaAuth.Utility;
@@ -88,13 +87,13 @@ public static partial class SessionHandler
             }
         }
 
-        if (allowInteractiveLogin && !DialogHost.IsDialogOpen(null))
+        if (allowInteractiveLogin && !DialogService.IsDialogOpen)
         {
             var noProxy = mafile.Proxy == null && MaClient.DefaultProxy == null;
             var currentPassword = GetPassword(mafile);
 
             Task<LoginAgainVM?> dialogTask = null!;
-            Application.Current.Dispatcher.Invoke(() =>
+            Dispatcher.UIThread.Invoke(() =>
             {
                 dialogTask = DialogsController.ShowLoginAgainDialog(mafile.AccountName, currentPassword, noProxy);
             });
@@ -158,15 +157,16 @@ public static partial class SessionHandler
 
     private static async Task OnLoginStarted()
     {
-        if (DialogHost.IsDialogOpen(null)) return;
-        await Application.Current.Dispatcher.BeginInvoke(async () => { await DialogHost.Show(new WaitLoginDialog()); });
+        if (DialogService.IsDialogOpen) return;
+        // Completes once the dialog is shown, not when it closes
+        await Dispatcher.UIThread.InvokeAsync(() => { _ = DialogService.Show(new WaitLoginDialog()); });
     }
 
     private static void OnLoginCompleted()
     {
-        var currentSession = DialogHost.GetDialogSession(null);
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Dispatcher.UIThread.Post(() =>
         {
+            var currentSession = DialogService.GetSession();
             if (currentSession is {Content: WaitLoginDialog, IsEnded: false})
             {
                 try

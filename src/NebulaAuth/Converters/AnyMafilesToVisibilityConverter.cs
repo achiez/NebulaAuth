@@ -1,28 +1,17 @@
-﻿using System;
+using System;
 using System.Globalization;
-using System.Windows;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace NebulaAuth.Converters;
 
+/// <summary>
+///     For <c>IsVisible</c>: true when the mafile count is 0 (the "no mafiles" hint is visible).
+/// </summary>
 public class AnyMafilesToVisibilityConverter : IValueConverter
 {
-    private static bool _everAnyMafiles;
-
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        //if (_everAnyMafiles)
-        //{
-        //    return Visibility.Collapsed;
-        //}
-
-        if (value is 0)
-        {
-            return Visibility.Visible;
-        }
-
-        _everAnyMafiles = true;
-        return Visibility.Collapsed;
+        return value is 0;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

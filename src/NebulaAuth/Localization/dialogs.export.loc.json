@@ -66,6 +66,26 @@
       "tr": "Şablon",
       "kk": "Үлгі"
     },
+    "AddTemplate": {
+      "ru": "Добавить шаблон",
+      "en": "Add template",
+      "uk": "Додати шаблон",
+      "fr": "Ajouter un modèle",
+      "zh": "添加模板",
+      "es": "Añadir plantilla",
+      "tr": "Şablon ekle",
+      "kk": "Үлгі қосу"
+    },
+    "RenameTemplate": {
+      "ru": "Переименовать шаблон",
+      "en": "Rename template",
+      "uk": "Перейменувати шаблон",
+      "fr": "Renommer le modèle",
+      "zh": "重命名模板",
+      "es": "Renombrar plantilla",
+      "tr": "Şablonu yeniden adlandır",
+      "kk": "Үлгінің атын өзгерту"
+    },
     "SelectPathHint": {
       "ru": "Выберите путь",
       "en": "Select path",

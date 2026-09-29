@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Windows.Media;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using NebulaAuth.Core;
 using NebulaAuth.Utility;
@@ -29,7 +29,16 @@ public partial class Settings : ObservableObject
         {
             Instance = new Settings();
             Instance.PropertyChanged += SettingsOnPropertyChanged;
-            Instance.Language = LanguageUtility.DetectPreferredLanguage();
+            try
+            {
+                Instance.Language = LanguageUtility.DetectPreferredLanguage();
+            }
+            catch (Exception)
+            {
+                // A failure here (culture lookup, first save) would break the static ctor and the app could not start:
+                // keep the default language
+            }
+
             return;
         }
 
@@ -88,7 +97,9 @@ public partial class Settings : ObservableObject
 
     [ObservableProperty] private bool _hideToTray;
     [ObservableProperty] private int _timerSeconds = 60;
-    [ObservableProperty] private Color? _iconColor;
+    // Persisted as "#AARRGGBB" (the format of existing settings.json files), null when unset
+    [ObservableProperty] [property: JsonConverter(typeof(HexColorJsonConverter))]
+    private Color? _iconColor;
     [ObservableProperty] private bool _isPasswordSet;
     [ObservableProperty] private LocalizationLanguage _language = LocalizationLanguage.English;
     [ObservableProperty] private bool _confirmMafileImport = true;

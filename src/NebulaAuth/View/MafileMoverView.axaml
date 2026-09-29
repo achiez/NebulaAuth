@@ -1,0 +1,160 @@
+<!--
+    Steam Guard mover wizard. The step templates live in UserControl.DataTemplates.
+    Enter = CurrentStep.NextCommand and the focus of each new step are handled by View/WizardKeyboard.cs: the element
+    with class "initialFocus" gets the focus when its step appears. Done step: Copy RCode gets it, so a stray Enter copies
+    the R-code instead of closing the only screen that shows it.
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mafileMover="using:NebulaAuth.ViewModel.MafileMover"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:sys="using:System"
+             mc:Ignorable="d"
+             x:Class="NebulaAuth.View.MafileMoverView"
+             x:DataType="mafileMover:MafileMoverVM"
+             MinWidth="400" MaxWidth="400"
+             FontSize="17">
+    <UserControl.DataTemplates>
+        <!-- Step 1: login / password / proxy -->
+        <DataTemplate DataType="mafileMover:MafileMoverAuthStepVM">
+            <StackPanel Spacing="10">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <mi:MaterialIcon Kind="Login" IconSize="20" VerticalAlignment="Center" />
+                    <TextBlock Classes="Heading" VerticalAlignment="Center" Text="{Tr LinkerDialog.Authorization}" />
+                </StackPanel>
+                <TextBox Classes="initialFocus"
+                         FontSize="13"
+                         Text="{Binding Login}"
+                         PlaceholderText="{Tr LinkerDialog.Login}">
+                    <TextBox.InnerLeftContent>
+                        <mi:MaterialIcon Classes="InputIcon" Kind="User" />
+                    </TextBox.InnerLeftContent>
+                </TextBox>
+                <TextBox FontSize="13"
+                         Text="{Binding Password}"
+                         PlaceholderText="{Tr LinkerDialog.Password}">
+                    <TextBox.InnerLeftContent>
+                        <mi:MaterialIcon Classes="InputIcon" Kind="Key" />
+                    </TextBox.InnerLeftContent>
+                </TextBox>
+                <StackPanel Classes="Field">
+                    <TextBlock Classes="FieldLabel" Text="{Tr LinkerDialog.Proxy}" />
+                    <ComboBox Classes="clearButton"
+                              FontSize="13"
+                              ItemsSource="{Binding Proxies, Converter={StaticResource SnapshotListConverter}}"
+                              SelectedItem="{Binding SelectedProxy}"
+                              PlaceholderText="{Tr LinkerDialog.Proxy}">
+                        <ComboBox.ItemTemplate>
+                            <!-- item = KeyValuePair<int, ProxyData> (no generic x:DataType in XAML): "Key: Address" -->
+                            <DataTemplate x:DataType="sys:Object">
+                                <TextBlock Text="{Binding Converter={StaticResource ProxyPairTextConverter}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+                <!-- Spinner while the login request runs (NextCommand = the whole flow; the step is replaced when Steam asks for a code) -->
+                <u:IconButton Theme="{DynamicResource SolidIconButton}" Classes="Primary"
+                              HorizontalAlignment="Center" MinWidth="130" Margin="0,4,0,0"
+                              IsLoading="{Binding NextCommand.IsRunning}"
+                              Command="{Binding NextCommand}"
+                              Content="{Tr LinkerDialog.ProceedButton}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Step 2: Steam Guard code (or confirmation in the mobile app + Proceed with an empty field) -->
+        <DataTemplate DataType="mafileMover:MafileMoverGuardCodeStepVM">
+            <StackPanel Spacing="14">
+                <TextBox Classes="initialFocus"
+                         FontSize="13"
+                         Text="{Binding GuardCode}"
+                         PlaceholderText="{Tr LinkerDialog.Code}">
+                    <TextBox.InnerLeftContent>
+                        <mi:MaterialIcon Classes="InputIcon" Kind="TwoFactorAuthentication" />
+                    </TextBox.InnerLeftContent>
+                </TextBox>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                    <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary" MinWidth="130"
+                            Command="{Binding CancelCommand}"
+                            Content="{Tr LinkerDialog.CancelButton}" />
+                    <Button Theme="{DynamicResource SolidButton}" Classes="Primary" MinWidth="130"
+                            Command="{Binding NextCommand}"
+                            Content="{Tr LinkerDialog.ProceedButton}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Step 3: SMS code -->
+        <DataTemplate DataType="mafileMover:MafileMoverSmsStepVM">
+            <StackPanel Spacing="14">
+                <TextBox Classes="initialFocus"
+                         FontSize="13"
+                         Text="{Binding SmsCode}"
+                         PlaceholderText="{Tr LinkerDialog.SmsCode}">
+                    <TextBox.InnerLeftContent>
+                        <mi:MaterialIcon Classes="InputIcon" Kind="Sms" />
+                    </TextBox.InnerLeftContent>
+                </TextBox>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                    <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary" MinWidth="130"
+                            Command="{Binding CancelCommand}"
+                            Content="{Tr LinkerDialog.CancelButton}" />
+                    <Button Theme="{DynamicResource SolidButton}" Classes="Primary" MinWidth="130"
+                            Command="{Binding NextCommand}"
+                            Content="{Tr LinkerDialog.ProceedButton}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Step 4: done, R-code + file name, copy R-code -->
+        <DataTemplate DataType="mafileMover:MafileMoverDoneStepVM">
+            <StackPanel Spacing="12">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
+                    <mi:MaterialIcon Kind="Done" IconSize="26" VerticalAlignment="Center"
+                                     Foreground="{DynamicResource SuccessBrush}" />
+                    <TextBlock Classes="Heading" VerticalAlignment="Center" Text="{Tr MafileMoverView.Done}" />
+                </StackPanel>
+                <Border Background="{DynamicResource SuccessTintBrush}"
+                        BorderBrush="{DynamicResource SuccessBorderBrush}"
+                        BorderThickness="1" CornerRadius="10" Padding="12,10">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <mi:MaterialIcon Grid.Column="0" Kind="InfoCircleOutline" IconSize="22"
+                                         Margin="0,0,10,0" VerticalAlignment="Center"
+                                         Foreground="{DynamicResource SuccessBrush}" />
+                        <SelectableTextBlock Grid.Column="1" FontSize="13" TextWrapping="Wrap"
+                                             VerticalAlignment="Center"
+                                             Text="{Binding InnerTip}" />
+                    </Grid>
+                </Border>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                    <Button Theme="{DynamicResource OutlineButton}" Classes="initialFocus" MinWidth="130"
+                            Command="{Binding CopyCodeCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <mi:MaterialIcon Kind="ContentCopy" IconSize="16" VerticalAlignment="Center" />
+                            <TextBlock VerticalAlignment="Center" Text="{Tr LinkerDialog.CopyRCodeButton}" />
+                        </StackPanel>
+                    </Button>
+                    <Button Theme="{DynamicResource SolidButton}" Classes="Primary" MinWidth="130"
+                            Command="{Binding NextCommand}"
+                            Content="{Tr LinkerDialog.FinishButton}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.DataTemplates>
+
+    <Grid RowDefinitions="Auto,Auto">
+        <nebulaAuth:DialogHeader Grid.Row="0" IconKind="FileMove" Title="{Tr MafileMoverView.Title}" />
+        <StackPanel Grid.Row="1" Classes="DialogBody">
+            <nebulaAuth:HintBox FontSize="13"
+                                IsVisible="{Binding Tip, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                Text="{Binding Tip}" />
+            <ContentControl x:Name="StepHost" Content="{Binding CurrentStep}" />
+            <nebulaAuth:HintBox FontSize="13" Severity="Error"
+                                IsVisible="{Binding Error, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                Text="{Binding Error}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

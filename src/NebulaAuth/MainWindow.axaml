@@ -1,0 +1,665 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:NebulaAuth.ViewModel"
+        xmlns:core="using:NebulaAuth.Core"
+        xmlns:entities="using:NebulaAuth.Model.Entities"
+        xmlns:maac="using:NebulaAuth.Model.MAAC"
+        xmlns:nebulaAuth="using:NebulaAuth"
+        xmlns:mi="using:Material.Icons.Avalonia"
+        xmlns:u="https://irihi.tech/ursa"
+        xmlns:dialogHost="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+        mc:Ignorable="d"
+        x:Class="NebulaAuth.MainWindow"
+        x:DataType="vm:MainVM"
+        Theme="{StaticResource NebulaWindow}"
+        Title="NebulaAuth"
+        Width="730" Height="800" MinWidth="500" MinHeight="500"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Theme/lock.ico"
+        FontSize="17">
+    <!--
+        Layers, back to front:
+        1. Window chrome: Theme NebulaWindow (Theme/WindowStyle/WindowStyle.axaml) draws the Base300 title bar.
+        2. DialogHostInstance: the single root DialogHost (DialogService). Its content = background layer + MAIN CONTENT.
+           While a dialog is open the content is blurred (Settings.ApplyBlurBackground, radius 12) and dimmed.
+        3. Snackbar (above the dialog host, so notifications stay readable while a dialog is open).
+        Keep x:Name="DialogHostInstance", its Identifier and Classes="Root" (dialog card look in Theme/Styles.axaml).
+
+        Window shortcuts (code-behind, OnWindowKeyDown): Ctrl+V pastes mafiles from the clipboard, Ctrl+F focuses the search box.
+        They are not KeyBindings: Avalonia runs KeyBindings before the focused control, so a window Ctrl+V binding would
+        break paste in text boxes. The account list gestures below are written with Ctrl; code-behind switches them to
+        Cmd on macOS.
+    -->
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- ConfirmationTemplates (item template of the confirmations list) -->
+                <ResourceInclude Source="avares://NebulaAuth/View/ConfirmationTemplates.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Window.Styles>
+        <!-- App bar menu: FontSize 15 -->
+        <Style Selector="Menu#MainMenu > MenuItem">
+            <Setter Property="FontSize" Value="15" />
+        </Style>
+        <!-- Timer field: a validation error (e.g. empty text) is an icon with a tooltip, not text under the field
+             (keeps the app bar height) -->
+        <Style Selector="TextBox#TimerBox /template/ DataValidationErrors">
+            <Setter Property="Theme" Value="{DynamicResource TooltipDataValidationErrors}" />
+        </Style>
+        <!-- Translucent panels: Base100 at Settings.LeftOpacity / RightOpacity, Base300 30% border -->
+        <Style Selector="Border.Translucent">
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush">
+                <SolidColorBrush Color="{DynamicResource Base300Color}" Opacity="0.3" />
+            </Setter>
+        </Style>
+        <!-- App bar auto-confirmation tools: last column; a narrow window moves them to a second row (right-aligned) -->
+        <Style Selector="StackPanel#MaacTools">
+            <Setter Property="Grid.Row" Value="0" />
+            <Setter Property="Grid.Column" Value="6" />
+        </Style>
+        <ContainerQuery Name="AppBar" Query="max-width:660">
+            <Style Selector="StackPanel#MaacTools">
+                <Setter Property="Grid.Row" Value="1" />
+                <Setter Property="Grid.Column" Value="0" />
+                <Setter Property="Grid.ColumnSpan" Value="7" />
+                <Setter Property="HorizontalAlignment" Value="Right" />
+                <Setter Property="Margin" Value="0,6,0,0" />
+            </Style>
+            <Style Selector="Border#MaacToolsDivider">
+                <Setter Property="IsVisible" Value="False" />
+            </Style>
+        </ContainerQuery>
+        <!-- ===== Confirmations list (row templates: View/ConfirmationTemplates.axaml) =====
+             Row = [tile 34] 12 [title] 12 [time: shared width] 12 [confirm][cancel]; hover = light fill -->
+        <Style Selector="Border.ConfRow">
+            <Setter Property="MinHeight" Value="44" />
+            <Setter Property="Padding" Value="6,4,2,4" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.12" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Border.ConfRow:pointerover">
+            <Setter Property="Background" Value="{DynamicResource HoverFillBrush}" />
+        </Style>
+        <Style Selector="Border.ConfRow.Child">
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="Padding" Value="6,2,2,2" />
+        </Style>
+        <Style Selector="Grid.ConfRow">
+            <Setter Property="ColumnSpacing" Value="12" />
+        </Style>
+        <Style Selector="Border.ConfTile">
+            <Setter Property="Width" Value="34" />
+            <Setter Property="Height" Value="34" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="ClipToBounds" Value="True" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Background" Value="{DynamicResource SemiColorFill0}" />
+        </Style>
+        <Style Selector="Border.ConfTile.Small">
+            <Setter Property="Width" Value="28" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="CornerRadius" Value="6" />
+        </Style>
+        <Style Selector="Border.ConfTile mi|MaterialIcon">
+            <Setter Property="IconSize" Value="18" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+        </Style>
+        <Style Selector="Border.ConfTile.Small mi|MaterialIcon">
+            <Setter Property="IconSize" Value="15" />
+        </Style>
+        <!-- Market item icons are transparent PNGs: keep a small inset inside the tile -->
+        <Style Selector="Border.ConfTile Image.Item">
+            <Setter Property="Margin" Value="3" />
+            <Setter Property="Stretch" Value="Uniform" />
+        </Style>
+        <Style Selector=":is(Control).ConfText">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="TextBlock.ConfTitle">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+        <Style Selector="TextBlock.ConfCaption">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+        </Style>
+        <Style Selector="TextBlock.ConfTime">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+        </Style>
+        <Style Selector="StackPanel.ConfActions">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="mi|MaterialIcon.ConfBadge">
+            <Setter Property="IconSize" Value="15" />
+            <Setter Property="Margin" Value="6,0,0,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+        </Style>
+        <!-- Grouped listings: chevron after the title (Semi's chevron at the far right is hidden) -->
+        <Style Selector="mi|MaterialIcon.ConfChevron">
+            <Setter Property="IconSize" Value="16" />
+            <Setter Property="Margin" Value="4,0,0,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+            <Setter Property="RenderTransform" Value="rotate(0deg)" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.18" Easing="CubicEaseOut" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="mi|MaterialIcon.ConfChevron.expanded">
+            <Setter Property="RenderTransform" Value="rotate(180deg)" />
+        </Style>
+        <Style Selector="Expander.ConfGroup /template/ PathIcon#PART_PathIcon">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <!-- Listings of a group: guide line under the header tile, child tiles start at the header title column -->
+        <Style Selector="Border.ConfChildren">
+            <Setter Property="Margin" Value="22,0,0,4" />
+            <Setter Property="Padding" Value="22,0,0,0" />
+            <Setter Property="BorderThickness" Value="2,0,0,0" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DividerBrush}" />
+        </Style>
+
+        <!-- Narrow right panel (small window): tighter rows leave more room for the titles -->
+        <ContainerQuery Name="ConfList" Query="max-width:400">
+            <Style Selector="Grid.ConfRow">
+                <Setter Property="ColumnSpacing" Value="8" />
+            </Style>
+            <Style Selector="Border.ConfTile">
+                <Setter Property="Width" Value="28" />
+                <Setter Property="Height" Value="28" />
+                <Setter Property="CornerRadius" Value="6" />
+            </Style>
+            <Style Selector="Border.ConfTile mi|MaterialIcon">
+                <Setter Property="IconSize" Value="16" />
+            </Style>
+            <Style Selector="StackPanel.ConfActions > Button">
+                <Setter Property="Width" Value="30" />
+            </Style>
+            <Style Selector="Border.ConfChildren">
+                <Setter Property="Margin" Value="19,0,0,4" />
+                <Setter Property="Padding" Value="8,0,0,0" />
+            </Style>
+        </ContainerQuery>
+
+        <!-- Status bar link: accent color readable on Base300 -->
+        <Style Selector="Button#ByAchiesLink">
+            <Setter Property="Foreground" Value="{DynamicResource LinkBrush}" />
+        </Style>
+    </Window.Styles>
+
+    <Panel>
+        <dialogHost:DialogHost x:Name="DialogHostInstance"
+                               Classes="Root"
+                               Identifier="{x:Static core:DialogService.HostIdentifier}"
+                               BlurBackground="{Binding Settings.ApplyBlurBackground}"
+                               BlurBackgroundRadius="12">
+            <!-- Centered, but never closer than 16 to the window edges: a dialog taller than the window (Exporter with
+                 expanded settings, small windows) is constrained and scrolls instead of touching the title bar.
+                 PopupPositioner is a direct property: it cannot be set by the DialogHost.Root style. -->
+            <dialogHost:DialogHost.PopupPositioner>
+                <nebulaAuth:PixelAlignedDialogPositioner HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16" />
+            </dialogHost:DialogHost.PopupPositioner>
+            <!-- Drop target for mafiles (drag and drop, disabled while a dialog is open: see MainWindow.axaml.cs) -->
+            <Panel x:Name="ContentRoot" DragDrop.AllowDrop="True">
+                <!-- Background layer: image (Settings.BackgroundMode: Default = embedded image, Custom = ./Background.png,
+                     Color = no image), BackgroundOpacity, BackgroundBlur and the black "gamma" overlay (BackgroundGamma) -->
+                <Panel x:Name="BackgroundLayer" IsHitTestVisible="False" ClipToBounds="True">
+                    <Image Stretch="UniformToFill"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Opacity="{Binding Settings.BackgroundOpacity}"
+                           IsVisible="{Binding Settings.BackgroundMode, Converter={StaticResource BackgroundImageVisibleConverter}}"
+                           Source="{Binding Settings.BackgroundMode, Converter={StaticResource BackgroundSourceConverter}}"
+                           Effect="{Binding Settings.BackgroundBlur, Converter={StaticResource BlurEffectConverter}}" />
+                    <Rectangle Fill="Black" Opacity="{Binding Settings.BackgroundGamma}" />
+                </Panel>
+
+                <!-- MAIN CONTENT: app bar, accounts | code + confirmations, status bar -->
+                <Grid x:Name="MainContent" RowDefinitions="Auto,*,Auto">
+
+                    <!-- ===== App bar ===== -->
+                    <!-- Container query "AppBar" (Window.Styles): narrow windows move the auto-confirmation tools to a
+                         second row instead of clipping them -->
+                    <Border Grid.Row="0" Classes="AppBar" ClipToBounds="True"
+                            Container.Name="AppBar" Container.Sizing="Width">
+                        <Grid VerticalAlignment="Center" RowDefinitions="Auto,Auto">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <!-- Groups | Proxy (proxy strings are longer): share the free width, MaxWidth 200 (+ margins) -->
+                                <ColumnDefinition Width="*" MinWidth="116" MaxWidth="208" />
+                                <ColumnDefinition Width="2*" MinWidth="72" MaxWidth="288" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Menu x:Name="MainMenu" Grid.Column="0" VerticalAlignment="Center">
+                                <MenuItem Header="{Tr MainWindow.Menu.File.Caption}">
+                                    <MenuItem Header="{Tr MainWindow.Menu.File.Import}"
+                                              Command="{Binding AddMafileCommand}" />
+                                    <MenuItem Header="{Tr MainWindow.Menu.File.Remove}"
+                                              Command="{Binding RemoveMafileCommand}" />
+                                    <MenuItem Header="{Tr MainWindow.Menu.File.OpenFolder}"
+                                              Command="{Binding OpenMafileFolderCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="{Tr MainWindow.Menu.File.ProxyManager}"
+                                              Command="{Binding OpenProxyManagerCommand}" />
+                                    <MenuItem Header="{Tr MainWindow.Menu.File.Settings}"
+                                              Command="{Binding OpenSettingsDialogCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="{Tr MainWindow.Menu.File.Other.Title}">
+                                        <MenuItem Header="{Tr MainWindow.Menu.File.Other.SetPasswords}"
+                                                  Command="{Binding OpenSetPasswordsDialogCommand}" />
+                                        <MenuItem Header="{Tr MainWindow.Menu.File.Other.OpenExport}"
+                                                  Command="{Binding OpenExporterDialogCommand}" />
+                                    </MenuItem>
+                                </MenuItem>
+                                <MenuItem Header="{Tr MainWindow.Menu.Account.Caption}">
+                                    <MenuItem Header="{Tr MainWindow.Menu.Account.Link}"
+                                              Command="{Binding LinkAccountCommand}" />
+                                    <MenuItem Header="{Tr MainWindow.Menu.Account.MoveSteamGuard}"
+                                              Command="{Binding MoveAccountCommand}" />
+                                    <MenuItem Header="{Tr MainWindow.Menu.Account.Unlink}"
+                                              Command="{Binding RemoveAuthenticatorCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="{Tr MainWindow.Menu.Account.RefreshSession}"
+                                              Command="{Binding RefreshSessionCommand}" />
+                                    <MenuItem Header="{Tr MainWindow.Menu.Account.LoginAgain}"
+                                              Command="{Binding LoginAgainCommand}" />
+                                </MenuItem>
+                            </Menu>
+
+                            <Border Grid.Column="1" Classes="Divider Vertical" />
+
+                            <!-- Groups: filter; type a new name + Enter = move the selected account to that group -->
+                            <ComboBox x:Name="GroupsBox" Grid.Column="2" Margin="4,0"
+                                      Classes="Subtle clearButton"
+                                      IsEditable="True"
+                                      FontSize="15"
+                                      ToolTip.Tip="{Tr MainWindow.AppBar.GroupToolTip}"
+                                      PlaceholderText="{Tr MainWindow.AppBar.GroupsHint}"
+                                      ItemsSource="{Binding Groups}"
+                                      SelectedItem="{Binding SelectedGroup}">
+                                <ComboBox.KeyBindings>
+                                    <KeyBinding Gesture="Enter" Command="{Binding AddGroupCommand}"
+                                                CommandParameter="{Binding #GroupsBox.Text}" />
+                                </ComboBox.KeyBindings>
+                            </ComboBox>
+
+                            <!-- Proxy of the selected account: RMB = open the proxy manager, Del = detach the proxy
+                                 (also Backspace on macOS). HideSelectedItem: Theme/Styles.axaml -->
+                            <ComboBox x:Name="ProxyBox" Grid.Column="3" Margin="4,0"
+                                      Classes="Subtle HideSelectedItem"
+                                      FontSize="15"
+                                      ToolTip.Tip="{Tr MainWindow.AppBar.Proxy.ProxyManipulateToolTip}"
+                                      PlaceholderText="{Tr MainWindow.AppBar.Proxy.ProxyHint}"
+                                      ItemsSource="{Binding Proxies}"
+                                      SelectedItem="{Binding SelectedProxy}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="entities:MaProxy">
+                                        <TextBlock TextTrimming="CharacterEllipsis"
+                                                   Text="{Binding Converter={StaticResource ProxyTextConverter}, Mode=OneWay}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                                <ComboBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="{Tr MainWindow.AppBar.Proxy.ProxyOpenManagerHint}"
+                                                  Command="{Binding OpenProxyManagerCommand}" />
+                                    </ContextMenu>
+                                </ComboBox.ContextMenu>
+                                <ComboBox.KeyBindings>
+                                    <KeyBinding Gesture="Delete" Command="{Binding RemoveProxyCommand}" />
+                                </ComboBox.KeyBindings>
+                            </ComboBox>
+
+                            <!-- Proxy alerts -->
+                            <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                <mi:MaterialIcon Kind="StopAlert" IconSize="20" Margin="3"
+                                                 Foreground="{DynamicResource ErrorBrush}"
+                                                 Background="Transparent"
+                                                 ToolTip.ShowDelay="300"
+                                                 IsVisible="{Binding !ProxyExist}">
+                                    <ToolTip.Tip>
+                                        <TextBlock>
+                                            <Run Text="{Tr MainWindow.AppBar.Proxy.ProxyAlert.MafileProxyInUse, IsDynamic=False}" />
+                                            <LineBreak />
+                                            <Run Text="{Binding SelectedMafile.Proxy.Data, FallbackValue='', Mode=OneWay}" />
+                                        </TextBlock>
+                                    </ToolTip.Tip>
+                                </mi:MaterialIcon>
+                                <mi:MaterialIcon Kind="StopAlert" IconSize="20" Margin="3"
+                                                 Foreground="{DynamicResource WarningBrush}"
+                                                 Background="Transparent"
+                                                 ToolTip.Tip="{Tr MainWindow.AppBar.Proxy.ProxyAlert.DefaultInUse}"
+                                                 ToolTip.ShowDelay="300"
+                                                 IsVisible="{Binding IsDefaultProxy}" />
+                            </StackPanel>
+
+                            <Border x:Name="MaacToolsDivider" Grid.Column="5" Classes="Divider Vertical" />
+
+                            <!-- Grid.Column/Row come from the styles (see the "AppBar" container query) -->
+                            <StackPanel x:Name="MaacTools" Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- Auto-confirmation (MAAC) of the selected account; RMB = switch for the group / all -->
+                                <ToggleButton Margin="2,0"
+                                              Theme="{StaticResource GhostIconToggleButton}"
+                                              ToolTip.Tip="{Tr MainWindow.AppBar.MarketTimerHint}"
+                                              IsEnabled="{Binding IsMafileSelected}"
+                                              IsChecked="{Binding MarketTimerEnabled}">
+                                    <mi:MaterialIcon Kind="ShoppingCart" />
+                                    <ToggleButton.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="{Tr MainWindow.AppBar.TimersContextMenu.SwitchMAACGroup}"
+                                                      Command="{Binding SwitchMAACOnGroupCommand}"
+                                                      CommandParameter="{x:True}" />
+                                            <MenuItem Header="{Tr MainWindow.AppBar.TimersContextMenu.SwitchMAACAll}"
+                                                      Command="{Binding SwitchMAACOnAllCommand}"
+                                                      CommandParameter="{x:True}" />
+                                        </ContextMenu>
+                                    </ToggleButton.ContextMenu>
+                                </ToggleButton>
+                                <ToggleButton Margin="2,0"
+                                              Theme="{StaticResource GhostIconToggleButton}"
+                                              ToolTip.Tip="{Tr MainWindow.AppBar.TradeTimerHint}"
+                                              IsEnabled="{Binding IsMafileSelected}"
+                                              IsChecked="{Binding TradeTimerEnabled}">
+                                    <mi:MaterialIcon Kind="AccountArrowRight" />
+                                    <ToggleButton.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="{Tr MainWindow.AppBar.TimersContextMenu.SwitchMAACGroup}"
+                                                      Command="{Binding SwitchMAACOnGroupCommand}"
+                                                      CommandParameter="{x:False}" />
+                                            <MenuItem Header="{Tr MainWindow.AppBar.TimersContextMenu.SwitchMAACAll}"
+                                                      Command="{Binding SwitchMAACOnAllCommand}"
+                                                      CommandParameter="{x:False}" />
+                                        </ContextMenu>
+                                    </ToggleButton.ContextMenu>
+                                </ToggleButton>
+
+                                <!-- Auto-confirmation check interval, digits only (MainWindow.axaml.cs) -->
+                                <TextBox x:Name="TimerBox" Margin="6,0,2,0"
+                                         Classes="Subtle"
+                                         Width="76" FontSize="15" Padding="8,0,2,0"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalAlignment="Center"
+                                         Text="{Binding TimerCheckSeconds, Delay=700}">
+                                    <TextBox.InnerRightContent>
+                                        <TextBlock Classes="Caption" VerticalAlignment="Center" Margin="0,0,8,0"
+                                                   Text="{Tr Common.Abbreviations.Time.Seconds}" />
+                                    </TextBox.InnerRightContent>
+                                </TextBox>
+
+                                <ToggleButton Margin="4,0,0,0"
+                                              Theme="{StaticResource GhostIconToggleButton}"
+                                              ToolTip.Tip="{Tr MainWindow.AppBar.ShowAutoConfirmAccountsHint}"
+                                              IsChecked="{Binding MaacDisplay}">
+                                    <mi:MaterialIcon Kind="Accounts" />
+                                </ToggleButton>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- ===== Accounts | code + confirmations ===== -->
+                    <Grid Grid.Row="1" ColumnDefinitions="0.4*,0.6*">
+
+                        <!-- Accounts -->
+                        <Border Grid.Column="0" Classes="Translucent" Margin="10" Padding="5">
+                            <Border.Background>
+                                <SolidColorBrush Color="{DynamicResource Base100Color}"
+                                                 Opacity="{Binding Settings.LeftOpacity}" />
+                            </Border.Background>
+                            <Grid RowDefinitions="*,Auto">
+                                <TextBlock Grid.Row="0" Margin="8" FontSize="15" TextWrapping="Wrap"
+                                           Classes="Muted"
+                                           IsVisible="{Binding MaFiles.Count, Converter={StaticResource AnyMafilesToVisibilityConverter}}"
+                                           Text="{Tr MainWindow.LeftPart.NoMafiles}" />
+
+                                <ListBox x:Name="MafileListBox" Grid.Row="0" Margin="2"
+                                         Classes="Stretch"
+                                         FontSize="16"
+                                         Background="Transparent"
+                                         SelectionMode="Single"
+                                         ItemsSource="{Binding MaFiles}"
+                                         SelectedItem="{Binding SelectedMafile}">
+                                    <ListBox.KeyBindings>
+                                        <KeyBinding Gesture="Ctrl+C" Command="{Binding CopyLoginCommand}"
+                                                    CommandParameter="{Binding #MafileListBox.SelectedItem}" />
+                                        <KeyBinding Gesture="Ctrl+X" Command="{Binding CopyMafileCommand}"
+                                                    CommandParameter="{Binding #MafileListBox.SelectedItem}" />
+                                        <KeyBinding Gesture="Ctrl+Shift+C" Command="{Binding CopyPasswordCommand}"
+                                                    CommandParameter="{Binding #MafileListBox.SelectedItem}" />
+                                    </ListBox.KeyBindings>
+                                    <ListBox.ContextMenu>
+                                        <!-- "Add to group" lists Groups: its items are rebuilt when the menu opens (code-behind) -->
+                                        <ContextMenu x:Name="MafileContextMenu">
+                                            <MenuItem x:Name="CopyLoginMenuItem"
+                                                      Header="{Tr MainWindow.ContextMenus.Mafile.CopyLogin}"
+                                                      InputGesture="Ctrl+C"
+                                                      Command="{Binding CopyLoginCommand}"
+                                                      CommandParameter="{Binding #MafileListBox.SelectedItem}" />
+                                            <MenuItem x:Name="CopyPasswordMenuItem"
+                                                      Header="{Tr MainWindow.ContextMenus.Mafile.CopyPassword}"
+                                                      InputGesture="Ctrl+Shift+C"
+                                                      Command="{Binding CopyPasswordCommand}"
+                                                      CommandParameter="{Binding #MafileListBox.SelectedItem}" />
+                                            <MenuItem Header="{Tr MainWindow.ContextMenus.Mafile.CopySteamId}"
+                                                      Command="{Binding CopySteamIdCommand}"
+                                                      CommandParameter="{Binding #MafileListBox.SelectedItem}" />
+                                            <MenuItem x:Name="CopyMafileMenuItem"
+                                                      Header="{Tr MainWindow.ContextMenus.Mafile.CopyMafile}"
+                                                      InputGesture="Ctrl+X"
+                                                      Command="{Binding CopyMafileCommand}"
+                                                      CommandParameter="{Binding #MafileListBox.SelectedItem}" />
+                                            <MenuItem x:Name="AddToGroupMenuItem"
+                                                      Header="{Tr MainWindow.ContextMenus.Mafile.AddToGroup}">
+                                                <MenuItem Header="{Tr MainWindow.ContextMenus.Mafile.CreateGroup}"
+                                                          Command="{Binding CreateGroupCommand}"
+                                                          CommandParameter="{Binding #MafileListBox.SelectedItem}">
+                                                    <MenuItem.Icon>
+                                                        <mi:MaterialIcon Kind="PlusCircle" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <Separator />
+                                            </MenuItem>
+                                            <MenuItem Header="{Tr MainWindow.ContextMenus.Mafile.RemoveFromGroup}"
+                                                      Command="{Binding RemoveGroupCommand}"
+                                                      CommandParameter="{Binding #MafileListBox.SelectedItem}" />
+                                            <MenuItem Header="{Tr MainWindow.ContextMenus.Mafile.UnattachProxy}"
+                                                      Command="{Binding RemoveProxyCommand}"
+                                                      CommandParameter="{Binding #MafileListBox.SelectedItem}" />
+                                            <MenuItem Header="{Tr MainWindow.ContextMenus.Mafile.AssignFreeProxy}"
+                                                      Command="{Binding AssignFreeProxyCommand}"
+                                                      CommandParameter="{Binding #MafileListBox.SelectedItem}" />
+                                        </ContextMenu>
+                                    </ListBox.ContextMenu>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate x:DataType="entities:Mafile">
+                                            <Grid ColumnDefinitions="*,Auto" Background="Transparent"
+                                                  ToolTip.Tip="{Binding Filename}">
+                                                <!-- Auto-confirmation status color: Ok / Warning / Error -->
+                                                <TextBlock Grid.Column="0"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           Text="{Binding AccountName}"
+                                                           ToolTip.Tip="{Binding LinkedClient.Status.Message, FallbackValue={x:Null}}"
+                                                           Classes.Success="{Binding LinkedClient.Status.StatusType, FallbackValue=False, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static maac:PortableMaClientStatusType.Ok}}"
+                                                           Classes.Warning="{Binding LinkedClient.Status.StatusType, FallbackValue=False, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static maac:PortableMaClientStatusType.Warning}}"
+                                                           Classes.Danger="{Binding LinkedClient.Status.StatusType, FallbackValue=False, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static maac:PortableMaClientStatusType.Error}}" />
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2"
+                                                            VerticalAlignment="Center" Margin="4,0,0,0"
+                                                            IsVisible="{Binding LinkedClient, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                                    <mi:MaterialIcon Kind="ShoppingCart" IconSize="16"
+                                                                     IsVisible="{Binding LinkedClient.AutoConfirmMarket, FallbackValue=False}" />
+                                                    <mi:MaterialIcon Kind="AccountArrowRight" IconSize="16"
+                                                                     IsVisible="{Binding LinkedClient.AutoConfirmTrades, FallbackValue=False}" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+
+                                <!-- Esc = leave the box, Ctrl+F = focus it (MainWindow.axaml.cs) -->
+                                <TextBox x:Name="SearchField" Grid.Row="1" Margin="5,5,5,5"
+                                         FontSize="15"
+                                         Classes="Subtle clearButton"
+                                         PlaceholderText="{Tr MainWindow.LeftPart.SearchBoxHint}"
+                                         Text="{Binding SearchText, Mode=TwoWay}">
+                                    <TextBox.InnerLeftContent>
+                                        <mi:MaterialIcon Classes="InputIcon" Kind="Magnify" />
+                                    </TextBox.InnerLeftContent>
+                                </TextBox>
+                            </Grid>
+                        </Border>
+
+                        <!-- Code + confirmations -->
+                        <Border x:Name="RightPanel" Grid.Column="1" Classes="Translucent" Margin="10,10,15,10" Padding="2">
+                            <Border.Background>
+                                <SolidColorBrush Color="{DynamicResource Base100Color}"
+                                                 Opacity="{Binding Settings.RightOpacity}" />
+                            </Border.Background>
+                            <Grid RowDefinitions="Auto,Auto,*,Auto">
+                                <!-- Steam Guard code: click = copy. Local Foreground: the button is disabled for 200 ms while
+                                     "Copied" is shown (CopyCodeCommand), the text must not dim -->
+                                <StackPanel Grid.Row="0" Margin="6,4,6,0">
+                                    <Button x:Name="CodeButton"
+                                            Theme="{StaticResource GhostIconButton}"
+                                            Width="NaN" Height="NaN"
+                                            HorizontalAlignment="Stretch"
+                                            Padding="8,4"
+                                            Foreground="{DynamicResource SemiColorText0}"
+                                            Command="{Binding CopyCodeCommand}">
+                                        <TextBlock Text="{Binding Code, FallbackValue=Code}" FontSize="23"
+                                                   HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                    </Button>
+                                    <Panel Height="4" Margin="0,2,0,0">
+                                        <Border Classes="Divider" Margin="0" VerticalAlignment="Bottom"
+                                                IsVisible="{Binding SelectedMafile, Converter={x:Static ObjectConverters.IsNull}}" />
+                                        <nebulaAuth:CodeProgressBar Height="4" MinHeight="4"
+                                                                    MaxTime="30"
+                                                                    TimeRemaining="{Binding CodeProgress, Mode=OneWay}"
+                                                                    IsVisible="{Binding SelectedMafile, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                    </Panel>
+                                </StackPanel>
+
+                                <!-- Load confirmations: 60% of the card width (wider when the text needs it), spinner while loading -->
+                                <u:IconButton Grid.Row="1" Margin="0,10"
+                                              Theme="{DynamicResource OutlineIconButton}"
+                                              HorizontalAlignment="Center"
+                                              MinWidth="{Binding #RightPanel.Bounds.Width, Converter={StaticResource CoefficientConverter}, ConverterParameter=0.6}"
+                                              FontSize="13"
+                                              IsEnabled="{Binding IsMafileSelected}"
+                                              IsLoading="{Binding GetConfirmationsCommand.IsRunning}"
+                                              Content="{Tr MainWindow.RightPart.LoadConfirmations}"
+                                              Command="{Binding GetConfirmationsCommand}" />
+
+                                <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Disabled"
+                                              Container.Name="ConfList" Container.Sizing="Width"
+                                              VerticalScrollBarVisibility="Auto"
+                                              IsVisible="{Binding ConfirmationsVisible}">
+                                    <!-- Shared size scope: the time column has the same width in every row -->
+                                    <ItemsControl x:Name="ConfirmationsList" Margin="8,2,8,8" FontSize="15"
+                                                  Grid.IsSharedSizeScope="True"
+                                                  Focusable="False"
+                                                  ItemsSource="{Binding Confirmations}"
+                                                  ItemTemplate="{StaticResource ConfirmationTemplates}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Spacing="2" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </ScrollViewer>
+
+                                <Button Grid.Row="3" Margin="4"
+                                        Theme="{DynamicResource BorderlessButton}"
+                                        HorizontalAlignment="Stretch"
+                                        FontSize="15"
+                                        Command="{Binding ConfirmLoginCommand}"
+                                        Content="{Tr MainWindow.RightPart.ConfirmLogin}" />
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- ===== Status bar ===== -->
+                    <Border x:Name="Footer" Grid.Row="2" Classes="Footer">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" ClipToBounds="True">
+                                <TextBlock Text="{Tr MainWindow.Footer.AccountsCount}" />
+                                <TextBlock Text="{Binding MaFiles.Count}" />
+                                <TextBlock Text="|" Margin="10,0" />
+                                <TextBlock Text="{Tr MainWindow.Footer.SelectedAccount}" />
+                                <TextBlock Text="{Binding SelectedMafile.AccountName, FallbackValue=' ', TargetNullValue=' ', Mode=OneWay}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- Shown and blinking for 6 s when an update is detected (StartUpdateBlink) -->
+                                <mi:MaterialIcon x:Name="UpdateBadgeIcon"
+                                                 Kind="BellAlert" IconSize="15"
+                                                 VerticalAlignment="Center"
+                                                 Margin="0,0,5,0"
+                                                 Background="Transparent"
+                                                 Foreground="DodgerBlue"
+                                                 IsVisible="False"
+                                                 ToolTip.Tip="{Tr CodeBehind.UpdateService.UpdateIndicatorHint}" />
+                                <Button x:Name="ByAchiesLink"
+                                        Theme="{StaticResource LinkButton}"
+                                        Margin="0,0,5,0"
+                                        Command="{Binding OpenLinksViewCommand}">
+                                    <TextBlock Text="by achies" FontSize="15" TextDecorations="Underline" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- ===== Drag and drop overlay (shown while files are dragged over the window) =====
+                         Surface = Base100 (the color primary text is designed for: Shadcn's Base300 and Primary are both
+                         near-black) -->
+                    <Border x:Name="DragNDropOverlay" Grid.Row="0" Grid.RowSpan="3" ZIndex="10" IsVisible="False">
+                        <Border.Background>
+                            <SolidColorBrush Color="{DynamicResource Base100Color}" Opacity="0.94" />
+                        </Border.Background>
+                        <Panel Margin="16">
+                            <Rectangle RadiusX="16" RadiusY="16"
+                                       StrokeThickness="2" StrokeDashArray="4,3"
+                                       Stroke="{DynamicResource PrimaryBrush}" />
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="8" Margin="16">
+                                <TextBlock FontSize="22" FontWeight="Bold"
+                                           TextWrapping="Wrap" TextAlignment="Center"
+                                           Foreground="{DynamicResource PrimaryBrush}"
+                                           Text="{Tr MainWindow.Global.DragNDropHint}" />
+                                <mi:MaterialIcon Kind="FileReplaceOutline" Width="36" Height="36"
+                                                 HorizontalAlignment="Center"
+                                                 Foreground="{DynamicResource PrimaryBrush}" />
+                            </StackPanel>
+                        </Panel>
+                    </Border>
+                </Grid>
+            </Panel>
+        </dialogHost:DialogHost>
+
+        <!-- Notifications: bottom center, above the status bar (bottom margin follows the footer height, code-behind)
+             and above open dialogs -->
+        <nebulaAuth:Snackbar x:Name="SnackbarHost"
+                             Margin="16,0,16,42"
+                             MessageQueue="{Binding MessageQueue}" />
+    </Panel>
+</Window>

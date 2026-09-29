@@ -1,0 +1,121 @@
+<!-- Control themes of the NebulaAuth components (merged into Application.Resources by App.axaml). -->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:nebulaAuth="using:NebulaAuth"
+                    xmlns:core="using:NebulaAuth.Core"
+                    xmlns:mi="using:Material.Icons.Avalonia">
+
+    <!-- DialogHeader: Base300 bar with icon, title (+ bold accent) and the close button -->
+    <ControlTheme x:Key="{x:Type nebulaAuth:DialogHeader}" TargetType="nebulaAuth:DialogHeader">
+        <Setter Property="Background" Value="{DynamicResource DialogHeaderBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource DialogHeaderForegroundBrush}" />
+        <Setter Property="Padding" Value="16,8,8,8" />
+        <Setter Property="MinHeight" Value="52" />
+        <Setter Property="FontSize" Value="16" />
+        <!-- Drawn over the 1px border of the dialog card (radius 12): otherwise the card border and background show as a
+             light rim around the dark header on light themes -->
+        <Setter Property="Margin" Value="-1,-1,-1,0" />
+        <Setter Property="CornerRadius" Value="12,12,0,0" />
+        <Setter Property="Template">
+            <ControlTemplate TargetType="nebulaAuth:DialogHeader">
+                <Border Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}"
+                        MinHeight="{TemplateBinding MinHeight}">
+                    <Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
+                        <mi:MaterialIcon Grid.Column="0"
+                                         Kind="{TemplateBinding IconKind}"
+                                         IconSize="20"
+                                         Margin="0,0,10,0"
+                                         VerticalAlignment="Center"
+                                         Foreground="{TemplateBinding Foreground}"
+                                         IsVisible="{Binding IconKind, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <TextBlock Text="{TemplateBinding Title}"
+                                       FontWeight="SemiBold"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       TextTrimming="CharacterEllipsis"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="{TemplateBinding TitleAccent}"
+                                       FontWeight="Bold"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       TextTrimming="CharacterEllipsis"
+                                       VerticalAlignment="Center"
+                                       IsVisible="{Binding TitleAccent, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                        </StackPanel>
+                        <Button Grid.Column="2"
+                                Margin="8,0,0,0"
+                                Theme="{StaticResource DialogCloseButton}"
+                                AutomationProperties.Name="Close"
+                                IsEnabled="{TemplateBinding IsCloseEnabled}"
+                                Command="{x:Static core:DialogService.CloseDialogCommand}"
+                                CommandParameter="{TemplateBinding CloseParameter}">
+                            <mi:MaterialIcon Kind="Close" />
+                        </Button>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <!-- HintBox: tinted callout (Info / Warning / Error), renders nothing while Text is null -->
+    <ControlTheme x:Key="{x:Type nebulaAuth:HintBox}" TargetType="nebulaAuth:HintBox">
+        <Setter Property="Background" Value="{DynamicResource InfoTintBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource InfoBorderBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource SemiColorText0}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="12,10" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Template">
+            <ControlTemplate TargetType="nebulaAuth:HintBox">
+                <Border Name="PART_Root"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}"
+                        IsVisible="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <mi:MaterialIcon Name="PART_Icon"
+                                         Grid.Column="0"
+                                         IconSize="20"
+                                         Margin="0,0,10,0"
+                                         VerticalAlignment="Center"
+                                         Foreground="{DynamicResource InfoBrush}"
+                                         Kind="{TemplateBinding IconKind}" />
+                        <TextBlock Grid.Column="1"
+                                   VerticalAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   LineHeight="20"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   Text="{TemplateBinding Text}" />
+                        <Button Grid.Column="2"
+                                Margin="8,-4,-4,-4"
+                                Theme="{StaticResource GhostIconButton}"
+                                Classes="Small"
+                                VerticalAlignment="Center"
+                                IsVisible="{TemplateBinding ShowCloseButton}"
+                                Command="{TemplateBinding EffectiveCloseCommand}">
+                            <mi:MaterialIcon Kind="Close" />
+                        </Button>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:warning">
+            <Setter Property="Background" Value="{DynamicResource WarningTintBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource WarningBorderBrush}" />
+            <Style Selector="^ /template/ mi|MaterialIcon#PART_Icon">
+                <Setter Property="Foreground" Value="{DynamicResource WarningBrush}" />
+            </Style>
+        </Style>
+        <Style Selector="^:error">
+            <Setter Property="Background" Value="{DynamicResource ErrorTintBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorderBrush}" />
+            <Style Selector="^ /template/ mi|MaterialIcon#PART_Icon">
+                <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+            </Style>
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

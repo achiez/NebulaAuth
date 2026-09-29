@@ -1,25 +1,28 @@
-﻿using System;
+using System;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Windows;
-using System.Windows.Interop;
-using System.Windows.Media.Imaging;
-using System.Windows.Shell;
+using Avalonia;
+using Avalonia.Threading;
 using NebulaAuth.Model;
-using Color = System.Drawing.Color;
+using NebulaAuth.Theme;
 
 namespace NebulaAuth.Core;
 
 public static class ThemeManager
 {
-    private static readonly Window MainWindow = Application.Current.MainWindow!;
-
     static ThemeManager()
     {
         Settings.Instance.PropertyChanged += SettingsOnPropertyChanged;
     }
+
+    /// <summary>
+    ///     Name of the applied theme ("DefaultTheme", "BlackTheme", "LightTheme", "LuxuryTheme", "ShadcnTheme").
+    /// </summary>
+    public static string? CurrentTheme { get; private set; }
+
+    /// <summary>
+    ///     The applied palette (null before the first <see cref="ApplyTheme" />).
+    /// </summary>
+    public static ThemePalette? CurrentPalette { get; private set; }
 
     private static void SettingsOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
@@ -31,62 +34,66 @@ public static class ThemeManager
 
     private static void UpdateIcon()
     {
-        var color = Settings.Instance.IconColor;
-        if (color == null)
+        if (!Dispatcher.UIThread.CheckAccess())
         {
-            MainWindow.TaskbarItemInfo = null;
+            Dispatcher.UIThread.Post(UpdateIcon);
+            return;
         }
-        else
-        {
-            var c = color.Value;
-            var diameter = 14;
-            var bitmap = new Bitmap(diameter, diameter);
-            var graphics = Graphics.FromImage(bitmap);
-            graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            var brush = new SolidBrush(Color.FromArgb(c.A, c.R, c.G, c.B));
-            graphics.FillEllipse(brush, 0, 0, diameter, diameter);
-            var bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty,
-                BitmapSizeOptions.FromEmptyOptions());
 
-            MainWindow.TaskbarItemInfo = new TaskbarItemInfo();
-            MainWindow.TaskbarItemInfo.Overlay = bitmapSource;
+        // Avalonia has no taskbar overlay API: the colored dot is composed into the window icon itself
+        // (taskbar, Alt+Tab, X11 _NET_WM_ICON).
+        var window = AppHost.MainWindow;
+        if (window == null) return;
+        try
+        {
+            window.Icon = WindowIconComposer.Create(Settings.Instance.IconColor);
+        }
+        catch (Exception ex)
+        {
+            Shell.Logger.Error(ex, "Failed to update the window icon");
         }
     }
 
 
     public static void ApplyTheme(string themeName)
     {
-        var colorDict = new ResourceDictionary
+        if (!Dispatcher.UIThread.CheckAccess())
         {
-            Source = new Uri($"Theme/Themes/{themeName}.xaml", UriKind.Relative)
-        };
-
-        var brushDict = new ResourceDictionary
-        {
-            Source = new Uri("Theme/Brushes.xaml", UriKind.Relative)
-        };
-
-        var mergedDictionaries = Application.Current.Resources.MergedDictionaries;
-
-
-        var toRemove = mergedDictionaries
-            .Where(d => d.Source?.OriginalString.Contains("Theme/Themes/") == true ||
-                        d.Source?.OriginalString.EndsWith("Brushes.xaml") == true)
-            .ToList();
-
-        foreach (var dict in toRemove)
-        {
-            mergedDictionaries.Remove(dict);
+            Dispatcher.UIThread.Post(() => ApplyTheme(themeName));
+            return;
         }
 
-        mergedDictionaries.Insert(0, colorDict);
-        mergedDictionaries.Insert(0, brushDict);
+        var app = Application.Current;
+        if (app == null) return;
+
+        ThemePalette palette;
+        try
+        {
+            palette = ThemePalette.Load(themeName);
+        }
+        catch (Exception ex)
+        {
+            Shell.Logger.Error(ex, "Theme {theme} not found, falling back to DefaultTheme", themeName);
+            themeName = "DefaultTheme";
+            palette = ThemePalette.Load(themeName);
+        }
+
+        var variant = ThemeResources.VariantFor(palette);
+        ThemeResources.Apply(app, palette, variant);
+        app.RequestedThemeVariant = variant;
+        CurrentTheme = themeName;
+        CurrentPalette = palette;
+
+        if (!ThemeResources.VerifySemiMapping(app, palette, variant))
+        {
+            Shell.Logger.Warn("Semi control tokens do not follow the palette of {theme}", themeName);
+        }
     }
 
 
     public static void InitializeTheme()
     {
-        UpdateIcon();
         ApplyTheme(Settings.Instance.GetTheme());
+        UpdateIcon();
     }
 }

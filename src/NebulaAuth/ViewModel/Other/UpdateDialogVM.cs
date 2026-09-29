@@ -1,26 +1,23 @@
 using System;
-using System.Diagnostics;
-using System.Windows;
-using AutoUpdaterDotNET;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MaterialDesignThemes.Wpf;
 using NebulaAuth.Core;
 using NebulaAuth.Model.Update;
+using NebulaAuth.Utility;
 
 namespace NebulaAuth.ViewModel.Other;
 
 public partial class UpdateDialogVM : ObservableObject
 {
-    public UpdateInfoEventArgs Args { get; }
+    public UpdateInfo Args { get; }
     public ChangelogEntry? Changelog { get; }
     public string? HtmlFallbackUrl { get; }
-    public string Version => Args.CurrentVersion;
+    public string Version => Args.CurrentVersion ?? string.Empty;
     public bool HasJsonChangelog => Changelog?.Changes?.Count > 0;
 
     [ObservableProperty] private bool _showRemindOptions;
 
-    public UpdateDialogVM(UpdateInfoEventArgs args, ChangelogEntry? changelog, string? htmlFallbackUrl)
+    public UpdateDialogVM(UpdateInfo args, ChangelogEntry? changelog, string? htmlFallbackUrl)
     {
         Args = args;
         Changelog = changelog;
@@ -30,11 +27,12 @@ public partial class UpdateDialogVM : ObservableObject
     [RelayCommand]
     private void UpdateNow()
     {
-        DialogHost.Close(null);
-        if (AutoUpdater.DownloadUpdate(Args))
-        {
-            Application.Current.Shutdown();
-        }
+        DialogService.Close();
+        // There is no cross-platform installer: open the release page so the user updates manually.
+        // PlatformUtils never throws: a failure is logged and reported with a snackbar
+        var url = Args.ReleasePageURL;
+        if (string.IsNullOrEmpty(url)) return;
+        PlatformUtils.OpenUrl(url);
     }
 
     [RelayCommand]
@@ -55,20 +53,20 @@ public partial class UpdateDialogVM : ObservableObject
             _ => TimeSpan.FromDays(1)
         };
         UpdateManager.SetRemindAfter(delay);
-        DialogHost.Close(null);
+        DialogService.Close();
     }
 
     [RelayCommand]
     private void SkipVersion()
     {
         UpdateManager.SkipVersion(Version);
-        DialogHost.Close(null);
+        DialogService.Close();
     }
 
     [RelayCommand]
     private void OpenLink(string url)
     {
         if (string.IsNullOrEmpty(url)) return;
-        Process.Start(new ProcessStartInfo(url) {UseShellExecute = true});
+        PlatformUtils.OpenUrl(url);
     }
 }

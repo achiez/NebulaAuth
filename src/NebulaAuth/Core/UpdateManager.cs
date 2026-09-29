@@ -1,14 +1,19 @@
-﻿using System;
-using System.IO;
+using System;
 using System.Net.Http;
-using System.Windows;
-using AutoUpdaterDotNET;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using Avalonia.Threading;
 using NebulaAuth.Model;
 using NebulaAuth.Model.Update;
 using Newtonsoft.Json;
 
 namespace NebulaAuth.Core;
 
+/// <summary>
+///     Update check (AutoUpdater.NET replacement). Only the check + changelog dialog are implemented,
+///     installing an update opens the release page in the browser (see <see cref="UpdateInfo.ReleasePageURL" />).
+/// </summary>
 public static class UpdateManager
 {
     private const string BASE_URL =
@@ -19,25 +24,14 @@ public static class UpdateManager
     private const string CHANGELOG_BASE_URL = BASE_URL + "changelog/";
 
     private static readonly HttpClient HttpClient = new();
-    private static bool _isManualCheck;
 
     public static bool HasPendingUpdate { get; private set; }
-
-    static UpdateManager()
-    {
-        AutoUpdater.CheckForUpdateEvent += HandleCheckForUpdateEvent;
-    }
 
     public static event Action? PendingUpdateDetected;
 
     public static void CheckForUpdates(bool manual = false)
     {
-        _isManualCheck = manual;
-        var jsonPath = Path.Combine(Environment.CurrentDirectory, "update-settings.json");
-        AutoUpdater.PersistenceProvider = new JsonFilePersistenceProvider(jsonPath);
-        AutoUpdater.ShowSkipButton = false;
-        AutoUpdater.RunUpdateAsAdmin = RequiresAdminAccess();
-        AutoUpdater.Start(UPDATE_URL);
+        _ = CheckForUpdatesAsync(manual);
     }
 
     public static void SkipVersion(string version)
@@ -52,70 +46,12 @@ public static class UpdateManager
         settings.SetRemindAfter(DateTime.Now + delay);
     }
 
-    private static async void HandleCheckForUpdateEvent(UpdateInfoEventArgs args)
+    private static async Task CheckForUpdatesAsync(bool isManual)
     {
         try
         {
-            var isManual = _isManualCheck;
-            _isManualCheck = false;
-
-            if (args.Error != null)
-            {
-                if (isManual)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                        SnackbarController.SendSnackbar(LocManager.GetCommonOrDefault("Request error",
-                            "RequestError")));
-                }
-
-                return;
-            }
-
-            if (!args.IsUpdateAvailable)
-            {
-                if (isManual)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                        SnackbarController.SendSnackbar(
-                            LocManager.GetCodeBehindOrDefault("You are using the latest version", "UpdateService",
-                                "LatestVersion")));
-                }
-
-                return;
-            }
-
-            var version = args.CurrentVersion;
-            var settings = UpdateSettings.Load();
-
-            if (!isManual && !settings.ShouldShow(version))
-            {
-                HasPendingUpdate = true;
-                Application.Current.Dispatcher.Invoke(() => PendingUpdateDetected?.Invoke());
-                return;
-            }
-
-            ChangelogEntry? changelog = null;
-            try
-            {
-                var jsonUrl = $"{CHANGELOG_BASE_URL}{version}.json";
-                var response = await HttpClient.GetAsync(jsonUrl).ConfigureAwait(false);
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    changelog = JsonConvert.DeserializeObject<ChangelogEntry>(json);
-                }
-            }
-            catch
-            {
-                // fallback to HTML changelog URL
-            }
-
-            var htmlFallbackUrl = changelog == null ? args.ChangelogURL : null;
-
-            await Application.Current.Dispatcher.BeginInvoke(async () =>
-            {
-                await DialogsController.ShowUpdateDialog(args, changelog, htmlFallbackUrl);
-            });
+            var args = await FetchUpdateInfoAsync().ConfigureAwait(false);
+            await HandleCheckForUpdateResult(args, isManual).ConfigureAwait(false);
         }
         catch (Exception e)
         {
@@ -123,21 +59,105 @@ public static class UpdateManager
         }
     }
 
-    private static bool RequiresAdminAccess()
+    private static async Task HandleCheckForUpdateResult(UpdateInfo args, bool isManual)
     {
-        try
+        if (args.Error != null)
         {
-            var testFile = Path.Combine(Environment.CurrentDirectory, "test.tmp");
-            using (File.Create(testFile))
+            Shell.Logger.Debug(args.Error, "Update check failed");
+            if (isManual)
             {
+                Dispatcher.UIThread.Invoke(() =>
+                    SnackbarController.SendSnackbar(LocManager.GetCommonOrDefault("Request error",
+                        "RequestError")));
             }
 
-            File.Delete(testFile);
-            return false;
+            return;
         }
-        catch (UnauthorizedAccessException)
+
+        if (!args.IsUpdateAvailable)
         {
-            return true;
+            if (isManual)
+            {
+                Dispatcher.UIThread.Invoke(() =>
+                    SnackbarController.SendSnackbar(
+                        LocManager.GetCodeBehindOrDefault("You are using the latest version", "UpdateService",
+                            "LatestVersion")));
+            }
+
+            return;
+        }
+
+        var version = args.CurrentVersion!;
+        var settings = UpdateSettings.Load();
+
+        if (!isManual && !settings.ShouldShow(version))
+        {
+            HasPendingUpdate = true;
+            Dispatcher.UIThread.Invoke(() => PendingUpdateDetected?.Invoke());
+            return;
+        }
+
+        ChangelogEntry? changelog = null;
+        try
+        {
+            var jsonUrl = $"{CHANGELOG_BASE_URL}{version}.json";
+            var response = await HttpClient.GetAsync(jsonUrl).ConfigureAwait(false);
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                changelog = JsonConvert.DeserializeObject<ChangelogEntry>(json);
+            }
+        }
+        catch
+        {
+            // fallback to HTML changelog URL
+        }
+
+        var htmlFallbackUrl = changelog == null ? args.ChangelogURL : null;
+
+        await Dispatcher.UIThread.InvokeAsync(async () =>
+        {
+            await DialogsController.ShowUpdateDialog(args, changelog, htmlFallbackUrl);
+        });
+    }
+
+    /// <summary>
+    ///     Downloads and parses update.xml (AutoUpdater.NET format) and compares it with the running version
+    ///     the same way AutoUpdater.NET did (<c>new Version(xml version) &gt; entry assembly version</c>).
+    /// </summary>
+    private static async Task<UpdateInfo> FetchUpdateInfoAsync()
+    {
+        var installedVersion = Assembly.GetEntryAssembly()?.GetName().Version;
+        try
+        {
+            var xml = await HttpClient.GetStringAsync(UPDATE_URL).ConfigureAwait(false);
+            var item = XDocument.Parse(xml).Root ?? throw new FormatException("update.xml has no root element");
+            var versionStr = item.Element("version")?.Value.Trim();
+            if (string.IsNullOrWhiteSpace(versionStr))
+                throw new FormatException("update.xml has no version");
+
+            var currentVersion = new Version(versionStr);
+            var checksum = item.Element("checksum");
+            bool.TryParse(item.Element("mandatory")?.Value.Trim(), out var mandatory);
+            return new UpdateInfo
+            {
+                CurrentVersion = versionStr,
+                InstalledVersion = installedVersion,
+                DownloadURL = item.Element("url")?.Value.Trim(),
+                ChangelogURL = item.Element("changelog")?.Value.Trim(),
+                Mandatory = mandatory,
+                Checksum = checksum?.Value.Trim(),
+                HashingAlgorithm = checksum?.Attribute("algorithm")?.Value,
+                IsUpdateAvailable = installedVersion != null && currentVersion > installedVersion
+            };
+        }
+        catch (Exception ex)
+        {
+            return new UpdateInfo
+            {
+                InstalledVersion = installedVersion,
+                Error = ex
+            };
         }
     }
 }

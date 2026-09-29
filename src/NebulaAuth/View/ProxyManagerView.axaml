@@ -1,0 +1,300 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:other="using:NebulaAuth.ViewModel.Other"
+             xmlns:view="using:NebulaAuth.View"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             mc:Ignorable="d"
+             x:Class="NebulaAuth.View.ProxyManagerView"
+             x:DataType="other:ProxyManagerVM"
+             Width="600"
+             Height="700"
+             FontSize="15">
+    <UserControl.Styles>
+        <!-- The row template draws the padding itself. The context menu sits on the container, so it opens on a
+             right click anywhere on the row and with Shift+F10 / the Menu key on the focused row; a template gives each
+             row its own menu instance -->
+        <Style Selector="ListBox#ProxyList > ListBoxItem" x:DataType="view:ProxyManagerViewItem">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="ContextMenu">
+                <Template>
+                    <ContextMenu>
+                        <MenuItem Header="{Tr MainWindow.ContextMenus.Proxy.Copy}"
+                                  Command="{Binding $parent[view:ProxyManagerView].((other:ProxyManagerVM)DataContext).CopyProxyCommand}"
+                                  CommandParameter="{Binding Value}" />
+                        <MenuItem Header="{Tr MainWindow.ContextMenus.Proxy.CopyAddress}"
+                                  Command="{Binding $parent[view:ProxyManagerView].((other:ProxyManagerVM)DataContext).CopyProxyAddressCommand}"
+                                  CommandParameter="{Binding Value}" />
+                        <MenuItem Header="{Tr Common.Delete}"
+                                  Command="{Binding $parent[view:ProxyManagerView].((other:ProxyManagerVM)DataContext).RemoveProxyCommand}"
+                                  CommandParameter="{Binding Pair}" />
+                    </ContextMenu>
+                </Template>
+            </Setter>
+        </Style>
+        <!-- Number of accounts using the proxy -->
+        <Style Selector="Border.CountBadge">
+            <Setter Property="Background" Value="{DynamicResource SemiColorFill0}" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="6,1" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+        </Style>
+        <!-- Assignment counters: card background, 20 Bold value, 11 muted caption -->
+        <Style Selector="Border.Stat">
+            <Setter Property="Padding" Value="10,8" />
+        </Style>
+        <Style Selector="Border.Stat TextBlock.StatValue">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Border.Stat TextBlock.StatLabel">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto,*">
+        <nebulaAuth:DialogHeader Grid.Row="0" IconKind="Proxy" Title="{Tr ProxyManagerDialog.Title}" />
+
+        <TabControl x:Name="Tabs"
+                    Grid.Row="1"
+                    Classes="Uniform"
+                    Padding="0"
+                    SelectionChanged="Tabs_SelectionChanged">
+
+            <!-- Tab 1: Proxy manager -->
+            <TabItem Header="{Tr ProxyManagerDialog.TabManager}">
+                <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="16,12,16,16">
+
+                    <!-- Default proxy + display options -->
+                    <Border Grid.Row="0" Classes="Card Flat" Padding="14,10,8,10">
+                        <StackPanel Spacing="6">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                                    <TextBlock Classes="FieldLabel"
+                                               Text="{Tr ProxyManagerDialog.DefaultProxy, IsDynamic=False}" />
+                                    <TextBlock Classes="Mono" FontSize="13" TextTrimming="CharacterEllipsis"><Run
+                                            Text="{Binding DefaultProxy.Value.Key, StringFormat='{}{0}: ', FallbackValue='-', TargetNullValue='-', Mode=OneWay}" /><Run>
+                                            <Run.Text>
+                                                <MultiBinding Mode="OneWay"
+                                                              Converter="{StaticResource ProxyDataTextMultiConverter}">
+                                                    <Binding Path="DefaultProxy.Value.Value" />
+                                                    <Binding Path="DisplayProtocol" />
+                                                    <Binding Path="DisplayCredentials" />
+                                                </MultiBinding>
+                                            </Run.Text>
+                                        </Run></TextBlock>
+                                </StackPanel>
+                                <Button Grid.Column="1"
+                                        Theme="{StaticResource GhostIconButton}"
+                                        Classes="Danger"
+                                        Command="{Binding RemoveDefaultCommand}">
+                                    <mi:MaterialIcon Kind="ClearBox" />
+                                </Button>
+                            </Grid>
+                            <WrapPanel ItemSpacing="24">
+                                <CheckBox Content="{Tr ProxyManagerDialog.DisplayProxyProtocol}"
+                                          IsChecked="{Binding DisplayProtocol}" />
+                                <CheckBox Content="{Tr ProxyManagerDialog.DisplayProxyCredentials}"
+                                          IsChecked="{Binding DisplayCredentials}" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Proxy list. ItemsSource is set in code-behind: live rows (ProxyManagerViewItem) of ProxyStorage.Proxies -->
+                    <Border Grid.Row="1" Classes="Card Flat" Padding="4" Margin="0,12">
+                        <ListBox x:Name="ProxyList"
+                                 Classes="Stretch"
+                                 Background="Transparent"
+                                 FontSize="13"
+                                 SelectedItem="{Binding SelectedProxy, Converter={x:Static view:ProxyManagerView.SelectedProxyConverter}}">
+                            <ListBox.KeyBindings>
+                                <KeyBinding Gesture="Delete" Command="{Binding RemoveProxyCommand}" />
+                            </ListBox.KeyBindings>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="view:ProxyManagerViewItem">
+                                    <Border Background="Transparent" Padding="12,4,6,4">
+                                        <Grid ColumnDefinitions="*,Auto,Auto">
+                                            <TextBlock Grid.Column="0"
+                                                       Classes="Mono"
+                                                       VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"><Run
+                                                    Text="{Binding Key, Mode=OneWay}" /><Run Text=": " /><Run>
+                                                    <Run.Text>
+                                                        <MultiBinding Mode="OneWay"
+                                                                      Converter="{StaticResource ProxyDataTextMultiConverter}">
+                                                            <Binding Path="Value" />
+                                                            <Binding Path="$parent[view:ProxyManagerView].((other:ProxyManagerVM)DataContext).DisplayProtocol" />
+                                                            <Binding Path="$parent[view:ProxyManagerView].((other:ProxyManagerVM)DataContext).DisplayCredentials" />
+                                                        </MultiBinding>
+                                                    </Run.Text>
+                                                </Run></TextBlock>
+
+                                            <Border Grid.Column="1"
+                                                    Classes="CountBadge"
+                                                    Margin="8,0,2,0"
+                                                    IsVisible="{Binding #AccountCount.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                                                <StackPanel Orientation="Horizontal" Spacing="3">
+                                                    <mi:MaterialIcon Kind="Account" IconSize="12" VerticalAlignment="Center" />
+                                                    <TextBlock x:Name="AccountCount"
+                                                               FontSize="11"
+                                                               VerticalAlignment="Center"
+                                                               Text="{Binding Key, Converter={StaticResource ProxyAccountCountConverter}}" />
+                                                </StackPanel>
+                                            </Border>
+
+                                            <Button Grid.Column="2"
+                                                    Theme="{StaticResource GhostIconButton}"
+                                                    Classes="Small"
+                                                    Command="{Binding $parent[view:ProxyManagerView].((other:ProxyManagerVM)DataContext).SetDefaultCommand}"
+                                                    CommandParameter="{Binding Pair}">
+                                                <!-- Filled primary heart = the current default proxy -->
+                                                <Panel>
+                                                    <mi:MaterialIcon Kind="HeartOutline"
+                                                                     IsVisible="{Binding !#DefaultHeart.IsVisible}" />
+                                                    <mi:MaterialIcon x:Name="DefaultHeart"
+                                                                     Kind="Heart"
+                                                                     Foreground="{DynamicResource SemiColorPrimary}">
+                                                        <mi:MaterialIcon.IsVisible>
+                                                            <MultiBinding Converter="{x:Static view:ProxyManagerView.IsDefaultProxyConverter}">
+                                                                <Binding />
+                                                                <Binding Path="$parent[view:ProxyManagerView].((other:ProxyManagerVM)DataContext).DefaultProxy" />
+                                                            </MultiBinding>
+                                                        </mi:MaterialIcon.IsVisible>
+                                                    </mi:MaterialIcon>
+                                                </Panel>
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+
+                    <!-- Parse error -->
+                    <nebulaAuth:HintBox Grid.Row="2"
+                                        Margin="0,0,0,12"
+                                        Severity="Error"
+                                        FontSize="13"
+                                        Text="{Binding ErrorText}"
+                                        CloseCommand="{Binding ClearErrorCommand}"
+                                        ShowCloseButton="True"
+                                        IsVisible="{Binding ErrorText, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                    <!-- Add / remove: compact icon buttons stacked at the top right of the input -->
+                    <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
+                        <TextBox x:Name="AddProxyBox"
+                                 Grid.Column="0"
+                                 Classes="Mono clearButton"
+                                 FontSize="12"
+                                 Height="90"
+                                 AcceptsReturn="True"
+                                 TextWrapping="NoWrap"
+                                 VerticalAlignment="Stretch"
+                                 Text="{Binding AddProxyField}"
+                                 PlaceholderText="IP:PORT&#x0a;IP:PORT:USER:PASS&#x0a;PROTOCOL://IP:PORT:USER:PASS&#x0a;IP:PORT:USER:PASS{ID}" />
+                        <StackPanel Grid.Column="1" Margin="8,0,0,0" Spacing="8" VerticalAlignment="Top">
+                            <Button x:Name="AddProxyBtn"
+                                    Width="40"
+                                    Height="36"
+                                    Padding="0"
+                                    Theme="{DynamicResource SolidButton}"
+                                    Classes="Primary"
+                                    IsDefault="True"
+                                    ToolTip.Tip="CTRL+ENTER"
+                                    Command="{Binding AddProxyCommand}">
+                                <mi:MaterialIcon Kind="Add" IconSize="20" />
+                            </Button>
+                            <Button Width="40"
+                                    Height="36"
+                                    Padding="0"
+                                    Theme="{DynamicResource OutlineButton}"
+                                    Classes="Danger"
+                                    ToolTip.Tip="{Tr Common.Delete}"
+                                    Command="{Binding RemoveProxyCommand}"
+                                    CommandParameter="{x:Null}">
+                                <mi:MaterialIcon Kind="Trash" IconSize="18" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <!-- Tab 2: Bulk assignment -->
+            <TabItem Header="{Tr ProxyManagerDialog.TabAssignment}">
+                <Grid RowDefinitions="Auto,Auto,*,Auto,Auto" Margin="16,12,16,16">
+
+                    <!-- Counters (margins keep the three cards equally wide) -->
+                    <UniformGrid Grid.Row="0" Columns="3" Margin="0,0,0,14">
+                        <Border Classes="Card Flat Stat" Margin="0,0,6,0">
+                            <StackPanel>
+                                <TextBlock Classes="StatValue" Text="{Binding TotalAccounts, Mode=OneWay}" />
+                                <TextBlock Classes="StatLabel" Text="{Tr ProxyManagerDialog.TotalAccounts}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Classes="Card Flat Stat" Margin="3,0">
+                            <StackPanel>
+                                <TextBlock Classes="StatValue" Text="{Binding TotalProxies, Mode=OneWay}" />
+                                <TextBlock Classes="StatLabel" Text="{Tr ProxyManagerDialog.TotalProxies}" />
+                            </StackPanel>
+                        </Border>
+                        <Border Classes="Card Flat Stat" Margin="6,0,0,0">
+                            <StackPanel>
+                                <TextBlock Classes="StatValue" Text="{Binding AssignedProxies, Mode=OneWay}" />
+                                <TextBlock Classes="StatLabel" Text="{Tr ProxyManagerDialog.AssignedProxies}" />
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <!-- Behaviour for lines without a proxy -->
+                    <StackPanel Grid.Row="1" Classes="Field" Margin="0,0,0,12">
+                        <TextBlock Classes="FieldLabel" Text="{Tr ProxyManagerDialog.UnspecifiedBehavior}" />
+                        <WrapPanel ItemSpacing="24">
+                            <RadioButton Content="{Tr ProxyManagerDialog.UnspecifiedRandom}"
+                                         IsChecked="{Binding UnspecifiedAssignRandom}" />
+                            <RadioButton Content="{Tr ProxyManagerDialog.UnspecifiedRemove}"
+                                         IsChecked="{Binding UnspecifiedAssignRandom, Converter={StaticResource ReverseBooleanConverter}}" />
+                        </WrapPanel>
+                    </StackPanel>
+
+                    <!-- Input -->
+                    <TextBox Grid.Row="2"
+                             Classes="Mono clearButton"
+                             FontSize="12"
+                             AcceptsReturn="True"
+                             TextWrapping="NoWrap"
+                             VerticalContentAlignment="Top"
+                             VerticalAlignment="Stretch"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             Text="{Binding AssignmentInput}"
+                             PlaceholderText="login:IP:PORT&#x0a;login:IP:PORT:USER:PASS&#x0a;login:socks5://USER:PASS@IP:PORT&#x0a;login:ID&#x0a;login" />
+
+                    <!-- Result -->
+                    <nebulaAuth:HintBox Grid.Row="3"
+                                        Margin="0,10,0,0"
+                                        Severity="Info"
+                                        FontSize="13"
+                                        Text="{Binding AssignmentTip}"
+                                        CloseCommand="{Binding ClearAssignmentTipCommand}"
+                                        ShowCloseButton="True"
+                                        IsVisible="{Binding AssignmentTip, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                    <Button Grid.Row="4"
+                            Margin="0,12,0,0"
+                            MinWidth="110"
+                            HorizontalAlignment="Right"
+                            Theme="{DynamicResource SolidButton}"
+                            Classes="Primary"
+                            Content="{Tr ProxyManagerDialog.ApplyAssignment}"
+                            Command="{Binding ApplyAssignmentCommand}" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

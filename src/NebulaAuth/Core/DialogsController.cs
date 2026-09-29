@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoUpdaterDotNET;
-using MaterialDesignThemes.Wpf;
 using NebulaAuth.Model;
 using NebulaAuth.Model.Entities;
 using NebulaAuth.Model.Update;
@@ -29,7 +27,7 @@ public static class DialogsController
         {
             DataContext = vm
         };
-        var result = await DialogHost.Show(content);
+        var result = await DialogService.Show(content);
         if (result is true)
         {
             return vm;
@@ -46,7 +44,7 @@ public static class DialogsController
         {
             DataContext = vm
         };
-        var result = await DialogHost.Show(content);
+        var result = await DialogService.Show(content);
         if (result is true)
         {
             return vm;
@@ -66,7 +64,7 @@ public static class DialogsController
         {
             DataContext = vm
         };
-        var result = await DialogHost.Show(content);
+        var result = await DialogService.Show(content);
         if (result is true)
         {
             return vm.Password;
@@ -83,7 +81,7 @@ public static class DialogsController
         {
             DataContext = vm
         };
-        var result = await DialogHost.Show(content);
+        var result = await DialogService.Show(content);
         return result is MafileImportDialogVM
             ? new MafileImportDialogResult(
                 !vm.AddToGroup || string.IsNullOrWhiteSpace(vm.Group) ? null : vm.Group.Trim(),
@@ -98,13 +96,13 @@ public static class DialogsController
         {
             DataContext = vm
         };
-        await DialogHost.Show(view);
+        await DialogService.Show(view);
         return vm.AnyChanges;
     }
 
     public static void CloseDialog()
     {
-        DialogHost.Close(null);
+        DialogService.Close();
     }
 
     public static async Task ShowLinkerDialog()
@@ -117,7 +115,7 @@ public static class DialogsController
             {
                 DataContext = vm
             };
-            await DialogHost.Show(view);
+            await DialogService.Show(view);
         }
         finally
         {
@@ -135,7 +133,7 @@ public static class DialogsController
             {
                 DataContext = vm
             };
-            await DialogHost.Show(view);
+            await DialogService.Show(view);
         }
         finally
         {
@@ -150,20 +148,28 @@ public static class DialogsController
         {
             DataContext = vm
         };
-        await DialogHost.Show(dialog);
+        await DialogService.Show(dialog);
     }
 
     public static async Task ShowExportDialog()
     {
-        var vm = new MafileExporterVM();
-        var dialog = new MafileExporterView
+        MafileExporterVM? vm = null;
+        try
         {
-            DataContext = vm
-        };
-        await DialogHost.Show(dialog);
+            vm = new MafileExporterVM();
+            var dialog = new MafileExporterView
+            {
+                DataContext = vm
+            };
+            await DialogService.Show(dialog);
+        }
+        finally
+        {
+            vm?.Dispose();
+        }
     }
 
-    public static async Task ShowUpdateDialog(UpdateInfoEventArgs args, ChangelogEntry? changelog,
+    public static async Task ShowUpdateDialog(UpdateInfo args, ChangelogEntry? changelog,
         string? htmlFallbackUrl)
     {
         var vm = new UpdateDialogVM(args, changelog, htmlFallbackUrl);
@@ -171,7 +177,7 @@ public static class DialogsController
         {
             DataContext = vm
         };
-        await DialogHost.Show(dialog);
+        await DialogService.Show(dialog);
     }
 
     #region CommonDialogs
@@ -180,14 +186,23 @@ public static class DialogsController
     {
         var content = msg == null ? new ConfirmCancelDialog() : new ConfirmCancelDialog(msg);
 
-        var result = await DialogHost.Show(content);
+        var result = await DialogService.Show(content);
         return result != null && (bool) result;
+    }
+
+    /// <summary>
+    ///     Confirmation with a description, a hint callout (severity) and optionally a red confirm button.
+    /// </summary>
+    public static async Task<bool> ShowConfirmCancelDialog(ConfirmDialogOptions options)
+    {
+        var result = await DialogService.Show(new ConfirmCancelDialog(options));
+        return result is true;
     }
 
     public static async Task<string?> ShowTextFieldDialog(string? title = null, string? msg = null)
     {
         var content = new TextFieldDialog(title, msg);
-        var result = await DialogHost.Show(content);
+        var result = await DialogService.Show(content);
         return result as string;
     }
 
