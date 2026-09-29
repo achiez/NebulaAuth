@@ -16,15 +16,18 @@ namespace NebulaAuth.Model;
 
 public static class Shell
 {
-    public static Logger Logger { get; private set; } = null!;
+    // Usable before Initialize (data folder choice, startup errors): NLog writes to the temp folder until DataRoot is set
+    public static Logger Logger { get; private set; } = LogManager.GetLogger("Logger");
     public static ILogger ExtensionsLogger { get; private set; } = null!;
 
     public static async Task Initialize()
     {
-        File.Delete("log.log");
+        // log.log of 1.x versions (logs are in the "logs" folder now)
+        File.Delete(DataRoot.Combine("log.log"));
         LocManager.Init();
         LocManager.SetApplicationLocalization(Settings.Instance.Language);
-        Logger = LogManager.GetLogger("Logger");
+        Logger.Info("NebulaAuth {version} started. Data folder: {dataRoot}. Program: {exe}",
+            UpdateManager.InstalledVersionText, DataRoot.Describe(), Environment.ProcessPath);
         var lp = new NLogLoggerProvider();
         var logger = lp.CreateLogger("SteamLib");
         SteamLibErrorMonitor.MonitorLogger = logger;
@@ -45,6 +48,7 @@ public static class Shell
 
         var threads = Environment.ProcessorCount > 0 ? Environment.ProcessorCount : 1;
         await Storage.Initialize(threads);
+        UpdateManager.Initialize();
         ProxyAssignmentCache.Initialize(Storage.MaFiles);
         MAACStorage.Initialize();
         MafileExporterStorage.Initialize();

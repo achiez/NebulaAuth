@@ -23,18 +23,21 @@ public static class MafileExporter
             return new ExportResult(LocManager.GetCodeBehindOrDefault("InvalidPath", "MafileExporter.InvalidPath"));
         }
 
-        if (!Directory.Exists(template.Path))
+        // A relative folder is relative to the data folder (the working directory is the replaceable program folder)
+        var exportPath = DataRoot.ResolveUserPath(template.Path);
+
+        if (!Directory.Exists(exportPath))
         {
-            Directory.CreateDirectory(template.Path);
+            Directory.CreateDirectory(exportPath);
         }
 
-        if (IsNebulaUtilizedDirectory(template.Path))
+        if (IsNebulaUtilizedDirectory(exportPath))
         {
             return new ExportResult(LocManager.GetCodeBehindOrDefault("NebulaUtilizedDirectory",
                 "MafileExporter.NebulaUtilizedDirectory"));
         }
 
-        if (!IsAllowedToWrite(template.Path))
+        if (!IsAllowedToWrite(exportPath))
         {
             return new ExportResult(LocManager.GetCodeBehindOrDefault("AccessDenied", "MafileExporter.AccessDenied"));
         }
@@ -63,7 +66,7 @@ public static class MafileExporter
             {
                 var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
                 var zipName = $"{toExport.Count}_{timestamp}.zip";
-                var zipPath = Path.Combine(template.Path, zipName);
+                var zipPath = Path.Combine(exportPath, zipName);
 
                 await using var zipStream = File.Create(zipPath);
                 using var archive = new ZipArchive(zipStream, ZipArchiveMode.Create);
@@ -91,7 +94,7 @@ public static class MafileExporter
             foreach (var (key, maf) in toExport)
             {
                 var (content, fileName) = BuildMafileContent(template, maf);
-                var fullPath = Path.Combine(template.Path, fileName);
+                var fullPath = Path.Combine(exportPath, fileName);
                 if (File.Exists(fullPath))
                 {
                     conflict.Add(key);
@@ -145,7 +148,7 @@ public static class MafileExporter
 
         try
         {
-            var full = Path.GetFullPath(path);
+            var full = DataRoot.ResolveUserPath(path);
 
             var invalidPathChars = Path.GetInvalidPathChars();
             if (full.IndexOfAny(invalidPathChars) >= 0) return false;
@@ -188,6 +191,6 @@ public static class MafileExporter
 
     private static bool IsNebulaUtilizedDirectory(string path)
     {
-        return Storage.MafilesDirectories.Any(x => Path.GetFullPath(path).EqualsIgnoreCase(x));
+        return Storage.MafilesDirectories.Any(x => DataRoot.ResolveUserPath(path).EqualsIgnoreCase(x));
     }
 }

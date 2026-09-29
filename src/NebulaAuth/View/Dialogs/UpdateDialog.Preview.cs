@@ -10,11 +10,13 @@ public partial class UpdateDialog
 {
     /// <summary>
     ///     Debug preview (NEBULA_PREVIEW=NebulaAuth.View.Dialogs.UpdateDialog). NEBULA_PREVIEW_ARG:
-    ///     empty = JSON changelog of 1.8.4, "remind" = same with the remind-after options open,
-    ///     "short" = only the first 3 changes, "html" = no JSON changelog but an HTML changelog link,
-    ///     "none" = no changelog at all.
+    ///     empty = available update with the JSON changelog of 1.8.4 (installable), "page" = same for a copy that can't
+    ///     update itself (download page), "remind" = remind-after options open, "short" = only the first 3 changes,
+    ///     "html" = no JSON changelog but a changelog link, "none" = no changelog at all, "progress" = downloading (45%),
+    ///     "ready" = downloaded, "failed:&lt;UpdateFailureKind&gt;" (e.g. "failed:NoWriteAccess") = failure.
     ///     Optional suffix "@h&lt;height&gt;" (e.g. "@h600", "remind@h600") resizes the main window first, to check that
     ///     the actions stay reachable on a short window.
+    ///     The preview uses its own <see cref="UpdateStatus" />: the real update state is not changed.
     /// </summary>
     internal static object CreatePreview(string? arg)
     {
@@ -26,13 +28,15 @@ public partial class UpdateDialog
         }
 
         const string repo = "https://github.com/achiez/NebulaAuth-Steam-Desktop-Authenticator-by-Achies";
-        var info = new UpdateInfo
+        var status = new UpdateStatus
         {
-            CurrentVersion = "1.8.4",
-            InstalledVersion = new Version(1, 8, 3, 0),
-            DownloadURL = repo + "/releases/download/1.8.4/NebulaAuth.1.8.4.zip",
-            ChangelogURL = "https://achiez.github.io/NebulaAuth-Steam-Desktop-Authenticator-by-Achies/changelog/1.8.4.html",
-            IsUpdateAvailable = true
+            InstalledVersion = "2.0.0",
+            AvailableVersion = "2.0.1",
+            DownloadSize = 61_790_670,
+            CanInstall = arg != "page",
+            ReleasePageUrl = repo + "/releases/tag/v2.0.1",
+            ManualUrl = repo + "/releases/download/v2.0.1/NebulaAuth-win-x64-Portable.zip",
+            ChangelogUrl = repo + "/releases/tag/v2.0.1"
         };
         // Content of changelog/1.8.4.json
         var changelog = new ChangelogEntry
@@ -101,14 +105,35 @@ public partial class UpdateDialog
             ]
         };
 
-        var vm = arg switch
-        {
-            "html" => new UpdateDialogVM(info, null, info.ChangelogURL),
-            "none" => new UpdateDialogVM(info, null, null),
-            _ => new UpdateDialogVM(info, changelog, null)
-        };
-        if (arg == "remind") vm.ShowRemindOptions = true;
         if (arg == "short") changelog.Changes.RemoveRange(3, changelog.Changes.Count - 3);
+        status.Changelog = arg is "html" or "none" ? null : changelog;
+        if (arg == "none") status.ChangelogUrl = null;
+        status.State = UpdateState.Available;
+        switch (arg)
+        {
+            case "progress":
+                status.Progress = 45;
+                status.State = UpdateState.Downloading;
+                break;
+            case "ready":
+                status.Progress = 100;
+                status.State = UpdateState.ReadyToRestart;
+                break;
+            case not null when arg.StartsWith("failed", StringComparison.Ordinal):
+                var kindText = arg.Length > 7 ? arg[7..] : nameof(UpdateFailureKind.Network);
+                status.FailureKind = Enum.TryParse<UpdateFailureKind>(kindText, true, out var kind)
+                    ? kind
+                    : UpdateFailureKind.Network;
+                status.FailureDetail = status.FailureKind == UpdateFailureKind.NoWriteAccess
+                    ? @"C:\Program Files\NebulaAuth"
+                    : "HttpRequestException: No connection could be made because the target machine actively refused it.";
+                status.State = UpdateState.Failed;
+                break;
+        }
+
+        // The preview dialog is not disposed by DialogsController: its status is not shared, nothing leaks
+        var vm = new UpdateDialogVM(status);
+        if (arg == "remind") vm.ShowRemindOptions = true;
         return new UpdateDialog {DataContext = vm};
     }
 }

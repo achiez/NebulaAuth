@@ -9,10 +9,7 @@ namespace NebulaAuth.Core;
 
 public static class ThemeManager
 {
-    static ThemeManager()
-    {
-        Settings.Instance.PropertyChanged += SettingsOnPropertyChanged;
-    }
+    private static bool _settingsSubscribed;
 
     /// <summary>
     ///     Name of the applied theme ("DefaultTheme", "BlackTheme", "LightTheme", "LuxuryTheme", "ShadcnTheme").
@@ -91,8 +88,18 @@ public static class ThemeManager
     }
 
 
+    /// <summary>
+    ///     Applies the theme from <see cref="Settings" /> and follows the icon color. <see cref="ApplyTheme" /> alone does
+    ///     not touch the settings, so windows shown before the data folder is known (data folder choice) can use a palette.
+    /// </summary>
     public static void InitializeTheme()
     {
+        if (!_settingsSubscribed)
+        {
+            _settingsSubscribed = true;
+            Settings.Instance.PropertyChanged += SettingsOnPropertyChanged;
+        }
+
         ApplyTheme(Settings.Instance.GetTheme());
         UpdateIcon();
     }

@@ -169,10 +169,20 @@ public static class DialogsController
         }
     }
 
-    public static async Task ShowUpdateDialog(UpdateInfo args, ChangelogEntry? changelog,
-        string? htmlFallbackUrl)
+    /// <summary>
+    ///     Shows the update dialog over <paramref name="status" />. Does nothing when it is already open; waits when
+    ///     another dialog is open (the update dialog must not replace a dialog the user is working in).
+    /// </summary>
+    public static async Task ShowUpdateDialog(UpdateStatus status)
     {
-        var vm = new UpdateDialogVM(args, changelog, htmlFallbackUrl);
+        if (DialogService.GetSession()?.Content is UpdateDialog) return;
+        while (DialogService.IsDialogOpen)
+        {
+            await Task.Delay(500);
+            if (DialogService.GetSession()?.Content is UpdateDialog) return;
+        }
+
+        using var vm = new UpdateDialogVM(status);
         var dialog = new UpdateDialog
         {
             DataContext = vm

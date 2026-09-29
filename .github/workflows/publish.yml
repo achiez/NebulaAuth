@@ -1,82 +1,387 @@
-name: Build and Publish Release
+name: Release
+
+# Release flow (docs/ru/release-2.0/07-updates-and-distribution.md):
+#   1. prepare  - one version everywhere (tag == csproj AssemblyVersion == changelog), the pinned feed key matches the
+#                 signing secret, the version was never published;
+#   2. build    - self-contained packages per RID, packed with Velopack (channels win-x64 / linux-x64 / osx-x64 /
+#                 osx-arm64, "-beta" suffix for pre-releases), checked before upload;
+#   3. release  - signed feeds + checksums, DRAFT GitHub release with every asset, assets verified, release published,
+#                 and only then the feeds (2.x clients) and update.xml (1.x clients) are committed to master.
+# Published assets are never overwritten: a version that already has a published release is rejected.
+#
+# Secrets:
+#   FEED_SIGNING_KEY - ECDSA P-256 private key (PEM) signing NebulaAuth/feeds/releases.<channel>.json.
+#                      Its public key is pinned in src/NebulaAuth/Core/Updates/UpdateTrust.cs.
+#   PAT_TOKEN        - token allowed to push to master (feeds, update.xml, changelog).
 
 on:
   push:
-    branches:
-      - master
-    paths:
-      - 'src/NebulaAuth/NebulaAuth.csproj'
-      - 'changelog/*.json'
+    tags:
+      - 'v*'
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release, e.g. 2.0.1 or 2.1.0-beta.1 (must match the csproj AssemblyVersion and changelog/<version>.json). Run it on the tag v<version>, or on a branch when the tag does not exist yet.'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  VPK_VERSION: '1.2.158'
+  PROJECT: src/NebulaAuth/NebulaAuth.csproj
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
 
 jobs:
+  # ------------------------------------------------------------------------------------------------------------------
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+      tag: ${{ steps.ver.outputs.tag }}
+      beta: ${{ steps.ver.outputs.beta }}
+      suffix: ${{ steps.ver.outputs.suffix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Resolve and check the version
+        id: ver
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          EVENT: ${{ github.event_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT" = "push" ]; then
+            TAG="$REF_NAME"
+            VERSION="${TAG#v}"
+          else
+            VERSION="${INPUT_VERSION#v}"
+            TAG="v$VERSION"
+            if [ "$REF_TYPE" = "tag" ]; then
+              if [ "$REF_NAME" != "$TAG" ]; then
+                echo "::error::Workflow runs on tag $REF_NAME but the version input is $VERSION"
+                exit 1
+              fi
+            elif git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null; then
+              echo "::error::Tag $TAG already exists: run the workflow on that tag instead of a branch"
+              exit 1
+            fi
+          fi
+
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
+            echo "::error::'$VERSION' is not a version (x.y.z or x.y.z-beta.n)"
+            exit 1
+          fi
+          CORE="${VERSION%%-*}"
+
+          CSPROJ=$(dotnet msbuild "$PROJECT" -getProperty:AssemblyVersion | tr -d '[:space:]')
+          CSPROJ_CORE=$(echo "$CSPROJ" | sed -E 's/^([0-9]+\.[0-9]+\.[0-9]+)(\.0)?$/\1/')
+          if [ "$CSPROJ_CORE" != "$CORE" ]; then
+            echo "::error::AssemblyVersion in $PROJECT is $CSPROJ, the tag is $TAG"
+            exit 1
+          fi
+
+          CHANGELOG="changelog/$VERSION.json"
+          if [ ! -f "$CHANGELOG" ]; then
+            echo "::error::$CHANGELOG not found"
+            exit 1
+          fi
+          if [ "$(jq -r '.version' "$CHANGELOG")" != "$VERSION" ]; then
+            echo "::error::$CHANGELOG has version $(jq -r '.version' "$CHANGELOG"), expected $VERSION"
+            exit 1
+          fi
+
+          if [ "$VERSION" != "$CORE" ]; then BETA=true; SUFFIX=-beta; else BETA=false; SUFFIX=; fi
+          {
+            echo "version=$VERSION"
+            echo "tag=$TAG"
+            echo "beta=$BETA"
+            echo "suffix=$SUFFIX"
+          } >> "$GITHUB_OUTPUT"
+          echo "Releasing $VERSION (tag $TAG, beta $BETA)"
+
+      - name: Refuse to overwrite a published release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.ver.outputs.tag }}
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json isDraft > release.json 2>/dev/null; then
+            if [ "$(jq -r '.isDraft' release.json)" != "true" ]; then
+              echo "::error::Release $TAG is already published; publish a new version instead of replacing assets"
+              exit 1
+            fi
+            echo "A draft of $TAG exists (earlier failed run): it will be replaced"
+          fi
+
+      - name: Check the pinned feed key
+        env:
+          FEED_SIGNING_KEY: ${{ secrets.FEED_SIGNING_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "$FEED_SIGNING_KEY" ]; then
+            echo "::error::Secret FEED_SIGNING_KEY is not set"
+            exit 1
+          fi
+          # Public key pinned in the app: the PEM lines of FEED_PUBLIC_KEY_PEM
+          sed -n '/FEED_PUBLIC_KEY_PEM/,/END PUBLIC KEY/p' src/NebulaAuth/Core/Updates/UpdateTrust.cs \
+            | sed -n '/BEGIN PUBLIC KEY/,/END PUBLIC KEY/p' | sed -E 's/^[[:space:]]+//' > pinned.pem
+          umask 077
+          printf '%s\n' "$FEED_SIGNING_KEY" > "$RUNNER_TEMP/feed.pem"
+          openssl ec -in "$RUNNER_TEMP/feed.pem" -pubout -out secret.pub.pem 2>/dev/null
+          rm -f "$RUNNER_TEMP/feed.pem"
+          if ! openssl pkey -pubin -in pinned.pem -noout 2>/dev/null; then
+            echo "::error::UpdateTrust.FEED_PUBLIC_KEY_PEM is not a public key (placeholder?)"
+            exit 1
+          fi
+          if [ "$(openssl pkey -pubin -in pinned.pem -outform DER | sha256sum)" != "$(openssl pkey -pubin -in secret.pub.pem -outform DER | sha256sum)" ]; then
+            echo "::error::FEED_SIGNING_KEY does not match the public key pinned in UpdateTrust.cs"
+            exit 1
+          fi
+          echo "Pinned key matches the signing key"
+
+  # ------------------------------------------------------------------------------------------------------------------
+  build:
+    needs: prepare
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - rid: win-x64
+            os: windows-latest
+          - rid: linux-x64
+            # oldest supported runner: the AppImage then runs on older glibc versions too
+            os: ubuntu-22.04
+          - rid: osx-x64
+            os: macos-latest
+          - rid: osx-arm64
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+      CHANNEL: ${{ matrix.rid }}${{ needs.prepare.outputs.suffix }}
+      RID: ${{ matrix.rid }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install vpk
+        run: dotnet tool install -g vpk --version "$VPK_VERSION"
+
+      - name: Publish (self-contained, not single-file, not trimmed)
+        run: |
+          set -euo pipefail
+          dotnet publish "$PROJECT" -c Release -r "$RID" --self-contained true \
+            -p:PublishSingleFile=false -p:PublishTrimmed=false \
+            -p:Version="$VERSION" -p:DebugType=none -p:DebugSymbols=false \
+            -o publish
+          # No symbols and no user data in the package
+          find publish -name '*.pdb' -delete
+          for f in settings.json proxies.json maac.json export_templates.json maFiles; do
+            if [ -e "publish/$f" ]; then echo "::error::publish/$f must not be packaged"; exit 1; fi
+          done
+
+      - name: Previous release (base of the delta package)
+        # First 2.x release / new channel: there is nothing to download, the release gets a full package only
+        continue-on-error: true
+        run: |
+          vpk download http --url "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/master/NebulaAuth/feeds" \
+            --channel "$CHANNEL" --allowEmptyChannel -o releases
+
+      - name: Pack with Velopack
+        run: |
+          set -euo pipefail
+          ARGS=(-u NebulaAuth -v "$VERSION" -p publish -o releases --channel "$CHANNEL" -r "$RID"
+                --packTitle NebulaAuth --packAuthors achies)
+          case "$RID" in
+            win-*)
+              # Portable ZIP only (also the legacy 1.x update package); no Setup.exe until installers are decided
+              ARGS+=(--mainExe NebulaAuth.exe --icon src/NebulaAuth/Theme/lock.ico --noInst)
+              ;;
+            linux-*)
+              ARGS+=(--mainExe NebulaAuth --icon src/NebulaAuth/Theme/icon.png)
+              ;;
+            osx-*)
+              # TODO(macOS signing): no Developer ID yet, so the .app is not signed or notarized (vpk only logs a
+              # warning). Apple Silicon requires at least an ad-hoc signature for every executable; the .NET SDK signs
+              # the apphost ad-hoc, but whether the bundle as modified by vpk (UpdateMac, Info.plist) still starts and
+              # updates must be checked on real Intel and Apple Silicon Macs (Gatekeeper, /Applications, user folder)
+              # before promising in-app updates. If it does not, add ad-hoc signing (--signAppIdentity "-") and verify.
+              # TODO(macOS icon): add an .icns and pass --icon.
+              ARGS+=(--mainExe NebulaAuth --noInst)
+              ;;
+          esac
+          vpk pack "${ARGS[@]}"
+
+      - name: Name the AppImage after its channel
+        if: startsWith(matrix.rid, 'linux')
+        run: |
+          set -euo pipefail
+          SRC=$(jq -r '.[] | select(.Type == "Portable") | .RelativeFileName' "releases/assets.$CHANNEL.json")
+          DST="NebulaAuth-$CHANNEL.AppImage"
+          if [ "$SRC" != "$DST" ]; then
+            mv "releases/$SRC" "releases/$DST"
+            jq --arg s "$SRC" --arg d "$DST" 'map(if .RelativeFileName == $s then .RelativeFileName = $d else . end)' \
+              "releases/assets.$CHANNEL.json" > assets.tmp && mv assets.tmp "releases/assets.$CHANNEL.json"
+          fi
+          chmod +x "releases/$DST"
+
+      - name: Verify packages
+        run: python .github/scripts/verify_package.py --releases-dir releases --channel "$CHANNEL" --rid "$RID" --version "$VERSION"
+
+      - name: macOS signature diagnostics
+        if: startsWith(matrix.rid, 'osx')
+        continue-on-error: true
+        run: |
+          ZIP=$(jq -r '.[] | select(.Type == "Portable") | .RelativeFileName' "releases/assets.$CHANNEL.json")
+          mkdir -p macapp && ditto -x -k "releases/$ZIP" macapp
+          APP=$(find macapp -maxdepth 1 -name '*.app' | head -n 1)
+          codesign -dv --verbose=2 "$APP" || true
+          codesign --verify --deep --strict --verbose=2 "$APP" || true
+
+      - name: Legacy 1.x update package
+        # AutoUpdater.NET of 1.x downloads NebulaAuth.<version>.zip (update.xml) and unpacks it over the 1.x folder:
+        # an exact copy of the Velopack portable ZIP (root stub, Update.exe, .portable, current\)
+        if: matrix.rid == 'win-x64' && needs.prepare.outputs.beta == 'false'
+        run: |
+          set -euo pipefail
+          ZIP=$(jq -r '.[] | select(.Type == "Portable") | .RelativeFileName' "releases/assets.$CHANNEL.json")
+          cp "releases/$ZIP" "releases/NebulaAuth.$VERSION.zip"
+          cmp "releases/$ZIP" "releases/NebulaAuth.$VERSION.zip"
+
+      - name: Collect release files
+        run: |
+          set -euo pipefail
+          mkdir -p "dist/$CHANNEL"
+          # Only this version's files: the previous full package was downloaded just to build the delta
+          for f in $(jq -r '.[].RelativeFileName' "releases/assets.$CHANNEL.json"); do
+            cp "releases/$f" "dist/$CHANNEL/"
+          done
+          cp "releases/releases.$CHANNEL.json" "releases/assets.$CHANNEL.json" "dist/$CHANNEL/"
+          if [ -f "releases/NebulaAuth.$VERSION.zip" ]; then cp "releases/NebulaAuth.$VERSION.zip" "dist/$CHANNEL/"; fi
+          ls -la "dist/$CHANNEL"
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: pkg-${{ env.CHANNEL }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  # ------------------------------------------------------------------------------------------------------------------
   release:
+    needs: [prepare, build]
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+      TAG: ${{ needs.prepare.outputs.tag }}
+      BETA: ${{ needs.prepare.outputs.beta }}
+      SUFFIX: ${{ needs.prepare.outputs.suffix }}
+      GH_TOKEN: ${{ github.token }}
     steps:
-
-      # --------------------------------------------------------
-      # Checkout
-      # --------------------------------------------------------
-
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.PAT_TOKEN }}
 
-      # --------------------------------------------------------
-      # Setup .NET
-      # --------------------------------------------------------
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - name: Download packages
+        uses: actions/download-artifact@v4
         with:
-          dotnet-version: '8.0.x'
+          pattern: pkg-*
+          path: dist
+          merge-multiple: true
 
-      # --------------------------------------------------------
-      # Extract version via MSBuild
-      # --------------------------------------------------------
-
-      - name: Extract version from csproj
-        id: ver
+      - name: Collect assets
         run: |
-          VERSION=$(dotnet msbuild src/NebulaAuth/NebulaAuth.csproj -getProperty:AssemblyVersion)
-          echo "Detected version $VERSION"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      # --------------------------------------------------------
-      # Validate JSON changelog
-      # --------------------------------------------------------
-
-      - name: Validate changelog JSON
-        run: |
-          VERSION="${{ steps.ver.outputs.version }}"
-          FILE="changelog/${VERSION}.json"
-
-          echo "Checking changelog file $FILE"
-
-          if [ ! -f "$FILE" ]; then
-            echo "ERROR: changelog JSON not found"
-            exit 1
+          set -euo pipefail
+          mkdir -p upload
+          for dir in dist/*/; do
+            CHANNEL=$(basename "$dir")
+            for f in $(jq -r '.[].RelativeFileName' "$dir/assets.$CHANNEL.json"); do
+              if [ -e "upload/$f" ]; then echo "::error::Two channels produced $f"; exit 1; fi
+              cp "$dir/$f" upload/
+            done
+            # Velopack index of the channel (the signed feeds in the repository are what clients use)
+            cp "$dir/releases.$CHANNEL.json" upload/
+          done
+          if [ "$BETA" = "false" ]; then
+            cp "dist/win-x64/NebulaAuth.$VERSION.zip" upload/
           fi
+          (cd upload && sha256sum -- * > SHA256SUMS.txt)
+          cat upload/SHA256SUMS.txt
 
-          jq empty "$FILE"
-
-      # --------------------------------------------------------
-      # Generate HTML changelog (legacy AutoUpdater)
-      # --------------------------------------------------------
-
-      - name: Generate HTML changelog
+      - name: Build and sign the feeds
+        env:
+          FEED_SIGNING_KEY: ${{ secrets.FEED_SIGNING_KEY }}
         run: |
-          VERSION="${{ steps.ver.outputs.version }}"
-          JSON="changelog/${VERSION}.json"
-          HTML="changelog/${VERSION}.html"
+          set -euo pipefail
+          umask 077
+          printf '%s\n' "$FEED_SIGNING_KEY" > "$RUNNER_TEMP/feed.pem"
+          openssl ec -in "$RUNNER_TEMP/feed.pem" -pubout -out feed.pub.pem 2>/dev/null
+          PUBLISHED=$(date -u +%Y-%m-%dT%H:%M:%S+00:00)
+          mkdir -p feeds
+          for dir in dist/*/; do
+            CHANNEL=$(basename "$dir")
+            python3 .github/scripts/build_feed.py \
+              --channel "$CHANNEL" --version "$VERSION" --releases-dir "$dir" \
+              --asset-base-url "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/" \
+              --release-url "https://github.com/$GITHUB_REPOSITORY/releases/tag/$TAG" \
+              --previous "NebulaAuth/feeds/releases.$CHANNEL.json" \
+              --published "$PUBLISHED" \
+              --out "feeds/releases.$CHANNEL.json"
+            openssl dgst -sha256 -sign "$RUNNER_TEMP/feed.pem" -out "feeds/releases.$CHANNEL.json.der" "feeds/releases.$CHANNEL.json"
+            openssl dgst -sha256 -verify feed.pub.pem -signature "feeds/releases.$CHANNEL.json.der" "feeds/releases.$CHANNEL.json"
+            base64 -w0 "feeds/releases.$CHANNEL.json.der" > "feeds/releases.$CHANNEL.json.sig"
+            rm "feeds/releases.$CHANNEL.json.der"
+          done
+          rm -f "$RUNNER_TEMP/feed.pem"
+          ls -la feeds
 
-          echo "Generating HTML changelog"
-
+      - name: Release notes and HTML changelog
+        run: |
+          set -euo pipefail
+          JSON="changelog/$VERSION.json"
+          jq -r '.changes[] | "- **\(.type):** \(.text)" + (if .link then " (\(.link))" else "" end)' "$JSON" > notes.md
+          {
+            echo ""
+            echo "Windows: \`NebulaAuth-win-x64${SUFFIX}-Portable.zip\` (unpack anywhere, start \`NebulaAuth.exe\`). macOS: \`NebulaAuth-osx-*-Portable.zip\`. Linux: \`NebulaAuth-linux-x64${SUFFIX}.AppImage\`."
+            echo "SHA-256 checksums: \`SHA256SUMS.txt\`."
+          } >> notes.md
+          # HTML changelog for the update dialog of 1.x (update.xml <changelog>)
           jq -r '
             "<!DOCTYPE html>",
             "<html>",
@@ -101,120 +406,86 @@ jobs:
             "</div>",
             "</body>",
             "</html>"
-          ' "$JSON" > "$HTML"
+          ' "$JSON" > "changelog-$VERSION.html"
 
-          echo "Generated $HTML"
-
-      # --------------------------------------------------------
-      # Build application
-      # --------------------------------------------------------
-
-      - name: Build NebulaAuth
+      - name: Create the draft release
         run: |
-            dotnet publish src/NebulaAuth/NebulaAuth.csproj \
-            -c Release \
-            -r win-x64 \
-            --self-contained false \
-            -p:EnableWindowsTargeting=true \
-            -o build
+          set -euo pipefail
+          if gh release view "$TAG" --json isDraft > release.json 2>/dev/null; then
+            if [ "$(jq -r '.isDraft' release.json)" != "true" ]; then
+              echo "::error::Release $TAG was published meanwhile"
+              exit 1
+            fi
+            gh release delete "$TAG" --yes
+          fi
+          FLAGS=(--draft --title "NebulaAuth $VERSION" --notes-file notes.md --target "$GITHUB_SHA")
+          if [ "$BETA" = "true" ]; then FLAGS+=(--prerelease); fi
+          gh release create "$TAG" "${FLAGS[@]}" upload/*
 
-      # --------------------------------------------------------
-      # Package ZIP
-      # --------------------------------------------------------
-
-      - name: Package release
+      - name: Verify the uploaded assets
         run: |
-          cd build
-          zip -r ../NebulaAuth.${{ steps.ver.outputs.version }}.zip *
+          set -euo pipefail
+          gh release view "$TAG" --json assets --jq '.assets[] | "\(.name) \(.size)"' | sort > uploaded.txt
+          (cd upload && for f in *; do echo "$f $(stat -c %s "$f")"; done) | sort > expected.txt
+          diff expected.txt uploaded.txt
+          # The draft is reachable only through the API: check one package end to end by content
+          if [ "$BETA" = "false" ]; then
+            gh release download "$TAG" --pattern "NebulaAuth.$VERSION.zip" --dir check
+            cmp "check/NebulaAuth.$VERSION.zip" "upload/NebulaAuth.$VERSION.zip"
+          fi
 
-      # --------------------------------------------------------
-      # Generate SHA256 checksum
-      # --------------------------------------------------------
-
-      - name: Generate checksum
-        id: checksum
+      - name: Publish the release
         run: |
-          FILE="NebulaAuth.${{ steps.ver.outputs.version }}.zip"
-          HASH=$(sha256sum "$FILE" | awk '{print $1}')
-          echo "checksum=$HASH" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          if [ "$BETA" = "true" ]; then
+            gh release edit "$TAG" --draft=false --prerelease
+          else
+            gh release edit "$TAG" --draft=false --latest
+          fi
 
-      # --------------------------------------------------------
-      # Generate update.xml
-      # --------------------------------------------------------
-
-      - name: Generate update.xml
+      - name: Commit feeds, update.xml and changelog (after the release is public)
         run: |
-          VERSION="${{ steps.ver.outputs.version }}"
-          CHECKSUM="${{ steps.checksum.outputs.checksum }}"
-
-          cat > NebulaAuth/update.xml <<EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <item>
-            <version>$VERSION</version>
-            <url>https://github.com/${{ github.repository }}/releases/download/$VERSION/NebulaAuth.$VERSION.zip</url>
-            <changelog>https://achiez.github.io/${{ github.event.repository.name }}/changelog/$VERSION.html</changelog>
-            <mandatory>false</mandatory>
-            <checksum algorithm="SHA256">$CHECKSUM</checksum>
-          </item>
-          EOF
-
-          echo "Generated update.xml"
-          cat NebulaAuth/update.xml
-
-      # --------------------------------------------------------
-      # Generate GitHub Release Notes
-      # --------------------------------------------------------
-
-      - name: Generate release notes
-        id: notes
-        run: |
-          VERSION="${{ steps.ver.outputs.version }}"
-          FILE="changelog/${VERSION}.json"
-
-          BODY=$(jq -r '
-            .changes[] |
-            "- **\(.type):** \(.text)" +
-            (if .link then " (\(.link))" else "" end)
-          ' "$FILE")
-
-          echo "body<<EOF" >> $GITHUB_OUTPUT
-          echo "$BODY" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      # --------------------------------------------------------
-      # Commit generated files
-      # --------------------------------------------------------
-
-      - name: Commit generated files
-        run: |
+          set -euo pipefail
           git config user.name "github-actions"
           git config user.email "actions@github.com"
+          for attempt in 1 2 3; do
+            git fetch origin master
+            git checkout -B master origin/master
+            mkdir -p NebulaAuth/feeds
+            cp feeds/releases.*.json feeds/releases.*.json.sig NebulaAuth/feeds/
+            # The update dialog of 2.x reads changelog/<version>.json from master
+            git show "$GITHUB_SHA:changelog/$VERSION.json" > "changelog/$VERSION.json"
+            cp "changelog-$VERSION.html" "changelog/$VERSION.html"
+            if [ "$BETA" = "false" ]; then
+              # 1.x clients (AutoUpdater.NET) always get the latest stable 2.x directly, same format as before
+              SHA=$(sha256sum "upload/NebulaAuth.$VERSION.zip" | awk '{print $1}')
+              REPO_NAME="${GITHUB_REPOSITORY#*/}"
+              OWNER="${GITHUB_REPOSITORY%%/*}"
+              {
+                echo '<?xml version="1.0" encoding="UTF-8"?>'
+                echo '<item>'
+                echo "  <version>$VERSION</version>"
+                echo "  <url>https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/NebulaAuth.$VERSION.zip</url>"
+                echo "  <changelog>https://$OWNER.github.io/$REPO_NAME/changelog/$VERSION.html</changelog>"
+                echo '  <mandatory>false</mandatory>'
+                echo "  <checksum algorithm=\"SHA256\">$SHA</checksum>"
+                echo '</item>'
+              } > NebulaAuth/update.xml
+              cat NebulaAuth/update.xml
+            fi
+            git add NebulaAuth/feeds NebulaAuth/update.xml "changelog/$VERSION.json" "changelog/$VERSION.html"
+            git commit -m "chore(release): $VERSION feeds" || echo "Nothing to commit"
+            if git push origin master; then exit 0; fi
+            echo "Push rejected, retrying"
+            sleep 5
+          done
+          echo "::error::Could not push the feeds; the release is published, commit NebulaAuth/feeds from the run artifacts manually"
+          exit 1
 
-          git add NebulaAuth/update.xml
-          git add changelog/*.html
-
-          git commit -m "chore(release): ${{ steps.ver.outputs.version }}" || echo "No changes"
-          git push
-
-      # --------------------------------------------------------
-      # Create git tag
-      # --------------------------------------------------------
-
-      - name: Create tag
-        run: |
-          VERSION="${{ steps.ver.outputs.version }}"
-          git tag -a "$VERSION" -m "Release $VERSION"
-          git push origin "$VERSION"
-
-      # --------------------------------------------------------
-      # Publish GitHub Release
-      # --------------------------------------------------------
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+      - name: Keep the signed feeds as an artifact
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: ${{ steps.ver.outputs.version }}
-          name: Release ${{ steps.ver.outputs.version }}
-          body: ${{ steps.notes.outputs.body }}
-          files: |
-            NebulaAuth.${{ steps.ver.outputs.version }}.zip
+          name: feeds
+          path: feeds/
+          if-no-files-found: ignore

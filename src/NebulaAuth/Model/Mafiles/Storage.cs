@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AchiesUtilities.Extensions;
+using NebulaAuth.Core;
 using NebulaAuth.Model.Entities;
 using NebulaAuth.Model.Exceptions;
 using NebulaAuth.Model.MAAC;
@@ -24,9 +25,11 @@ public static class Storage
     public const string DIR_BACKUP_MAFILES = "maFiles_backup";
 
     public static readonly string[] MafilesDirectories;
-    public static string MafilesDirectory { get; } = Path.GetFullPath(DIR_MAFILES);
-    public static string RemovedMafilesDirectory { get; } = Path.GetFullPath(DIR_REMOVED_MAFILES);
-    public static string BackupMafilesDirectory { get; } = Path.GetFullPath(DIR_BACKUP_MAFILES);
+
+    // Absolute paths in the data folder; an existing folder that differs only in case is reused (Linux)
+    public static string MafilesDirectory { get; } = DataRoot.Combine(DIR_MAFILES);
+    public static string RemovedMafilesDirectory { get; } = DataRoot.Combine(DIR_REMOVED_MAFILES);
+    public static string BackupMafilesDirectory { get; } = DataRoot.Combine(DIR_BACKUP_MAFILES);
 
     public static ObservableCollection<Mafile> MaFiles { get; private set; } = [];
 
@@ -180,7 +183,7 @@ public static class Storage
     {
         var sourcePath = MafilesStorageHelper.GetOrUpdateMafilePath(data);
         var fileName = Path.GetFileNameWithoutExtension(data.Filename!);
-        var destinationPathBase = Path.Combine(DIR_REMOVED_MAFILES, fileName);
+        var destinationPathBase = Path.Combine(RemovedMafilesDirectory, fileName);
         var destinationPathFinal = Path.ChangeExtension(destinationPathBase, MafileNamingStrategy.DEF_EXTENSION);
         var i = 0;
         while (File.Exists(destinationPathFinal))
@@ -210,8 +213,8 @@ public static class Storage
 
     public static void WriteBackup(string accountName, string data)
     {
-        Directory.CreateDirectory(DIR_BACKUP_MAFILES);
-        File.WriteAllText(Path.Combine(DIR_BACKUP_MAFILES, accountName + MafileNamingStrategy.DEF_EXTENSION), data);
+        Directory.CreateDirectory(BackupMafilesDirectory);
+        File.WriteAllText(Path.Combine(BackupMafilesDirectory, accountName + MafileNamingStrategy.DEF_EXTENSION), data);
     }
 
     public static async Task<MafilesBulkRenameResult> RenameMafiles(bool loginAsFileName,

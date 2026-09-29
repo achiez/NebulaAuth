@@ -162,6 +162,46 @@
         "es": "Actualización disponible. Haz clic en 'by achies' para comprobar",
         "tr": "Güncelleme mevcut. Kontrol etmek için 'by achies' tıklayın",
         "kk": "Жаңарту қолжетімді. Тексеру үшін 'by achies' басыңыз"
+      },
+      "Updated": {
+        "en": "NebulaAuth was updated to version {0}",
+        "ru": "NebulaAuth обновлён до версии {0}",
+        "zh": "NebulaAuth 已更新到版本 {0}",
+        "uk": "NebulaAuth оновлено до версії {0}",
+        "fr": "NebulaAuth a été mis à jour vers la version {0}",
+        "es": "NebulaAuth se actualizó a la versión {0}",
+        "tr": "NebulaAuth {0} sürümüne güncellendi",
+        "kk": "NebulaAuth {0} нұсқасына жаңартылды"
+      },
+      "Downloaded": {
+        "en": "Update {0} is downloaded and ready to install",
+        "ru": "Обновление {0} загружено и готово к установке",
+        "zh": "更新 {0} 已下载，可以安装",
+        "uk": "Оновлення {0} завантажено й готове до встановлення",
+        "fr": "La mise à jour {0} est téléchargée et prête à être installée",
+        "es": "La actualización {0} se descargó y está lista para instalarse",
+        "tr": "{0} güncellemesi indirildi ve yüklenmeye hazır",
+        "kk": "{0} жаңартуы жүктелді және орнатуға дайын"
+      },
+      "DownloadFailed": {
+        "en": "The update could not be downloaded",
+        "ru": "Не удалось загрузить обновление",
+        "zh": "无法下载更新",
+        "uk": "Не вдалося завантажити оновлення",
+        "fr": "Impossible de télécharger la mise à jour",
+        "es": "No se pudo descargar la actualización",
+        "tr": "Güncelleme indirilemedi",
+        "kk": "Жаңартуды жүктеу мүмкін болмады"
+      },
+      "OpenDialog": {
+        "en": "Details",
+        "ru": "Подробнее",
+        "zh": "详情",
+        "uk": "Докладніше",
+        "fr": "Détails",
+        "es": "Detalles",
+        "tr": "Ayrıntılar",
+        "kk": "Толығырақ"
       }
     }
   }

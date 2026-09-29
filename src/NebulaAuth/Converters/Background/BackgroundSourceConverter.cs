@@ -4,12 +4,13 @@ using System.IO;
 using Avalonia.Data.Converters;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using NebulaAuth.Core;
 using NebulaAuth.Model;
 
 namespace NebulaAuth.Converters.Background;
 
 /// <summary>
-///     BackgroundMode -> Bitmap. Custom: <c>Background.png</c> in the current directory (portable layout),
+///     BackgroundMode -> Bitmap. Custom: <c>Background.png</c> in the data folder (<see cref="DataRoot" />),
 ///     otherwise (or when that file is missing/unreadable) the embedded default background.
 /// </summary>
 public class BackgroundSourceConverter : IValueConverter
@@ -24,12 +25,13 @@ public class BackgroundSourceConverter : IValueConverter
 
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is BackgroundMode.Custom && File.Exists(CUSTOM_BACKGROUND_FILE))
+        var customFile = value is BackgroundMode.Custom ? DataRoot.Combine(CUSTOM_BACKGROUND_FILE) : null;
+        if (customFile != null && File.Exists(customFile))
         {
             try
             {
                 // Read into memory so the file is not locked and a replaced file is picked up on the next conversion
-                using var stream = new MemoryStream(File.ReadAllBytes(Path.GetFullPath(CUSTOM_BACKGROUND_FILE)));
+                using var stream = new MemoryStream(File.ReadAllBytes(customFile));
                 return Bitmap.DecodeToWidth(stream, DECODE_WIDTH);
             }
             catch (Exception ex)

@@ -12,6 +12,8 @@ using Avalonia.Threading;
 using NebulaAuth.Core;
 using NebulaAuth.Model;
 using NebulaAuth.Model.Exceptions;
+using NebulaAuth.Utility;
+using NebulaAuth.View;
 using NebulaAuth.ViewModel;
 using NLog;
 
@@ -53,6 +55,19 @@ public partial class App : Application
             // Let the splash render before the (partly synchronous) initialization starts
             await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
+            if (DataRoot.TranslocatedApp is { } translocatedApp)
+            {
+                await ShowTranslocationAsync(splashScreen, translocatedApp);
+                splashScreen.Close();
+                desktop.Shutdown();
+                return;
+            }
+
+            if (!DataRoot.IsWritable(DataRoot.Path, out var error))
+            {
+                throw new DataFolderNotWritableException(DataRoot.Path, error);
+            }
+
             await Shell.Initialize();
             var mainWindow = new MainWindow();
             desktop.MainWindow = mainWindow;
@@ -68,6 +83,28 @@ public partial class App : Application
         {
             await FailStartupAsync(desktop, splashScreen, ex);
         }
+    }
+
+    // Settings (language, theme) live in the data folder, which is not resolved in this state
+    private static void InitUiWithoutSettings()
+    {
+        LocManager.Init();
+        LocManager.SetApplicationLocalization(LanguageUtility.DetectPreferredLanguage());
+        ThemeManager.ApplyTheme("DefaultTheme");
+    }
+
+    /// <summary>
+    ///     macOS runs a translocated copy of the app: no data folder is used (anything next to the temporary copy is not
+    ///     the user's folder). Explains how to move the app; the app exits when the window closes.
+    /// </summary>
+    private static async Task ShowTranslocationAsync(Window splashScreen, string appPath)
+    {
+        InitUiWithoutSettings();
+        Shell.Logger.Warn("Not started: {rule}", DataRoot.Rule);
+        splashScreen.Hide();
+        var window = new TranslocationWindow(appPath);
+        window.Show();
+        await window.Completion;
     }
 
     // Must never throw: the startup task is not observed, so an exception escaping from here would leave the process
@@ -87,6 +124,19 @@ public partial class App : Application
             if (ex is CantAlignTimeException)
             {
                 BestEffort(() => msg = LocManager.Get("CantAlignTimeError") ?? msg);
+            }
+            else if (ex is DataFolderNotWritableException notWritable)
+            {
+                BestEffort(() =>
+                {
+                    // Thrown before Shell.Initialize: the settings (language) are not loaded yet
+                    LocManager.Init();
+                    LocManager.SetApplicationLocalization(LanguageUtility.DetectPreferredLanguage());
+                });
+                msg = LocManager.GetOrDefault(
+                          "NebulaAuth can't write to its data folder. Move the program to a folder your user account can write to (for example, inside your user folder), or allow writing to this folder:",
+                          "DataFolderDialog", "NotWritable") + Environment.NewLine + Environment.NewLine +
+                      notWritable.Folder + Environment.NewLine + Environment.NewLine + notWritable.InnerException?.Message;
             }
 
             // Visible when started from a terminal (Linux / macOS), also if the error window below cannot be shown

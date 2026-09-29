@@ -18,6 +18,17 @@
 		<PredefinedCulturesOnly>false</PredefinedCulturesOnly>
 	</PropertyGroup>
 
+	<!--
+		Release packages are published self-contained per RID (win-x64, linux-x64, osx-x64, osx-arm64) by
+		.github/workflows/publish.yml and packed with Velopack. The .NET runtime ships with the app because the 1.x updater
+		only unpacks a ZIP and cannot install .NET 10. Single-file and trimming stay off: Velopack replaces the whole
+		"current" folder, and trimming breaks reflection-based code (XAML, JSON, localization).
+	-->
+	<PropertyGroup>
+		<PublishSingleFile>false</PublishSingleFile>
+		<PublishTrimmed>false</PublishTrimmed>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="12.1.3" />
 		<PackageReference Include="Avalonia.Desktop" Version="12.1.3" />
@@ -34,6 +45,8 @@
 		<PackageReference Include="CodingSeb.Localization.JsonFileLoader" Version="1.4.0" />
 		<PackageReference Include="NLog" Version="5.5.0" />
 		<PackageReference Include="NLog.Extensions.Logging" Version="5.5.0" />
+		<!-- Pinned: the update flow (portable layout, signed feed wrapper, apply/restart) was verified with this version -->
+		<PackageReference Include="Velopack" Version="1.2.158" />
 	</ItemGroup>
 
 	<ItemGroup>

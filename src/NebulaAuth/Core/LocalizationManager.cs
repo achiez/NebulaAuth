@@ -41,8 +41,15 @@ public static class LocManager
     }
 
 
+    private static bool _initialized;
+
+    /// <summary>
+    ///     Loads the translation files once (the data folder choice needs them before <c>Shell.Initialize</c>).
+    /// </summary>
     public static void Init()
     {
+        if (_initialized) return;
+        _initialized = true;
         Loc.Instance.LogOutMissingTranslations = true;
 
         LocalizationLoader.Instance.FileLanguageLoaders.Add(new JsonFileLoader());

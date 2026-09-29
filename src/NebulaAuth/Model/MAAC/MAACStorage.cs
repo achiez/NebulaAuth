@@ -86,19 +86,21 @@ public static class MAACStorage
             Save();
     }
 
+    private static string FilePath => DataRoot.Combine("maac.json");
+
     public static void Save()
     {
         var json = JsonConvert.SerializeObject(Clients, Formatting.Indented);
-        File.WriteAllText("maac.json", json);
+        File.WriteAllText(FilePath, json);
     }
 
     public static void Initialize()
     {
         MultiAccountAutoConfirmer.Clients.CollectionChanged += ClientsOnCollectionChanged;
-        if (!File.Exists("maac.json")) return;
+        if (!File.Exists(FilePath)) return;
         try
         {
-            var json = File.ReadAllText("maac.json");
+            var json = File.ReadAllText(FilePath);
             var clients = JsonConvert.DeserializeObject<Dictionary<string, StoredClient>>(json) ?? [];
             foreach (var (fileName, storedClient) in clients)
             {

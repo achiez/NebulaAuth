@@ -10,17 +10,7 @@ namespace NebulaAuth.View.Dialogs;
 public partial class UpdateDialog : UserControl
 {
     /// <summary>
-    ///     Installed version without trailing zero parts ("1.8.3.0" -> "1.8.3").
-    /// </summary>
-    public static readonly FuncValueConverter<Version?, string?> VersionTextConverter = new(v =>
-    {
-        if (v == null) return null;
-        if (v.Revision > 0) return v.ToString();
-        return v.Build >= 0 ? v.ToString(3) : v.ToString(2);
-    });
-
-    /// <summary>
-    ///     URL without the scheme, for the caption under "Update now".
+    ///     URL without the scheme, for the captions (release page, manual package).
     /// </summary>
     public static readonly FuncValueConverter<string?, string?> UrlTextConverter = new(url =>
     {

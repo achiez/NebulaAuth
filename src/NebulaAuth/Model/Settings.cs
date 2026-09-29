@@ -23,9 +23,11 @@ public partial class Settings : ObservableObject
         {ThemeType.Shadcn, "ShadcnTheme"}
     };
 
+    private static string FilePath => DataRoot.Combine("settings.json");
+
     static Settings()
     {
-        if (!File.Exists("settings.json"))
+        if (!File.Exists(FilePath))
         {
             Instance = new Settings();
             Instance.PropertyChanged += SettingsOnPropertyChanged;
@@ -44,7 +46,7 @@ public partial class Settings : ObservableObject
 
         try
         {
-            var json = File.ReadAllText("settings.json");
+            var json = File.ReadAllText(FilePath);
             var settings = JsonConvert.DeserializeObject<Settings>(json) ?? throw new NullReferenceException();
             Instance = settings;
         }
@@ -72,7 +74,7 @@ public partial class Settings : ObservableObject
     public static void Save()
     {
         var json = JsonConvert.SerializeObject(Instance, Formatting.Indented);
-        File.WriteAllText("settings.json", json);
+        File.WriteAllText(FilePath, json);
     }
 
     public static void ResetThemeDefaults()

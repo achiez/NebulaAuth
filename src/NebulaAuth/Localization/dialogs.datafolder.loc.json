@@ -1,0 +1,116 @@
+{
+  "DataFolderDialog": {
+    "NotWritable": {
+      "en": "NebulaAuth can't write to its data folder. Move the program to a folder your user account can write to (for example, inside your user folder), or allow writing to this folder:",
+      "ru": "NebulaAuth не может записывать в папку с данными. Перенесите программу в папку, куда у вашей учётной записи есть права на запись (например, в папку пользователя), или разрешите запись в эту папку:",
+      "zh": "NebulaAuth 无法写入其数据文件夹。请将程序移动到当前账户可写的文件夹（例如用户文件夹内），或允许写入此文件夹：",
+      "uk": "NebulaAuth не може записувати в папку з даними. Перенесіть програму в папку, де ваш обліковий запис має право на запис (наприклад, у папку користувача), або дозвольте запис у цю папку:",
+      "fr": "NebulaAuth ne peut pas écrire dans son dossier de données. Déplacez le programme dans un dossier accessible en écriture pour votre compte (par exemple dans votre dossier utilisateur) ou autorisez l'écriture dans ce dossier :",
+      "es": "NebulaAuth no puede escribir en su carpeta de datos. Mueve el programa a una carpeta en la que tu cuenta pueda escribir (por ejemplo, dentro de tu carpeta de usuario) o permite la escritura en esta carpeta:",
+      "tr": "NebulaAuth veri klasörüne yazamıyor. Programı hesabınızın yazabildiği bir klasöre (örneğin kullanıcı klasörünüze) taşıyın veya bu klasöre yazmaya izin verin:",
+      "kk": "NebulaAuth деректер қалтасына жаза алмайды. Бағдарламаны тіркелгіңіз жаза алатын қалтаға (мысалы, пайдаланушы қалтасына) жылжытыңыз немесе осы қалтаға жазуға рұқсат беріңіз:"
+    }
+  },
+  "TranslocationDialog": {
+    "Title": {
+      "en": "Move NebulaAuth out of Downloads",
+      "ru": "Переместите NebulaAuth из «Загрузок»",
+      "zh": "请将 NebulaAuth 移出“下载”文件夹",
+      "uk": "Перемістіть NebulaAuth із «Завантажень»",
+      "fr": "Déplacez NebulaAuth hors de Téléchargements",
+      "es": "Mueve NebulaAuth fuera de Descargas",
+      "tr": "NebulaAuth'u İndirilenler klasöründen taşıyın",
+      "kk": "NebulaAuth-ты «Жүктеулер» қалтасынан жылжытыңыз"
+    },
+    "Description": {
+      "en": "macOS started NebulaAuth from a temporary read-only copy because NebulaAuth.app is still in the folder it was downloaded or unpacked to (usually Downloads). From there NebulaAuth can't find its data folder or install updates, so it won't start.",
+      "ru": "macOS запустила NebulaAuth из временной копии только для чтения, потому что NebulaAuth.app всё ещё лежит в папке, куда его скачали или распаковали (обычно «Загрузки»). Оттуда NebulaAuth не может найти свою папку с данными и устанавливать обновления, поэтому не запустится.",
+      "zh": "由于 NebulaAuth.app 仍位于下载或解压时所在的文件夹（通常是“下载”），macOS 从一个临时的只读副本启动了 NebulaAuth。在这种状态下，NebulaAuth 无法找到其数据文件夹，也无法安装更新，因此不会启动。",
+      "uk": "macOS запустила NebulaAuth із тимчасової копії лише для читання, бо NebulaAuth.app досі лежить у папці, куди його завантажили або розпакували (зазвичай «Завантаження»). Звідти NebulaAuth не може знайти свою папку з даними й встановлювати оновлення, тому не запуститься.",
+      "fr": "macOS a lancé NebulaAuth depuis une copie temporaire en lecture seule, car NebulaAuth.app se trouve encore dans le dossier où il a été téléchargé ou décompressé (généralement Téléchargements). Depuis cet emplacement, NebulaAuth ne peut ni trouver son dossier de données ni installer les mises à jour : il ne démarrera donc pas.",
+      "es": "macOS inició NebulaAuth desde una copia temporal de solo lectura porque NebulaAuth.app sigue en la carpeta donde se descargó o descomprimió (normalmente Descargas). Desde ahí NebulaAuth no puede encontrar su carpeta de datos ni instalar actualizaciones, así que no se iniciará.",
+      "tr": "NebulaAuth.app hâlâ indirildiği veya açıldığı klasörde (genellikle İndirilenler) olduğu için macOS, NebulaAuth'u geçici ve salt okunur bir kopyadan başlattı. Bu konumdan NebulaAuth veri klasörünü bulamaz ve güncelleme yükleyemez, bu yüzden başlatılmayacak.",
+      "kk": "NebulaAuth.app әлі жүктелген немесе ашылған қалтада (әдетте «Жүктеулер») тұрғандықтан, macOS NebulaAuth-ты уақытша, тек оқуға арналған көшірмеден іске қосты. Ол жерден NebulaAuth деректер қалтасын таба алмайды және жаңартуларды орната алмайды, сондықтан іске қосылмайды."
+    },
+    "Step1": {
+      "en": "Click Quit.",
+      "ru": "Нажмите «Выйти».",
+      "zh": "点击“退出”。",
+      "uk": "Натисніть «Вийти».",
+      "fr": "Cliquez sur « Quitter ».",
+      "es": "Haz clic en «Salir».",
+      "tr": "\"Çık\" düğmesine tıklayın.",
+      "kk": "«Шығу» түймесін басыңыз."
+    },
+    "Step2": {
+      "en": "In Finder, drag NebulaAuth.app from Downloads to Applications or to a folder of your choice (for example, a separate folder for each copy).",
+      "ru": "В Finder перетащите NebulaAuth.app из «Загрузок» в «Программы» или в любую свою папку (например, в отдельную папку для каждой копии).",
+      "zh": "在访达中，将 NebulaAuth.app 从“下载”拖到“应用程序”或您自选的文件夹（例如为每个副本单独建一个文件夹）。",
+      "uk": "У Finder перетягніть NebulaAuth.app із «Завантажень» у «Програми» або в будь-яку свою папку (наприклад, в окрему папку для кожної копії).",
+      "fr": "Dans le Finder, faites glisser NebulaAuth.app de Téléchargements vers Applications ou vers un dossier de votre choix (par exemple, un dossier distinct pour chaque copie).",
+      "es": "En Finder, arrastra NebulaAuth.app de Descargas a Aplicaciones o a una carpeta que elijas (por ejemplo, una carpeta distinta para cada copia).",
+      "tr": "Finder'da NebulaAuth.app'i İndirilenler'den Uygulamalar'a veya seçtiğiniz bir klasöre (örneğin her kopya için ayrı bir klasöre) sürükleyin.",
+      "kk": "Finder-де NebulaAuth.app файлын «Жүктеулер» қалтасынан «Бағдарламалар» қалтасына немесе өзіңіз таңдаған қалтаға (мысалы, әр көшірме үшін бөлек қалтаға) сүйреңіз."
+    },
+    "Step3": {
+      "en": "Start NebulaAuth again from its new location.",
+      "ru": "Снова запустите NebulaAuth из нового места.",
+      "zh": "从新位置再次启动 NebulaAuth。",
+      "uk": "Знову запустіть NebulaAuth із нового місця.",
+      "fr": "Relancez NebulaAuth depuis son nouvel emplacement.",
+      "es": "Vuelve a iniciar NebulaAuth desde su nueva ubicación.",
+      "tr": "NebulaAuth'u yeni konumundan yeniden başlatın.",
+      "kk": "NebulaAuth-ты жаңа орнынан қайта іске қосыңыз."
+    },
+    "NothingChanged": {
+      "en": "Your accounts are not affected: NebulaAuth has not opened or changed any of your data.",
+      "ru": "Ваши аккаунты не затронуты: NebulaAuth не открывал и не изменял ваши данные.",
+      "zh": "您的账户不受影响：NebulaAuth 没有打开或更改您的任何数据。",
+      "uk": "Ваші акаунти не зачеплено: NebulaAuth не відкривав і не змінював ваші дані.",
+      "fr": "Vos comptes ne sont pas affectés : NebulaAuth n'a ni ouvert ni modifié vos données.",
+      "es": "Tus cuentas no se ven afectadas: NebulaAuth no ha abierto ni modificado tus datos.",
+      "tr": "Hesaplarınız etkilenmedi: NebulaAuth verilerinizi açmadı veya değiştirmedi.",
+      "kk": "Аккаунттарыңызға әсер етілмеді: NebulaAuth деректеріңізді ашқан да, өзгерткен де жоқ."
+    },
+    "PortableHint": {
+      "en": "To keep this copy's data next to the app (a separate, portable copy), create a folder named \"NebulaAuth Data\" next to NebulaAuth.app.",
+      "ru": "Чтобы данные этой копии хранились рядом с приложением (отдельная портативная копия), создайте рядом с NebulaAuth.app папку с именем «NebulaAuth Data».",
+      "zh": "如需让此副本的数据保存在应用旁边（独立的便携副本），请在 NebulaAuth.app 旁边创建名为“NebulaAuth Data”的文件夹。",
+      "uk": "Щоб дані цієї копії зберігалися поруч із застосунком (окрема портативна копія), створіть поруч із NebulaAuth.app папку з назвою «NebulaAuth Data».",
+      "fr": "Pour garder les données de cette copie à côté de l'application (copie portable distincte), créez un dossier nommé « NebulaAuth Data » à côté de NebulaAuth.app.",
+      "es": "Para guardar los datos de esta copia junto a la aplicación (una copia portátil independiente), crea una carpeta llamada «NebulaAuth Data» junto a NebulaAuth.app.",
+      "tr": "Bu kopyanın verilerini uygulamanın yanında tutmak için (ayrı, taşınabilir bir kopya), NebulaAuth.app'in yanında \"NebulaAuth Data\" adlı bir klasör oluşturun.",
+      "kk": "Осы көшірменің деректерін қолданбаның жанында сақтау үшін (бөлек портативті көшірме), NebulaAuth.app жанында «NebulaAuth Data» деп аталатын қалта жасаңыз."
+    },
+    "StartedFrom": {
+      "en": "Started from:",
+      "ru": "Запущено из:",
+      "zh": "启动位置：",
+      "uk": "Запущено з:",
+      "fr": "Lancé depuis :",
+      "es": "Iniciado desde:",
+      "tr": "Başlatıldığı konum:",
+      "kk": "Іске қосылған орын:"
+    },
+    "OpenDownloads": {
+      "en": "Open Downloads",
+      "ru": "Открыть «Загрузки»",
+      "zh": "打开“下载”",
+      "uk": "Відкрити «Завантаження»",
+      "fr": "Ouvrir Téléchargements",
+      "es": "Abrir Descargas",
+      "tr": "İndirilenler'i aç",
+      "kk": "«Жүктеулер» қалтасын ашу"
+    },
+    "Quit": {
+      "en": "Quit",
+      "ru": "Выйти",
+      "zh": "退出",
+      "uk": "Вийти",
+      "fr": "Quitter",
+      "es": "Salir",
+      "tr": "Çık",
+      "kk": "Шығу"
+    }
+  }
+}

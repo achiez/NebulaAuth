@@ -173,7 +173,7 @@ public static class Motion
     private static void Trace(string text)
     {
         if (Environment.GetEnvironmentVariable("NEBULA_MOTION_TRACE") != "1") return;
-        System.IO.File.AppendAllText("motion-trace.log", $"{TraceClock.ElapsedMilliseconds,6} {text}{Environment.NewLine}");
+        System.IO.File.AppendAllText(global::NebulaAuth.Core.DataRoot.Combine("motion-trace.log"), $"{TraceClock.ElapsedMilliseconds,6} {text}{Environment.NewLine}");
     }
 #endif
 
