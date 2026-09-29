@@ -67,6 +67,7 @@ public partial class MainVM : ObservableObject
             LoginAgainCommand.NotifyCanExecuteChanged();
             RemoveAuthenticatorCommand.NotifyCanExecuteChanged();
             ConfirmLoginCommand.NotifyCanExecuteChanged();
+            QrLoginCommand.NotifyCanExecuteChanged();
             RemoveProxyCommand.NotifyCanExecuteChanged();
         }
     }

@@ -47,6 +47,8 @@
 		<PackageReference Include="NLog.Extensions.Logging" Version="5.5.0" />
 		<!-- Pinned: the update flow (portable layout, signed feed wrapper, apply/restart) was verified with this version -->
 		<PackageReference Include="Velopack" Version="1.2.158" />
+		<!-- Managed QR decoder (core library only, no platform bindings): Steam login QR from a clipboard image -->
+		<PackageReference Include="ZXing.Net" Version="0.16.11" />
 	</ItemGroup>
 
 	<ItemGroup>

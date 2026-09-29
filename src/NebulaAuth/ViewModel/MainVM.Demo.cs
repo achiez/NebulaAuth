@@ -1,7 +1,16 @@
 #if DEBUG
 using System;
+using System.Globalization;
+using System.Threading.Tasks;
+using NebulaAuth.Core;
+using NebulaAuth.Model;
 using NebulaAuth.Model.Entities;
 using NebulaAuth.Model.MAAC;
+using NebulaAuth.Model.QrLogin;
+using NebulaAuth.View.Dialogs;
+using SteamLib.Core.StatusCodes;
+using SteamLib.Exceptions;
+using SteamLib.ProtoCore.Enums;
 using SteamLib.SteamMobile.Confirmations;
 
 namespace NebulaAuth.ViewModel;
@@ -77,6 +86,47 @@ public partial class MainVM
             client.SetStatus(statuses[i]);
             mafile.LinkedClient = client;
         }
+    }
+
+    /// <summary>
+    ///     Debug builds only (MainWindow, NEBULA_MAIN_DEMO=qr / qrrisk / qrminimal / qrexpired): the QR login of the selected
+    ///     account up to the first network call. The clipboard image is read, decoded and validated by the real code
+    ///     (errors show the real snackbars); then, instead of GetAuthSessionInfo, fake session info fills the real dialog.
+    ///     No request is sent: "qrexpired" shows the snackbar of an expired QR code, approving shows a demo snackbar.
+    /// </summary>
+    internal async Task DemoQrLogin(string scenario)
+    {
+        var mafile = SelectedMafile;
+        if (mafile == null) return;
+        var demoDuration = TimeSpan.FromSeconds(30);
+        var qr = await QrClipboardReader.ReadAsync();
+        if (!qr.Success)
+        {
+            SnackbarController.SendSnackbar(GetQrLoginErrorText(qr.Error), demoDuration);
+            return;
+        }
+
+        var clientId = qr.Challenge.ClientId.ToString(CultureInfo.InvariantCulture);
+        Shell.Logger.Info("Demo QR login: version {version}, client id ...{tail}", qr.Challenge.Version,
+            clientId[^Math.Min(4, clientId.Length)..]);
+        if (scenario == "qrexpired")
+        {
+            var expired = new SteamStatusCodeException(SteamStatusCode.FromEResult(EResult.Expired));
+            if (IsQrLoginExpired(expired))
+                SnackbarController.SendSnackbar(GetLocalization("QrLoginExpired"), demoDuration);
+            return;
+        }
+
+        var info = QrLoginDialog.DemoSessionInfo(scenario switch
+        {
+            "qrrisk" => "risk",
+            "qrminimal" => "minimal",
+            _ => null
+        });
+        var approved = await DialogsController.ShowQrLoginDialog(CreateQrLoginDialogVM(mafile, info));
+        SnackbarController.SendSnackbar(
+            approved ? "Demo: approval not sent (no network)" : LocManager.GetCommonOrDefault("Canceled", "Canceled"),
+            demoDuration);
     }
 }
 #endif

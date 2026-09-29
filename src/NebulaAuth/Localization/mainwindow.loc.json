@@ -410,6 +410,86 @@
         "es": "Grupo creado",
         "tr": "Grup oluşturuldu",
         "kk": "Топ құрылды"
+      },
+      "QrLoginConfirmed": {
+        "en": "Login request confirmed",
+        "ru": "Запрос на вход подтверждён",
+        "uk": "Запит на вхід підтверджено",
+        "zh": "登录请求已确认",
+        "fr": "Demande de connexion confirmée",
+        "es": "Solicitud de inicio de sesión confirmada",
+        "tr": "Giriş isteği onaylandı",
+        "kk": "Кіру сұранысы расталды"
+      },
+      "QrLoginExpired": {
+        "en": "The QR code is invalid or expired. Refresh the Steam login page and copy the new QR code",
+        "ru": "QR-код недействителен или истёк. Обновите страницу входа Steam и скопируйте новый QR-код",
+        "uk": "QR-код недійсний або прострочений. Оновіть сторінку входу Steam і скопіюйте новий QR-код",
+        "zh": "二维码无效或已过期。请刷新 Steam 登录页面并复制新的二维码",
+        "fr": "Le code QR est invalide ou a expiré. Actualisez la page de connexion Steam et copiez le nouveau code QR",
+        "es": "El código QR no es válido o ha caducado. Actualiza la página de inicio de sesión de Steam y copia el nuevo código QR",
+        "tr": "QR kodu geçersiz veya süresi dolmuş. Steam giriş sayfasını yenileyin ve yeni QR kodunu kopyalayın",
+        "kk": "QR-код жарамсыз немесе мерзімі өткен. Steam кіру бетін жаңартып, жаңа QR-кодты көшіріңіз"
+      },
+      "QrLoginClipboardEmpty": {
+        "en": "The clipboard is empty. Copy a screenshot of the QR code from the Steam login page",
+        "ru": "Буфер обмена пуст. Скопируйте скриншот QR-кода со страницы входа Steam",
+        "uk": "Буфер обміну порожній. Скопіюйте знімок екрана з QR-кодом зі сторінки входу Steam",
+        "zh": "剪贴板为空。请复制 Steam 登录页面上二维码的截图",
+        "fr": "Le presse-papiers est vide. Copiez une capture d'écran du code QR de la page de connexion Steam",
+        "es": "El portapapeles está vacío. Copia una captura de pantalla del código QR de la página de inicio de sesión de Steam",
+        "tr": "Pano boş. Steam giriş sayfasındaki QR kodunun ekran görüntüsünü kopyalayın",
+        "kk": "Алмасу буфері бос. Steam кіру бетіндегі QR-кодтың скриншотын көшіріңіз"
+      },
+      "QrLoginNoImage": {
+        "en": "The clipboard contains no image. Copy a screenshot of the QR code from the Steam login page",
+        "ru": "В буфере обмена нет изображения. Скопируйте скриншот QR-кода со страницы входа Steam",
+        "uk": "У буфері обміну немає зображення. Скопіюйте знімок екрана з QR-кодом зі сторінки входу Steam",
+        "zh": "剪贴板中没有图片。请复制 Steam 登录页面上二维码的截图",
+        "fr": "Le presse-papiers ne contient pas d'image. Copiez une capture d'écran du code QR de la page de connexion Steam",
+        "es": "El portapapeles no contiene ninguna imagen. Copia una captura de pantalla del código QR de la página de inicio de sesión de Steam",
+        "tr": "Panoda resim yok. Steam giriş sayfasındaki QR kodunun ekran görüntüsünü kopyalayın",
+        "kk": "Алмасу буферінде сурет жоқ. Steam кіру бетіндегі QR-кодтың скриншотын көшіріңіз"
+      },
+      "QrLoginInvalidImage": {
+        "en": "Could not read the image from the clipboard",
+        "ru": "Не удалось прочитать изображение из буфера обмена",
+        "uk": "Не вдалося прочитати зображення з буфера обміну",
+        "zh": "无法读取剪贴板中的图片",
+        "fr": "Impossible de lire l'image du presse-papiers",
+        "es": "No se pudo leer la imagen del portapapeles",
+        "tr": "Panodaki resim okunamadı",
+        "kk": "Алмасу буферіндегі суретті оқу мүмкін болмады"
+      },
+      "QrLoginNoQrCode": {
+        "en": "No QR code found in the image",
+        "ru": "QR-код на изображении не найден",
+        "uk": "QR-код на зображенні не знайдено",
+        "zh": "图片中未找到二维码",
+        "fr": "Aucun code QR trouvé dans l'image",
+        "es": "No se encontró ningún código QR en la imagen",
+        "tr": "Resimde QR kodu bulunamadı",
+        "kk": "Суреттен QR-код табылмады"
+      },
+      "QrLoginMultipleQrCodes": {
+        "en": "The image contains several QR codes. Copy a screenshot with only the Steam login QR code",
+        "ru": "На изображении несколько QR-кодов. Скопируйте скриншот только с QR-кодом входа Steam",
+        "uk": "На зображенні кілька QR-кодів. Скопіюйте знімок екрана лише з QR-кодом входу Steam",
+        "zh": "图片中有多个二维码。请只复制包含 Steam 登录二维码的截图",
+        "fr": "L'image contient plusieurs codes QR. Copiez une capture d'écran contenant uniquement le code QR de connexion Steam",
+        "es": "La imagen contiene varios códigos QR. Copia una captura de pantalla solo con el código QR de inicio de sesión de Steam",
+        "tr": "Resimde birden fazla QR kodu var. Yalnızca Steam giriş QR kodunu içeren bir ekran görüntüsü kopyalayın",
+        "kk": "Суретте бірнеше QR-код бар. Тек Steam кіру QR-коды бар скриншотты көшіріңіз"
+      },
+      "QrLoginNotSteamQrCode": {
+        "en": "This is not a Steam login QR code",
+        "ru": "Это не QR-код входа Steam",
+        "uk": "Це не QR-код входу Steam",
+        "zh": "这不是 Steam 登录二维码",
+        "fr": "Ce n'est pas un code QR de connexion Steam",
+        "es": "Este no es un código QR de inicio de sesión de Steam",
+        "tr": "Bu bir Steam giriş QR kodu değil",
+        "kk": "Бұл Steam кіру QR-коды емес"
       }
 
     }
@@ -592,6 +672,16 @@
           "es": "Iniciar sesión",
           "tr": "Giriş yap",
           "kk": "Кіру"
+        },
+        "QrLogin": {
+          "en": "Login via QR",
+          "ru": "Войти по QR",
+          "uk": "Увійти за QR",
+          "zh": "扫码登录",
+          "fr": "Connexion par QR",
+          "es": "Entrar con QR",
+          "tr": "QR ile giriş",
+          "kk": "QR арқылы кіру"
         }
       }
     },
@@ -767,6 +857,26 @@
         "es": "Confirmar inicio de sesión",
         "tr": "Girişi onayla",
         "kk": "Кіруді растау"
+      },
+      "QrLogin": {
+        "en": "Login via QR",
+        "ru": "Войти по QR",
+        "uk": "Увійти за QR",
+        "zh": "扫码登录",
+        "fr": "Connexion par QR",
+        "es": "Entrar con QR",
+        "tr": "QR ile giriş",
+        "kk": "QR арқылы кіру"
+      },
+      "QrLoginHint": {
+        "en": "Copy a screenshot of the QR code from the Steam login page, then click here to approve the login with the selected account",
+        "ru": "Скопируйте скриншот QR-кода со страницы входа Steam и нажмите, чтобы разрешить вход выбранным аккаунтом",
+        "uk": "Скопіюйте знімок екрана з QR-кодом зі сторінки входу Steam і натисніть, щоб дозволити вхід вибраним акаунтом",
+        "zh": "复制 Steam 登录页面上二维码的截图，然后点击此处用所选账户批准登录",
+        "fr": "Copiez une capture d'écran du code QR de la page de connexion Steam, puis cliquez ici pour autoriser la connexion avec le compte sélectionné",
+        "es": "Copia una captura de pantalla del código QR de la página de inicio de sesión de Steam y haz clic aquí para aprobar el inicio de sesión con la cuenta seleccionada",
+        "tr": "Steam giriş sayfasındaki QR kodunun ekran görüntüsünü kopyalayın, ardından seçili hesapla girişi onaylamak için buraya tıklayın",
+        "kk": "Steam кіру бетіндегі QR-кодтың скриншотын көшіріп, таңдалған аккаунтпен кіруге рұқсат беру үшін осында басыңыз"
       }
     },
     "Footer": {

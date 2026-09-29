@@ -1,0 +1,176 @@
+{
+  "QrLoginDialog": {
+    "Title": {
+      "en": "Sign in to",
+      "ru": "Вход в аккаунт",
+      "uk": "Вхід в акаунт",
+      "zh": "登录账户",
+      "fr": "Connexion à",
+      "es": "Iniciar sesión en",
+      "tr": "Hesaba giriş:",
+      "kk": "Аккаунтқа кіру:"
+    },
+    "Description": {
+      "en": "Steam asks to sign in to this account on the device that shows the QR code. Approve only if it is your own login.",
+      "ru": "Steam запрашивает вход в этот аккаунт на устройстве, где показан QR-код. Разрешайте, только если это ваш вход.",
+      "uk": "Steam запитує вхід у цей акаунт на пристрої, де показано QR-код. Дозволяйте, лише якщо це ваш вхід.",
+      "zh": "Steam 请求在显示该二维码的设备上登录此账户。仅在这是您本人的登录时才批准。",
+      "fr": "Steam demande à se connecter à ce compte sur l'appareil qui affiche le code QR. N'autorisez que s'il s'agit de votre propre connexion.",
+      "es": "Steam solicita iniciar sesión en esta cuenta en el dispositivo que muestra el código QR. Apruébalo solo si es tu propio inicio de sesión.",
+      "tr": "Steam, QR kodunu gösteren cihazda bu hesaba giriş yapılmasını istiyor. Yalnızca giriş size aitse onaylayın.",
+      "kk": "Steam QR-код көрсетілген құрылғыда осы аккаунтқа кіруді сұрап тұр. Бұл сіздің кіруіңіз болса ғана рұқсат беріңіз."
+    },
+    "Account": {
+      "en": "Account",
+      "ru": "Аккаунт",
+      "uk": "Акаунт",
+      "zh": "账户",
+      "fr": "Compte",
+      "es": "Cuenta",
+      "tr": "Hesap",
+      "kk": "Аккаунт"
+    },
+    "Device": {
+      "en": "Device",
+      "ru": "Устройство",
+      "uk": "Пристрій",
+      "zh": "设备",
+      "fr": "Appareil",
+      "es": "Dispositivo",
+      "tr": "Cihaz",
+      "kk": "Құрылғы"
+    },
+    "IpAddress": {
+      "en": "IP address",
+      "ru": "IP-адрес",
+      "uk": "IP-адреса",
+      "zh": "IP 地址",
+      "fr": "Adresse IP",
+      "es": "Dirección IP",
+      "tr": "IP adresi",
+      "kk": "IP мекенжайы"
+    },
+    "Location": {
+      "en": "Location",
+      "ru": "Местоположение",
+      "uk": "Місцезнаходження",
+      "zh": "位置",
+      "fr": "Emplacement",
+      "es": "Ubicación",
+      "tr": "Konum",
+      "kk": "Орналасқан жері"
+    },
+    "Unknown": {
+      "en": "Unknown",
+      "ru": "Неизвестно",
+      "uk": "Невідомо",
+      "zh": "未知",
+      "fr": "Inconnu",
+      "es": "Desconocido",
+      "tr": "Bilinmiyor",
+      "kk": "Белгісіз"
+    },
+    "Approve": {
+      "en": "Approve login",
+      "ru": "Разрешить вход",
+      "uk": "Дозволити вхід",
+      "zh": "批准登录",
+      "fr": "Autoriser la connexion",
+      "es": "Aprobar inicio de sesión",
+      "tr": "Girişe izin ver",
+      "kk": "Кіруге рұқсат беру"
+    },
+    "SafetyHint": {
+      "en": "Never approve a QR code that someone sent you or asked you to scan: it gives them full access to the account.",
+      "ru": "Никогда не подтверждайте QR-код, который вам прислали или попросили отсканировать: это даст полный доступ к аккаунту.",
+      "uk": "Ніколи не підтверджуйте QR-код, який вам надіслали або попросили відсканувати: це дасть повний доступ до акаунта.",
+      "zh": "切勿批准他人发给您或要求您扫描的二维码：这会让对方完全访问该账户。",
+      "fr": "N'autorisez jamais un code QR qu'on vous a envoyé ou demandé de scanner : cela donne un accès complet au compte.",
+      "es": "Nunca apruebes un código QR que alguien te haya enviado o te haya pedido escanear: le da acceso completo a la cuenta.",
+      "tr": "Size gönderilen veya taramanız istenen bir QR kodunu asla onaylamayın: bu, hesaba tam erişim sağlar.",
+      "kk": "Сізге жіберілген немесе сканерлеуді сұраған QR-кодты ешқашан растамаңыз: бұл аккаунтқа толық қол жеткізу береді."
+    },
+    "RiskHeader": {
+      "en": "Steam flagged this login attempt:",
+      "ru": "Steam отметил этот вход:",
+      "uk": "Steam позначив цей вхід:",
+      "zh": "Steam 标记了此次登录：",
+      "fr": "Steam a signalé cette tentative de connexion :",
+      "es": "Steam marcó este intento de inicio de sesión:",
+      "tr": "Steam bu giriş denemesini işaretledi:",
+      "kk": "Steam бұл кіруді белгіледі:"
+    },
+    "RiskLocationMismatch": {
+      "en": "The request comes from a different location than this device",
+      "ru": "Запрос отправлен из другого местоположения, чем это устройство",
+      "uk": "Запит надіслано з іншого місця, ніж цей пристрій",
+      "zh": "请求来自与本设备不同的位置",
+      "fr": "La demande provient d'un autre emplacement que cet appareil",
+      "es": "La solicitud proviene de una ubicación distinta a la de este dispositivo",
+      "tr": "İstek bu cihazdan farklı bir konumdan geliyor",
+      "kk": "Сұраныс осы құрылғыдан басқа жерден жіберілген"
+    },
+    "RiskNoPriorHistory": {
+      "en": "No previous logins from this device or location",
+      "ru": "С этого устройства или места раньше не входили",
+      "uk": "З цього пристрою або місця раніше не входили",
+      "zh": "此前从未从该设备或位置登录",
+      "fr": "Aucune connexion précédente depuis cet appareil ou cet emplacement",
+      "es": "No hay inicios de sesión previos desde este dispositivo o ubicación",
+      "tr": "Bu cihazdan veya konumdan daha önce giriş yapılmamış",
+      "kk": "Бұл құрылғыдан немесе жерден бұрын кірмеген"
+    },
+    "RiskHighUsage": {
+      "en": "Unusually many login attempts",
+      "ru": "Необычно много попыток входа",
+      "uk": "Незвично багато спроб входу",
+      "zh": "登录尝试次数异常多",
+      "fr": "Nombre inhabituel de tentatives de connexion",
+      "es": "Número inusual de intentos de inicio de sesión",
+      "tr": "Olağandışı sayıda giriş denemesi",
+      "kk": "Кіру әрекеттері әдеттен тыс көп"
+    },
+    "Platform": {
+      "SteamClient": {
+        "en": "Steam client",
+        "ru": "Клиент Steam",
+        "uk": "Клієнт Steam",
+        "zh": "Steam 客户端",
+        "fr": "Client Steam",
+        "es": "Cliente de Steam",
+        "tr": "Steam istemcisi",
+        "kk": "Steam клиенті"
+      },
+      "WebBrowser": {
+        "en": "Web browser",
+        "ru": "Браузер",
+        "uk": "Браузер",
+        "zh": "网页浏览器",
+        "fr": "Navigateur web",
+        "es": "Navegador web",
+        "tr": "Web tarayıcısı",
+        "kk": "Веб-браузер"
+      },
+      "MobileApp": {
+        "en": "Mobile app",
+        "ru": "Мобильное приложение",
+        "uk": "Мобільний застосунок",
+        "zh": "移动应用",
+        "fr": "Application mobile",
+        "es": "Aplicación móvil",
+        "tr": "Mobil uygulama",
+        "kk": "Мобильді қосымша"
+      },
+      "Unknown": {
+        "en": "Unknown device",
+        "ru": "Неизвестное устройство",
+        "uk": "Невідомий пристрій",
+        "zh": "未知设备",
+        "fr": "Appareil inconnu",
+        "es": "Dispositivo desconocido",
+        "tr": "Bilinmeyen cihaz",
+        "kk": "Белгісіз құрылғы"
+      }
+    }
+  }
+}

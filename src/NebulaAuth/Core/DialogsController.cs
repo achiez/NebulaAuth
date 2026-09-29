@@ -190,6 +190,13 @@ public static class DialogsController
         await DialogService.Show(dialog);
     }
 
+    /// <summary>QR login confirmation. True = approve; false = cancel (also the X and Esc).</summary>
+    public static async Task<bool> ShowQrLoginDialog(QrLoginDialogVM vm)
+    {
+        var result = await DialogService.Show(new QrLoginDialog {DataContext = vm});
+        return result is true;
+    }
+
     #region CommonDialogs
 
     public static async Task<bool> ShowConfirmCancelDialog(string? msg = null)

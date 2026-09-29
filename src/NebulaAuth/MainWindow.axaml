@@ -288,6 +288,9 @@
                                               Command="{Binding RefreshSessionCommand}" />
                                     <MenuItem Header="{Tr MainWindow.Menu.Account.LoginAgain}"
                                               Command="{Binding LoginAgainCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="{Tr MainWindow.Menu.Account.QrLogin}"
+                                              Command="{Binding QrLoginCommand}" />
                                 </MenuItem>
                             </Menu>
 
@@ -590,12 +593,27 @@
                                     </ItemsControl>
                                 </ScrollViewer>
 
-                                <Button Grid.Row="3" Margin="4"
-                                        Theme="{DynamicResource BorderlessButton}"
-                                        HorizontalAlignment="Stretch"
-                                        FontSize="15"
-                                        Command="{Binding ConfirmLoginCommand}"
-                                        Content="{Tr MainWindow.RightPart.ConfirmLogin}" />
+                                <!-- Login actions: pending login request of the account / QR code screenshot on the clipboard
+                                     (Ctrl+V is the mafile paste, so the QR login has its own button). One centered line;
+                                     wraps to two lines when the texts do not fit (narrow window, long translations) -->
+                                <WrapPanel Grid.Row="3" Margin="4" ItemsAlignment="Center" ItemSpacing="8">
+                                    <Button Theme="{DynamicResource BorderlessButton}"
+                                            FontSize="15"
+                                            Command="{Binding ConfirmLoginCommand}">
+                                        <TextBlock Text="{Tr MainWindow.RightPart.ConfirmLogin}" TextTrimming="CharacterEllipsis" />
+                                    </Button>
+                                    <Button Theme="{DynamicResource BorderlessButton}"
+                                            FontSize="15"
+                                            ToolTip.Tip="{Tr MainWindow.RightPart.QrLoginHint}"
+                                            ToolTip.ShowDelay="300"
+                                            Command="{Binding QrLoginCommand}">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <mi:MaterialIcon Kind="QrcodeScan" IconSize="16" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Tr MainWindow.RightPart.QrLogin}" VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+                                    </Button>
+                                </WrapPanel>
                             </Grid>
                         </Border>
                     </Grid>

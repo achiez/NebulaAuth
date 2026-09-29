@@ -1,0 +1,87 @@
+<!--
+    QR login confirmation: the approving account and the login attempt reported by Steam (device, IP, location, risk
+    flags). Result: {x:True} = approve, {x:False} = cancel (nothing is sent). The approve button is not IsDefault: the
+    approval must be a deliberate click, Enter does not grant access to the account.
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:core="using:NebulaAuth.Core"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             xmlns:other="using:NebulaAuth.ViewModel.Other"
+             mc:Ignorable="d"
+             x:Class="NebulaAuth.View.Dialogs.QrLoginDialog"
+             x:DataType="other:QrLoginDialogVM"
+             MinWidth="400" MaxWidth="500">
+    <UserControl.Styles>
+        <Style Selector="Grid#Details > TextBlock.Label">
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+        <Style Selector="Grid#Details TextBlock.Value">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style Selector="Grid#Details TextBlock.Sub">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </UserControl.Styles>
+    <Grid RowDefinitions="Auto,Auto">
+        <nebulaAuth:DialogHeader Grid.Row="0"
+                                 IconKind="QrcodeScan"
+                                 Title="{Tr QrLoginDialog.Title}"
+                                 TitleAccent="{Binding AccountName}"
+                                 CloseParameter="{x:False}" />
+        <StackPanel Grid.Row="1" Classes="DialogBody">
+            <TextBlock Classes="DialogText" Text="{Tr QrLoginDialog.Description}" />
+
+            <Border Padding="14,12" CornerRadius="8" BorderThickness="1">
+                <Border.Background>
+                    <SolidColorBrush Color="{DynamicResource BaseContentColor}" Opacity="0.07" />
+                </Border.Background>
+                <Border.BorderBrush>
+                    <SolidColorBrush Color="{DynamicResource BaseContentColor}" Opacity="0.12" />
+                </Border.BorderBrush>
+                <Grid x:Name="Details" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto"
+                      ColumnSpacing="16" RowSpacing="10">
+                    <TextBlock Grid.Row="0" Grid.Column="0" Classes="Label" Text="{Tr QrLoginDialog.Account}" />
+                    <StackPanel Grid.Row="0" Grid.Column="1" Spacing="1">
+                        <TextBlock Classes="Value" Text="{Binding AccountName}" />
+                        <TextBlock Classes="Sub" Text="{Binding SteamId}" IsVisible="{Binding HasSteamId}" />
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Classes="Label" Text="{Tr QrLoginDialog.Device}" />
+                    <StackPanel Grid.Row="1" Grid.Column="1" Spacing="1">
+                        <TextBlock Classes="Value" Text="{Binding Device}" />
+                        <TextBlock Classes="Sub" Text="{Binding Platform}" IsVisible="{Binding ShowPlatform}" />
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Classes="Label" Text="{Tr QrLoginDialog.IpAddress}" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Classes="Value" Text="{Binding IpAddress}" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Classes="Label" Text="{Tr QrLoginDialog.Location}" />
+                    <TextBlock Grid.Row="3" Grid.Column="1" Classes="Value" Text="{Binding Location}" />
+                </Grid>
+            </Border>
+
+            <nebulaAuth:HintBox Text="{Binding HintText}" Severity="{Binding HintSeverity}" />
+
+            <StackPanel Classes="DialogActions">
+                <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                        Content="{Tr QrLoginDialog.Approve}"
+                        Command="{x:Static core:DialogService.CloseDialogCommand}"
+                        CommandParameter="{x:True}" />
+                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                        Content="{Tr Common.Cancel}"
+                        IsCancel="True"
+                        Command="{x:Static core:DialogService.CloseDialogCommand}"
+                        CommandParameter="{x:False}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>
