@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NebulaAuth.Core;
@@ -15,41 +16,33 @@ public partial class SetAccountPasswordsVM : ObservableObject
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(SetPasswordsCommand))]
     private string? _accountsPasswords;
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(SetEncryptionPasswordCommand))]
-    private string? _encryptionPassword;
-
+    /// <summary>
+    ///     Steam passwords can be saved only in an encrypted storage (separate encrypted password store, by Steam login).
+    /// </summary>
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(SetPasswordsCommand))]
-    private bool _isEncryptionPasswordSet;
+    private bool _canSavePasswords = SteamPasswords.CanSave;
+
+    /// <summary>
+    ///     The storage is encrypted, but saving Steam passwords is turned off in the settings (other hint, same link).
+    /// </summary>
+    [ObservableProperty] private bool _saveTurnedOff = SteamPasswords.IsTurnedOff;
 
     [ObservableProperty] private string? _tip;
 
-    public SetAccountPasswordsVM()
+    /// <summary>
+    ///     Closes this dialog and opens Settings → Encryption, where encryption is enabled.
+    /// </summary>
+    [RelayCommand]
+    private async Task OpenEncryptionSettings()
     {
-        _isEncryptionPasswordSet = PHandler.IsPasswordSet;
+        DialogService.Close();
+        // Only one dialog at a time: let the closed one end first
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+        await DialogsController.ShowSettingsDialog(SettingsVM.ENCRYPTION_TAB);
     }
-
-
-    [RelayCommand(CanExecute = nameof(SetEncryptionPasswordCanExecute))]
-    private void SetEncryptionPassword()
-    {
-        if (string.IsNullOrWhiteSpace(EncryptionPassword))
-        {
-            return;
-        }
-
-        Settings.Instance.IsPasswordSet = PHandler.SetPassword(EncryptionPassword);
-        IsEncryptionPasswordSet = PHandler.IsPasswordSet;
-        EncryptionPassword = null;
-    }
-
-    private bool SetEncryptionPasswordCanExecute()
-    {
-        return !string.IsNullOrWhiteSpace(EncryptionPassword);
-    }
-
 
     [RelayCommand(CanExecute = nameof(SetPasswordsCanExecute))]
-    private async Task SetPasswords()
+    private void SetPasswords()
     {
         Tip = null;
         var input = AccountsPasswords;
@@ -92,8 +85,12 @@ public partial class SetAccountPasswordsVM : ObservableObject
                     continue;
                 }
 
-                maf.Password = PHandler.Encrypt(password);
-                await Storage.UpdateMafileAsync(maf);
+                if (!SteamPasswords.TrySet(maf.AccountName, password))
+                {
+                    errors++;
+                    continue;
+                }
+
                 success++;
             }
             catch
@@ -114,7 +111,7 @@ public partial class SetAccountPasswordsVM : ObservableObject
 
     private bool SetPasswordsCanExecute()
     {
-        return !string.IsNullOrWhiteSpace(AccountsPasswords) && IsEncryptionPasswordSet;
+        return !string.IsNullOrWhiteSpace(AccountsPasswords) && CanSavePasswords;
     }
 
     [RelayCommand]

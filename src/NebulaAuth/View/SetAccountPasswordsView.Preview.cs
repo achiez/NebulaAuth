@@ -7,7 +7,7 @@ public partial class SetAccountPasswordsView
 {
     /// <summary>
     ///     Debug preview (NEBULA_PREVIEW=NebulaAuth.View.SetAccountPasswordsView, NEBULA_PREVIEW_ARG=state): default/"1"
-    ///     no encryption password set yet, empty accounts field; "2" encryption password already set. Suffix "f"
+    ///     plain storage (passwords can't be saved: hint + link to Settings → Encryption); "2" encrypted storage; "3" encrypted storage with saving turned off in the settings. Suffix "f"
     ///     pre-fills the accounts textbox with sample login:password lines; suffix "t" shows a sample result in the
     ///     HintBox. No network, no real accounts, no mafile storage access.
     /// </summary>
@@ -16,7 +16,8 @@ public partial class SetAccountPasswordsView
         arg = (arg ?? "1").Trim().ToLowerInvariant();
         var vm = new SetAccountPasswordsVM
         {
-            IsEncryptionPasswordSet = arg.Contains('2')
+            CanSavePasswords = arg.Contains('2'),
+            SaveTurnedOff = arg.Contains('3')
         };
         if (arg.Contains('f'))
         {

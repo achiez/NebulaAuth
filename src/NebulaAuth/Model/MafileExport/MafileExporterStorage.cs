@@ -95,7 +95,6 @@ public static class MafileExporterStorage
                 IncludeSessionData = true,
                 IncludeOtherInfo = true,
                 IncludeNebulaProxy = true,
-                IncludeNebulaPassword = true,
                 IncludeNebulaGroup = true,
                 Path = null
             },
@@ -109,7 +108,6 @@ public static class MafileExporterStorage
                 IncludeSessionData = false,
                 IncludeOtherInfo = false,
                 IncludeNebulaProxy = false,
-                IncludeNebulaPassword = false,
                 IncludeNebulaGroup = false,
                 Path = null
             }

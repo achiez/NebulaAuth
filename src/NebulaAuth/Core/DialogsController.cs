@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using NebulaAuth.Model;
 using NebulaAuth.Model.Entities;
+using NebulaAuth.Model.Mafiles.Protection;
 using NebulaAuth.Model.Update;
 using NebulaAuth.View;
 using NebulaAuth.View.Dialogs;
@@ -20,7 +21,7 @@ public static class DialogsController
         {
             UserName = username,
             Password = currentPassword ?? string.Empty,
-            SavePassword = PHandler.IsPasswordSet,
+            SavePassword = SteamPasswords.CanSave,
             ShowNoProxyWarning = showNoProxyWarning
         };
         var content = new LoginAgainDialog
@@ -188,6 +189,27 @@ public static class DialogsController
             DataContext = vm
         };
         await DialogService.Show(dialog);
+    }
+
+    /// <summary>
+    ///     Settings dialog opened on <paramref name="tab" /> (<see cref="SettingsVM.MAIN_TAB" />,
+    ///     <see cref="SettingsVM.ENCRYPTION_TAB" />...).
+    /// </summary>
+    public static async Task ShowSettingsDialog(int tab = SettingsVM.MAIN_TAB)
+    {
+        var vm = new SettingsVM {SelectedTab = tab};
+        await DialogService.Show(new SettingsView {DataContext = vm});
+    }
+
+    /// <summary>
+    ///     Storage files that were not loaded or not converted to the storage mode (name, reason, not protected); the
+    ///     current list of the storage when <paramref name="files" /> is null. Nothing happens while another dialog is open.
+    /// </summary>
+    public static async Task ShowSkippedFilesDialog(IEnumerable<SkippedFile>? files = null)
+    {
+        if (DialogService.IsDialogOpen) return;
+        files ??= MafileStorageService.Current.SkippedFiles;
+        await DialogService.Show(new SkippedFilesDialog {DataContext = new SkippedFilesVM(files)});
     }
 
     /// <summary>QR login confirmation. True = approve; false = cancel (also the X and Esc).</summary>

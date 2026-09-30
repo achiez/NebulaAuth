@@ -50,8 +50,14 @@ public partial class SessionHandler //API
 
         //Triggers PropertyChanged event for PortableMaClient handling session updated from MaClient
         mafile.SetSessionData((MobileSessionData) result);
-        if (PHandler.IsPasswordSet)
-            mafile.Password = savePassword ? PHandler.Encrypt(password) : null;
+        // Saved only in an encrypted storage (the dialogs offer it only then); otherwise the password was typed for this
+        // login only and is not kept
+        if (SteamPasswords.CanSave)
+        {
+            if (savePassword) SteamPasswords.TrySet(mafile.AccountName, password);
+            else SteamPasswords.Remove(mafile.AccountName);
+        }
+
         await Storage.UpdateMafileAsync(mafile);
     }
 }

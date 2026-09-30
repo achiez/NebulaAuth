@@ -9,6 +9,16 @@
       "es": "NebulaAuth no puede escribir en su carpeta de datos. Mueve el programa a una carpeta en la que tu cuenta pueda escribir (por ejemplo, dentro de tu carpeta de usuario) o permite la escritura en esta carpeta:",
       "tr": "NebulaAuth veri klasörüne yazamıyor. Programı hesabınızın yazabildiği bir klasöre (örneğin kullanıcı klasörünüze) taşıyın veya bu klasöre yazmaya izin verin:",
       "kk": "NebulaAuth деректер қалтасына жаза алмайды. Бағдарламаны тіркелгіңіз жаза алатын қалтаға (мысалы, пайдаланушы қалтасына) жылжытыңыз немесе осы қалтаға жазуға рұқсат беріңіз:"
+    },
+    "AlreadyRunning": {
+      "en": "NebulaAuth is already running with this data folder. Switch to the open NebulaAuth window (it may be minimized to the tray). Two copies of the program can't use the same accounts at the same time.",
+      "ru": "NebulaAuth уже запущен с этой папкой данных. Перейдите в открытое окно NebulaAuth (оно может быть свёрнуто в трей). Две копии программы не могут одновременно работать с одними и теми же аккаунтами.",
+      "zh": "NebulaAuth 已在使用此数据文件夹运行。请切换到已打开的 NebulaAuth 窗口（它可能已最小化到托盘）。程序的两个副本不能同时使用相同的账户。",
+      "uk": "NebulaAuth уже запущено з цією папкою даних. Перейдіть до відкритого вікна NebulaAuth (воно може бути згорнуте в трей). Дві копії програми не можуть одночасно працювати з тими самими акаунтами.",
+      "fr": "NebulaAuth est déjà en cours d'exécution avec ce dossier de données. Passez à la fenêtre NebulaAuth ouverte (elle est peut-être réduite dans la zone de notification). Deux copies du programme ne peuvent pas utiliser les mêmes comptes en même temps.",
+      "es": "NebulaAuth ya se está ejecutando con esta carpeta de datos. Cambia a la ventana de NebulaAuth abierta (puede estar minimizada en la bandeja). Dos copias del programa no pueden usar las mismas cuentas a la vez.",
+      "tr": "NebulaAuth bu veri klasörüyle zaten çalışıyor. Açık NebulaAuth penceresine geçin (sistem tepsisine küçültülmüş olabilir). Programın iki kopyası aynı hesapları aynı anda kullanamaz.",
+      "kk": "NebulaAuth осы деректер қалтасымен іске қосылып тұр. Ашық NebulaAuth терезесіне ауысыңыз (ол науаға кішірейтілген болуы мүмкін). Бағдарламаның екі көшірмесі бір аккаунттарды бір уақытта пайдалана алмайды."
     }
   },
   "TranslocationDialog": {

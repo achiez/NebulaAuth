@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -12,6 +13,7 @@ using Avalonia.Threading;
 using NebulaAuth.Core;
 using NebulaAuth.Model;
 using NebulaAuth.Model.Exceptions;
+using NebulaAuth.Model.Mafiles.Protection;
 using NebulaAuth.Utility;
 using NebulaAuth.View;
 using NebulaAuth.ViewModel;
@@ -68,13 +70,43 @@ public partial class App : Application
                 throw new DataFolderNotWritableException(DataRoot.Path, error);
             }
 
-            await Shell.Initialize();
+            // One process per data folder: a second one must not touch the storage (nor the settings / logs)
+            if (!DataRootLock.AcquireForProcess(DataRoot.Path))
+            {
+                await ShowAlreadyRunningAsync(splashScreen);
+                splashScreen.Close();
+                desktop.Shutdown(ALREADY_RUNNING_EXIT_CODE);
+                return;
+            }
+
+            Shell.InitializeBase();
+            // Readable "Copy mafile" copies of an encrypted storage left by the previous run
+            DecryptedMafileClipboard.SweepLeftovers();
+            // The storage is unlocked and reconciled before any mafile is read (accounts, MAAC, proxies)
+            switch (await StartupStorage.OpenAsync(splashScreen))
+            {
+                case StorageOpenResult.Cancelled:
+                    Shell.Logger.Info("Master password prompt cancelled: exit");
+                    splashScreen.Close();
+                    desktop.Shutdown();
+                    return;
+                case StorageOpenResult.Failed:
+                    splashScreen.Close();
+                    desktop.Shutdown(1);
+                    return;
+            }
+
+            await Shell.InitializeAccounts();
+            // The readable "Copy mafile" copy must not outlive the app
+            desktop.Exit += (_, _) => DecryptedMafileClipboard.OnAppExit();
             var mainWindow = new MainWindow();
             desktop.MainWindow = mainWindow;
             mainWindow.Show();
             // Hidden-to-tray main window is not closed, so the app keeps running until MainWindow closes or Exit
             desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
             splashScreen.Close();
+            // Files of the storage folders that were not loaded or not converted to the current mode (snackbar + badge)
+            StartupStorage.NotifySkippedFilesIfAny();
 #if DEBUG
             DebugPreview.TryShow();
 #endif
@@ -83,6 +115,34 @@ public partial class App : Application
         {
             await FailStartupAsync(desktop, splashScreen, ex);
         }
+    }
+
+    private const int ALREADY_RUNNING_EXIT_CODE = 3;
+
+    /// <summary>
+    ///     Another NebulaAuth process uses this data folder: explains it; the app exits when the window closes. The
+    ///     running instance owns the data folder: its settings.json is only read (language, theme), never written; without
+    ///     it the system language is used.
+    /// </summary>
+    private static async Task ShowAlreadyRunningAsync(Window splashScreen)
+    {
+        InitUiWithoutSettings();
+        // Loading existing settings only reads the file (a missing file would be created: not touched then)
+        BestEffort(() =>
+        {
+            if (!File.Exists(DataRoot.Combine("settings.json"))) return;
+            LocManager.SetApplicationLocalization(Settings.Instance.Language);
+            ThemeManager.ApplyTheme(Settings.Instance.GetTheme());
+        });
+        BestEffort(() => LogManager.GetLogger("Logger")
+            .Warn("Not started: another NebulaAuth process uses the data folder {dataRoot}", DataRoot.Path));
+        splashScreen.Hide();
+        var message = LocManager.GetOrDefault(
+                          "NebulaAuth is already running with this data folder. Switch to the open NebulaAuth window (it may be minimized to the tray). Two copies of the program can't use the same accounts at the same time.",
+                          "DataFolderDialog", "AlreadyRunning") + Environment.NewLine + Environment.NewLine +
+                      DataRoot.Path;
+        BestEffort(() => Console.Error.WriteLine(message));
+        await ShowStartupError(message, "NebulaAuth");
     }
 
     // Settings (language, theme) live in the data folder, which is not resolved in this state
@@ -124,6 +184,10 @@ public partial class App : Application
             if (ex is CantAlignTimeException)
             {
                 BestEffort(() => msg = LocManager.Get("CantAlignTimeError") ?? msg);
+            }
+            else if (ex is StorageAccessException storageError)
+            {
+                BestEffort(() => msg = StartupStorage.DescribeError(storageError));
             }
             else if (ex is DataFolderNotWritableException notWritable)
             {
@@ -204,7 +268,7 @@ public partial class App : Application
     }
 
     // Plain error window: the main window and its dialog host do not exist yet
-    private static Task ShowStartupError(string message)
+    private static Task ShowStartupError(string message, string title = "Error")
     {
         var tcs = new TaskCompletionSource();
         var okButton = new Button
@@ -231,7 +295,7 @@ public partial class App : Application
 
         var window = new Window
         {
-            Title = "Error",
+            Title = title,
             Width = 560,
             SizeToContent = SizeToContent.Height,
             MaxHeight = 600,

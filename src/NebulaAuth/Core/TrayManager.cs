@@ -126,6 +126,13 @@ public static class TrayManager
     private static void ExitApplication()
     {
         if (!Init) return;
+        if (StorageOperationLock.IsBusy)
+        {
+            ShowMainWindow();
+            SnackbarController.SendSnackbar(StorageOperationLock.BusyMessage);
+            return;
+        }
+
         // The icon is registered in TrayIcon.Icons of the application, Avalonia disposes it on exit
         _trayIcon.IsVisible = false;
         AppHost.Shutdown();

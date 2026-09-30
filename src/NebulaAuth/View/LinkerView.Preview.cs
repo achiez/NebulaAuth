@@ -15,7 +15,8 @@ public partial class LinkerView
     /// <summary>
     ///     Debug preview (NEBULA_PREVIEW=NebulaAuth.View.LinkerView). <paramref name="arg" /> = step number 1..7
     ///     (1 auth, 2 email auth code, 3 phone, 4 confirm email link, 5 SMS, 6 email code, 7 done) plus optional flags:
-    ///     "e" shows a sample error, "r" = retry text on step 4, "l" = step 1 while logging in (spinner).
+    ///     "e" shows a sample error, "r" = retry text on step 4, "l" = step 1 while logging in (spinner), "n" = step 1 with
+    ///     a Cyrillic password (keyboard layout hint).
     ///     Examples: "1e", "4r", "1l". No network: the preview steps are not connected to the linking flow.
     /// </summary>
     internal static object CreatePreview(string? arg)
@@ -34,7 +35,7 @@ public partial class LinkerView
             5 => new LinkAccountSmsStepVM("+7 *** ***-**-45") {SmsCode = "12345"},
             6 => new LinkAccountEmailCodeStepVM(),
             7 => new LinkAccountDoneStepVM("R12345", "76561199000000001"),
-            _ => CreateAuthPreviewStep(flags.Contains('l'))
+            _ => CreateAuthPreviewStep(flags.Contains('l'), flags.Contains('n'))
         };
         vm.CurrentStep = step;
         vm.Tip = step.Tip;
@@ -49,7 +50,7 @@ public partial class LinkerView
         return view;
     }
 
-    private static LinkAccountAuthStepVM CreateAuthPreviewStep(bool loggingIn)
+    private static LinkAccountAuthStepVM CreateAuthPreviewStep(bool loggingIn, bool nonLatinPassword)
     {
         var proxy = ProxyStorage.Proxies.Count > 0 ? ProxyStorage.Proxies.First() : (KeyValuePair<int, ProxyData>?) null;
         var step = new LinkAccountAuthStepVM(proxy)
@@ -57,6 +58,7 @@ public partial class LinkerView
             Login = "design_user",
             Callback = () => Task.Delay(Timeout.Infinite)
         };
+        if (nonLatinPassword) step.Password = "пароль123";
         if (loggingIn)
         {
             step.Password = "design_password";

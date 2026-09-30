@@ -6,6 +6,7 @@ using NebulaAuth.Core;
 using NebulaAuth.Model.MAAC;
 using NebulaAuth.Model.MafileExport;
 using NebulaAuth.Model.Mafiles;
+using NebulaAuth.Model.Mafiles.Protection;
 using NLog;
 using NLog.Extensions.Logging;
 using SteamLib.Core;
@@ -20,7 +21,11 @@ public static class Shell
     public static Logger Logger { get; private set; } = LogManager.GetLogger("Logger");
     public static ILogger ExtensionsLogger { get; private set; } = null!;
 
-    public static async Task Initialize()
+    /// <summary>
+    ///     First startup phase: logging, localization, error handlers. Nothing here reads mafiles; the storage is unlocked
+    ///     and reconciled after this (<see cref="MafileStorageService" />), then <see cref="InitializeAccounts" /> runs.
+    /// </summary>
+    public static void InitializeBase()
     {
         // log.log of 1.x versions (logs are in the "logs" folder now)
         File.Delete(DataRoot.Combine("log.log"));
@@ -35,7 +40,14 @@ public static class Shell
 
         var loggerFactory = new NLogLoggerFactory();
         ExtensionsLogger = loggerFactory.CreateLogger("Logger");
+    }
 
+    /// <summary>
+    ///     Second startup phase, after the storage is unlocked and prepared: loads the accounts and starts the services
+    ///     that use them (MAAC, proxies, exporter).
+    /// </summary>
+    public static async Task InitializeAccounts()
+    {
         try
         {
             await TimeAligner.AlignTimeAsync();

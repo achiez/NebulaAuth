@@ -31,6 +31,7 @@ public partial class Settings : ObservableObject
         {
             Instance = new Settings();
             Instance.PropertyChanged += SettingsOnPropertyChanged;
+            SteamPasswords.SavingEnabled = Instance.SaveSteamPasswords;
             try
             {
                 Instance.Language = LanguageUtility.DetectPreferredLanguage();
@@ -59,6 +60,7 @@ public partial class Settings : ObservableObject
         }
 
         Instance.PropertyChanged += SettingsOnPropertyChanged;
+        SteamPasswords.SavingEnabled = Instance.SaveSteamPasswords;
     }
 
 
@@ -102,7 +104,6 @@ public partial class Settings : ObservableObject
     // Persisted as "#AARRGGBB" (the format of existing settings.json files), null when unset
     [ObservableProperty] [property: JsonConverter(typeof(HexColorJsonConverter))]
     private Color? _iconColor;
-    [ObservableProperty] private bool _isPasswordSet;
     [ObservableProperty] private LocalizationLanguage _language = LocalizationLanguage.English;
     [ObservableProperty] private bool _confirmMafileImport = true;
     [ObservableProperty] private bool _allowAutoUpdate;
@@ -122,6 +123,18 @@ public partial class Settings : ObservableObject
 
     [ObservableProperty] private TimeSpan _maacErrorThreshold = TimeSpan.FromHours(3);
     [ObservableProperty] private TimeSpan _maacRetryInterval = TimeSpan.FromMinutes(15);
+
+    /// <summary>
+    ///     Steam passwords may be saved for automatic re-login (encrypted storage only). A missing field (older settings.json)
+    ///     means allowed. Turning it off is done by the Encryption settings, which also delete the saved passwords.
+    /// </summary>
+    [ObservableProperty] private bool _saveSteamPasswords = true;
+
+    partial void OnSaveSteamPasswordsChanged(bool value)
+    {
+        // Only the app settings drive the password store (a deserialized copy must not)
+        if (ReferenceEquals(this, Instance)) SteamPasswords.SavingEnabled = value;
+    }
 
     #endregion
 }

@@ -10,7 +10,8 @@ public partial class LoginAgainOnImportDialog
 {
     /// <summary>
     ///     Debug preview: NEBULA_PREVIEW_ARG "mafile-proxy" starts with the mafile's own proxy pre-selected
-    ///     (UseMafileProxy = true), otherwise a manual proxy list is shown with none selected.
+    ///     (UseMafileProxy = true), otherwise a manual proxy list is shown with none selected; "save" (comma separated)
+    ///     shows the "save password" option of an encrypted storage, "off" the hint of saving turned off in the settings.
     /// </summary>
     internal static object CreatePreview(string? arg)
     {
@@ -21,12 +22,17 @@ public partial class LoginAgainOnImportDialog
         };
 
         var mafile = new Mafile { AccountName = "demo_user" };
-        if (arg == "mafile-proxy")
+        if (arg?.Contains("mafile-proxy") == true)
         {
             mafile.Proxy = proxies[0];
         }
 
-        var vm = new LoginAgainOnImportVM(mafile, proxies) { Password = "hunter2" };
+        var vm = new LoginAgainOnImportVM(mafile, proxies)
+        {
+            Password = "hunter2",
+            CanSavePassword = arg?.Contains("save") == true,
+            SaveTurnedOff = arg?.Contains("off") == true
+        };
         return new LoginAgainOnImportDialog { DataContext = vm };
     }
 }

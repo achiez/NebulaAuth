@@ -1,12 +1,15 @@
 using System;
+using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Threading;
 using DialogHostAvalonia;
 using NebulaAuth.Core;
 using NebulaAuth.Model;
+using NebulaAuth.ViewModel.Other;
 
 namespace NebulaAuth.View;
 
@@ -31,6 +34,43 @@ public partial class SettingsView : UserControl
             slider.AddHandler(PointerPressedEvent, Slider_OnPointerPressed, RoutingStrategies.Tunnel, true);
             slider.AddHandler(PointerReleasedEvent, Slider_OnPointerReleased, RoutingStrategies.Tunnel, true);
         }
+    }
+
+    private EncryptionSettingsVM? _encryption;
+
+    protected override void OnDataContextChanged(EventArgs e)
+    {
+        base.OnDataContextChanged(e);
+        if (_encryption != null) _encryption.PropertyChanged -= Encryption_OnPropertyChanged;
+        _encryption = (DataContext as SettingsVM)?.Encryption;
+        if (_encryption != null) _encryption.PropertyChanged += Encryption_OnPropertyChanged;
+    }
+
+    protected override void OnLoaded(RoutedEventArgs e)
+    {
+        base.OnLoaded(e);
+        FocusEncryptionForm();
+    }
+
+    private void Encryption_OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(EncryptionSettingsVM.Page)) FocusEncryptionForm();
+    }
+
+    /// <summary>
+    ///     A password form of the Encryption tab starts with the focus in its first field (so typing goes there and the
+    ///     Caps Lock / layout hints apply at once).
+    /// </summary>
+    private void FocusEncryptionForm()
+    {
+        var box = _encryption?.Page switch
+        {
+            EncryptionPage.Enable => EnableNewPassword,
+            EncryptionPage.Change => ChangeCurrentPassword,
+            EncryptionPage.Disable when _encryption.DisableRequiresPassword => DisableCurrentPassword,
+            _ => null
+        };
+        if (box != null) Dispatcher.UIThread.Post(() => box.Focus(), DispatcherPriority.Loaded);
     }
 
     private void Slider_OnPointerPressed(object? sender, PointerPressedEventArgs e)

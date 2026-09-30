@@ -1,0 +1,1456 @@
+{
+  "StorageUnlock": {
+    "Title": {
+      "en": "Unlock NebulaAuth",
+      "ru": "Разблокировка NebulaAuth",
+      "zh": "解锁 NebulaAuth",
+      "uk": "Розблокування NebulaAuth",
+      "fr": "Déverrouiller NebulaAuth",
+      "es": "Desbloquear NebulaAuth",
+      "tr": "NebulaAuth kilidini aç",
+      "kk": "NebulaAuth құлпын ашу"
+    },
+    "ErrorHeader": {
+      "en": "Can't open the accounts",
+      "ru": "Не удаётся открыть аккаунты",
+      "zh": "无法打开账户",
+      "uk": "Не вдається відкрити акаунти",
+      "fr": "Impossible d'ouvrir les comptes",
+      "es": "No se pueden abrir las cuentas",
+      "tr": "Hesaplar açılamıyor",
+      "kk": "Аккаунттарды ашу мүмкін емес"
+    },
+    "Prompt": {
+      "en": "Your accounts are encrypted. Enter the master password to open them.",
+      "ru": "Ваши аккаунты зашифрованы. Введите мастер-пароль, чтобы открыть их.",
+      "zh": "您的账户已加密。请输入主密码以打开它们。",
+      "uk": "Ваші акаунти зашифровані. Введіть майстер-пароль, щоб відкрити їх.",
+      "fr": "Vos comptes sont chiffrés. Saisissez le mot de passe principal pour les ouvrir.",
+      "es": "Tus cuentas están cifradas. Introduce la contraseña maestra para abrirlas.",
+      "tr": "Hesaplarınız şifrelenmiş. Açmak için ana parolayı girin.",
+      "kk": "Аккаунттарыңыз шифрланған. Оларды ашу үшін бас құпиясөзді енгізіңіз."
+    },
+    "PasswordLabel": {
+      "en": "Master password",
+      "ru": "Мастер-пароль",
+      "zh": "主密码",
+      "uk": "Майстер-пароль",
+      "fr": "Mot de passe principal",
+      "es": "Contraseña maestra",
+      "tr": "Ana parola",
+      "kk": "Бас құпиясөз"
+    },
+    "Unlock": {
+      "en": "Unlock",
+      "ru": "Разблокировать",
+      "zh": "解锁",
+      "uk": "Розблокувати",
+      "fr": "Déverrouiller",
+      "es": "Desbloquear",
+      "tr": "Kilidi aç",
+      "kk": "Құлпын ашу"
+    },
+    "Quit": {
+      "en": "Quit",
+      "ru": "Выйти",
+      "zh": "退出",
+      "uk": "Вийти",
+      "fr": "Quitter",
+      "es": "Salir",
+      "tr": "Çık",
+      "kk": "Шығу"
+    },
+    "WrongPassword": {
+      "en": "Wrong master password. Try again.",
+      "ru": "Неверный мастер-пароль. Попробуйте ещё раз.",
+      "zh": "主密码错误，请重试。",
+      "uk": "Неправильний майстер-пароль. Спробуйте ще раз.",
+      "fr": "Mot de passe principal incorrect. Réessayez.",
+      "es": "Contraseña maestra incorrecta. Inténtalo de nuevo.",
+      "tr": "Ana parola yanlış. Tekrar deneyin.",
+      "kk": "Бас құпиясөз қате. Қайталап көріңіз."
+    },
+    "CorruptedStateTitle": {
+      "en": "The storage state file is damaged",
+      "ru": "Файл состояния хранилища повреждён",
+      "zh": "存储状态文件已损坏",
+      "uk": "Файл стану сховища пошкоджено",
+      "fr": "Le fichier d'état du stockage est endommagé",
+      "es": "El archivo de estado del almacenamiento está dañado",
+      "tr": "Depolama durum dosyası bozuk",
+      "kk": "Қойма күйінің файлы зақымдалған"
+    },
+    "CorruptedState": {
+      "en": "storage-state.json can't be read, so NebulaAuth can't tell whether your accounts are encrypted. Restore the file from a backup of the data folder.",
+      "ru": "Не удаётся прочитать storage-state.json, поэтому NebulaAuth не может определить, зашифрованы ли ваши аккаунты. Восстановите файл из резервной копии папки данных.",
+      "zh": "无法读取 storage-state.json，因此 NebulaAuth 无法判断您的账户是否已加密。请从数据文件夹的备份中恢复该文件。",
+      "uk": "Не вдається прочитати storage-state.json, тому NebulaAuth не може визначити, чи зашифровані ваші акаунти. Відновіть файл з резервної копії папки даних.",
+      "fr": "storage-state.json est illisible : NebulaAuth ne peut pas savoir si vos comptes sont chiffrés. Restaurez ce fichier depuis une sauvegarde du dossier de données.",
+      "es": "No se puede leer storage-state.json, por lo que NebulaAuth no sabe si tus cuentas están cifradas. Restaura el archivo desde una copia de seguridad de la carpeta de datos.",
+      "tr": "storage-state.json okunamıyor, bu yüzden NebulaAuth hesaplarınızın şifreli olup olmadığını anlayamıyor. Dosyayı veri klasörünün bir yedeğinden geri yükleyin.",
+      "kk": "storage-state.json оқылмайды, сондықтан NebulaAuth аккаунттарыңыздың шифрланғанын анықтай алмайды. Файлды деректер қалтасының сақтық көшірмесінен қалпына келтіріңіз."
+    },
+    "UnsupportedVersionTitle": {
+      "en": "Newer storage format",
+      "ru": "Более новый формат хранилища",
+      "zh": "较新的存储格式",
+      "uk": "Новіший формат сховища",
+      "fr": "Format de stockage plus récent",
+      "es": "Formato de almacenamiento más reciente",
+      "tr": "Daha yeni depolama biçimi",
+      "kk": "Қойманың жаңарақ пішімі"
+    },
+    "UnsupportedVersion": {
+      "en": "The accounts were encrypted by a newer version of NebulaAuth. Update NebulaAuth to open them.",
+      "ru": "Аккаунты зашифрованы более новой версией NebulaAuth. Обновите NebulaAuth, чтобы открыть их.",
+      "zh": "这些账户由更新版本的 NebulaAuth 加密。请更新 NebulaAuth 以打开它们。",
+      "uk": "Акаунти зашифровані новішою версією NebulaAuth. Оновіть NebulaAuth, щоб відкрити їх.",
+      "fr": "Les comptes ont été chiffrés par une version plus récente de NebulaAuth. Mettez NebulaAuth à jour pour les ouvrir.",
+      "es": "Las cuentas se cifraron con una versión más reciente de NebulaAuth. Actualiza NebulaAuth para abrirlas.",
+      "tr": "Hesaplar NebulaAuth'un daha yeni bir sürümüyle şifrelenmiş. Açmak için NebulaAuth'u güncelleyin.",
+      "kk": "Аккаунттар NebulaAuth-тың жаңарақ нұсқасымен шифрланған. Оларды ашу үшін NebulaAuth-ты жаңартыңыз."
+    },
+    "StateMissingTitle": {
+      "en": "The storage state file is missing",
+      "ru": "Файл состояния хранилища отсутствует",
+      "zh": "存储状态文件丢失",
+      "uk": "Файл стану сховища відсутній",
+      "fr": "Le fichier d'état du stockage est manquant",
+      "es": "Falta el archivo de estado del almacenamiento",
+      "tr": "Depolama durum dosyası eksik",
+      "kk": "Қойма күйінің файлы жоқ"
+    },
+    "StateMissing": {
+      "en": "storage-state.json is missing, but the data folder contains encrypted mafiles. NebulaAuth can't open them without it and will not change any file. Restore storage-state.json from a backup of the data folder (or rename storage-state.json.prev to storage-state.json if it is there). If the encrypted files are not yours, move them out of the maFiles, maFiles_removed and maFiles_backup folders.",
+      "ru": "Файл storage-state.json отсутствует, но в папке с данными есть зашифрованные mafile. Без него NebulaAuth не может их открыть и не будет менять ни один файл. Восстановите storage-state.json из резервной копии папки с данными (или переименуйте storage-state.json.prev в storage-state.json, если он есть). Если зашифрованные файлы не ваши, переместите их из папок maFiles, maFiles_removed и maFiles_backup.",
+      "zh": "storage-state.json 丢失，但数据文件夹中有已加密的 mafile。没有该文件，NebulaAuth 无法打开它们，也不会更改任何文件。请从数据文件夹的备份中恢复 storage-state.json（如果存在 storage-state.json.prev，也可以将其重命名为 storage-state.json）。如果这些加密文件不是您的，请将它们移出 maFiles、maFiles_removed 和 maFiles_backup 文件夹。",
+      "uk": "Файл storage-state.json відсутній, але в папці з даними є зашифровані mafile. Без нього NebulaAuth не може їх відкрити й не змінюватиме жодного файлу. Відновіть storage-state.json із резервної копії папки з даними (або перейменуйте storage-state.json.prev на storage-state.json, якщо він є). Якщо зашифровані файли не ваші, перемістіть їх із папок maFiles, maFiles_removed і maFiles_backup.",
+      "fr": "Le fichier storage-state.json est manquant, mais le dossier de données contient des mafiles chiffrés. Sans lui, NebulaAuth ne peut pas les ouvrir et ne modifiera aucun fichier. Restaurez storage-state.json à partir d'une sauvegarde du dossier de données (ou renommez storage-state.json.prev en storage-state.json s'il existe). Si les fichiers chiffrés ne sont pas les vôtres, déplacez-les hors des dossiers maFiles, maFiles_removed et maFiles_backup.",
+      "es": "Falta storage-state.json, pero la carpeta de datos contiene mafiles cifrados. Sin él, NebulaAuth no puede abrirlos y no modificará ningún archivo. Restaura storage-state.json desde una copia de seguridad de la carpeta de datos (o cambia el nombre de storage-state.json.prev a storage-state.json si existe). Si los archivos cifrados no son tuyos, sácalos de las carpetas maFiles, maFiles_removed y maFiles_backup.",
+      "tr": "storage-state.json eksik, ancak veri klasöründe şifrelenmiş mafile dosyaları var. NebulaAuth bu dosya olmadan onları açamaz ve hiçbir dosyayı değiştirmez. storage-state.json dosyasını veri klasörünün bir yedeğinden geri yükleyin (varsa storage-state.json.prev dosyasının adını storage-state.json olarak değiştirin). Şifrelenmiş dosyalar size ait değilse onları maFiles, maFiles_removed ve maFiles_backup klasörlerinden taşıyın.",
+      "kk": "storage-state.json файлы жоқ, бірақ деректер қалтасында шифрланған mafile файлдары бар. Онсыз NebulaAuth оларды аша алмайды және ешбір файлды өзгертпейді. storage-state.json файлын деректер қалтасының сақтық көшірмесінен қалпына келтіріңіз (егер storage-state.json.prev болса, оның атын storage-state.json етіп өзгертіңіз). Шифрланған файлдар сіздікі болмаса, оларды maFiles, maFiles_removed және maFiles_backup қалталарынан жылжытыңыз."
+    },
+    "NothingChanged": {
+      "en": "No file was changed: your mafiles stay where they are.",
+      "ru": "Ни один файл не изменён: ваши мафайлы остаются на месте.",
+      "zh": "没有任何文件被更改：您的 mafile 保持原样。",
+      "uk": "Жоден файл не змінено: ваші мафайли залишаються на місці.",
+      "fr": "Aucun fichier n'a été modifié : vos mafiles restent en place.",
+      "es": "No se ha modificado ningún archivo: tus mafiles siguen en su sitio.",
+      "tr": "Hiçbir dosya değiştirilmedi: mafile dosyalarınız yerinde duruyor.",
+      "kk": "Ешбір файл өзгертілмеді: mafile файлдарыңыз орнында қалды."
+    },
+    "Details": {
+      "en": "Details",
+      "ru": "Подробности",
+      "zh": "详细信息",
+      "uk": "Подробиці",
+      "fr": "Détails",
+      "es": "Detalles",
+      "tr": "Ayrıntılar",
+      "kk": "Толығырақ"
+    },
+    "OpenDataFolder": {
+      "en": "Open data folder",
+      "ru": "Открыть папку данных",
+      "zh": "打开数据文件夹",
+      "uk": "Відкрити папку даних",
+      "fr": "Ouvrir le dossier de données",
+      "es": "Abrir la carpeta de datos",
+      "tr": "Veri klasörünü aç",
+      "kk": "Деректер қалтасын ашу"
+    },
+    "ProgressEncrypting": {
+      "en": "Finishing encryption",
+      "ru": "Завершение шифрования",
+      "zh": "正在完成加密",
+      "uk": "Завершення шифрування",
+      "fr": "Fin du chiffrement",
+      "es": "Finalizando el cifrado",
+      "tr": "Şifreleme tamamlanıyor",
+      "kk": "Шифрлау аяқталуда"
+    },
+    "ProgressDecrypting": {
+      "en": "Finishing decryption",
+      "ru": "Завершение расшифровки",
+      "zh": "正在完成解密",
+      "uk": "Завершення розшифрування",
+      "fr": "Fin du déchiffrement",
+      "es": "Finalizando el descifrado",
+      "tr": "Şifre çözme tamamlanıyor",
+      "kk": "Шифрды ашу аяқталуда"
+    },
+    "ProgressText": {
+      "en": "The last change of the encryption mode was interrupted. NebulaAuth finishes it before the accounts are opened.",
+      "ru": "Последняя смена режима шифрования была прервана. NebulaAuth завершит её до открытия аккаунтов.",
+      "zh": "上一次加密模式更改被中断。NebulaAuth 会在打开账户之前完成它。",
+      "uk": "Останню зміну режиму шифрування було перервано. NebulaAuth завершить її до відкриття акаунтів.",
+      "fr": "Le dernier changement du mode de chiffrement a été interrompu. NebulaAuth le termine avant d'ouvrir les comptes.",
+      "es": "El último cambio del modo de cifrado se interrumpió. NebulaAuth lo termina antes de abrir las cuentas.",
+      "tr": "Şifreleme modunun son değişikliği yarıda kaldı. NebulaAuth hesapları açmadan önce bunu tamamlıyor.",
+      "kk": "Шифрлау режимінің соңғы өзгерісі үзілді. NebulaAuth аккаунттарды ашпас бұрын оны аяқтайды."
+    },
+    "ProgressHint": {
+      "en": "Don't close NebulaAuth. If it is interrupted again, it continues on the next start; no mafile is lost.",
+      "ru": "Не закрывайте NebulaAuth. Если процесс снова прервётся, он продолжится при следующем запуске; мафайлы не потеряются.",
+      "zh": "请不要关闭 NebulaAuth。如果再次中断，将在下次启动时继续；不会丢失任何 mafile。",
+      "uk": "Не закривайте NebulaAuth. Якщо процес знову перерветься, він продовжиться під час наступного запуску; мафайли не загубляться.",
+      "fr": "Ne fermez pas NebulaAuth. En cas de nouvelle interruption, l'opération reprendra au prochain démarrage ; aucun mafile n'est perdu.",
+      "es": "No cierres NebulaAuth. Si se interrumpe de nuevo, continuará en el próximo inicio; no se pierde ningún mafile.",
+      "tr": "NebulaAuth'u kapatmayın. Yeniden yarıda kalırsa bir sonraki başlatmada devam eder; hiçbir mafile kaybolmaz.",
+      "kk": "NebulaAuth-ты жаппаңыз. Қайта үзілсе, келесі іске қосқанда жалғасады; бірде-бір mafile жоғалмайды."
+    },
+    "ProgressCount": {
+      "en": "{0} of {1}",
+      "ru": "{0} из {1}",
+      "zh": "{0} / {1}",
+      "uk": "{0} з {1}",
+      "fr": "{0} sur {1}",
+      "es": "{0} de {1}",
+      "tr": "{0} / {1}",
+      "kk": "{0} / {1}"
+    },
+    "UnfinishedEncryptingTitle": {
+      "en": "Encryption is not finished",
+      "ru": "Шифрование не завершено",
+      "zh": "加密未完成",
+      "uk": "Шифрування не завершено",
+      "fr": "Le chiffrement n'est pas terminé",
+      "es": "El cifrado no ha terminado",
+      "tr": "Şifreleme tamamlanmadı",
+      "kk": "Шифрлау аяқталмады"
+    },
+    "UnfinishedDecryptingTitle": {
+      "en": "Decryption is not finished",
+      "ru": "Расшифровка не завершена",
+      "zh": "解密未完成",
+      "uk": "Розшифрування не завершено",
+      "fr": "Le déchiffrement n'est pas terminé",
+      "es": "El descifrado no ha terminado",
+      "tr": "Şifre çözme tamamlanmadı",
+      "kk": "Шифрды шешу аяқталмады"
+    },
+    "UnfinishedEncrypting": {
+      "en": "Enabling encryption could not be finished: {0} file(s) could not be encrypted and stay unchanged. The accounts open now; the operation is retried on the next start or with Resume in Settings → Encryption.",
+      "ru": "Не удалось завершить включение шифрования: не удалось зашифровать файлов — {0}, они остались без изменений. Аккаунты сейчас откроются; операция повторится при следующем запуске или по кнопке «Возобновить» в разделе «Настройки → Шифрование».",
+      "zh": "无法完成启用加密：有 {0} 个文件无法加密，保持不变。账户现在将打开；下次启动时或在“设置 → 加密”中点击“继续”会重试该操作。",
+      "uk": "Не вдалося завершити ввімкнення шифрування: не вдалося зашифрувати файлів — {0}, вони лишилися без змін. Акаунти зараз відкриються; операцію буде повторено під час наступного запуску або кнопкою «Відновити» в розділі «Налаштування → Шифрування».",
+      "fr": "L'activation du chiffrement n'a pas pu être terminée : {0} fichier(s) n'ont pas pu être chiffrés et restent inchangés. Les comptes s'ouvrent maintenant ; l'opération sera relancée au prochain démarrage ou avec Reprendre dans Paramètres → Chiffrement.",
+      "es": "No se pudo terminar de activar el cifrado: {0} archivo(s) no se pudieron cifrar y siguen sin cambios. Las cuentas se abren ahora; la operación se reintenta en el próximo inicio o con Reanudar en Configuración → Cifrado.",
+      "tr": "Şifrelemeyi etkinleştirme tamamlanamadı: {0} dosya şifrelenemedi ve değişmeden kaldı. Hesaplar şimdi açılıyor; işlem bir sonraki başlatmada veya Ayarlar → Şifreleme'deki Sürdür ile yeniden denenir.",
+      "kk": "Шифрлауды қосу аяқталмады: {0} файлды шифрлау мүмкін болмады, олар өзгеріссіз қалды. Аккаунттар қазір ашылады; операция келесі іске қосқанда немесе «Баптаулар → Шифрлау» бөліміндегі «Жалғастыру» арқылы қайталанады."
+    },
+    "UnfinishedDecrypting": {
+      "en": "Disabling encryption could not be finished: {0} file(s) are still encrypted with your key or could not be checked (for example, another program has them open). Encryption stays on and the master password is still needed until they are decrypted. Close the program that uses them or fix the listed files, then use Resume in Settings → Encryption. The accounts open now.",
+      "ru": "Не удалось завершить выключение шифрования: файлов, которые всё ещё зашифрованы вашим ключом или не удалось проверить (например, их открыла другая программа), — {0}. Шифрование остаётся включённым, и мастер-пароль нужен, пока они не расшифрованы. Закройте программу, которая их использует, или исправьте файлы из списка, затем нажмите «Возобновить» в разделе «Настройки → Шифрование». Аккаунты сейчас откроются.",
+      "zh": "无法完成关闭加密：有 {0} 个文件仍由您的密钥加密或无法检查（例如被其他程序打开）。在它们被解密之前，加密保持开启，仍需要主密码。请关闭使用这些文件的程序或修复列表中的文件，然后在“设置 → 加密”中点击“继续”。账户现在将打开。",
+      "uk": "Не вдалося завершити вимкнення шифрування: файлів, які досі зашифровані вашим ключем або які не вдалося перевірити (наприклад, їх відкрила інша програма), — {0}. Шифрування лишається ввімкненим, і майстер-пароль потрібен, доки їх не розшифровано. Закрийте програму, яка їх використовує, або виправте файли зі списку, потім натисніть «Відновити» в розділі «Налаштування → Шифрування». Акаунти зараз відкриються.",
+      "fr": "La désactivation du chiffrement n'a pas pu être terminée : {0} fichier(s) sont encore chiffrés avec votre clé ou n'ont pas pu être vérifiés (par exemple, un autre programme les a ouverts). Le chiffrement reste actif et le mot de passe principal reste nécessaire tant qu'ils ne sont pas déchiffrés. Fermez le programme qui les utilise ou corrigez les fichiers listés, puis utilisez Reprendre dans Paramètres → Chiffrement. Les comptes s'ouvrent maintenant.",
+      "es": "No se pudo terminar de desactivar el cifrado: {0} archivo(s) siguen cifrados con tu clave o no se pudieron comprobar (por ejemplo, otro programa los tiene abiertos). El cifrado sigue activo y la contraseña maestra sigue siendo necesaria hasta que se descifren. Cierra el programa que los usa o corrige los archivos de la lista y luego usa Reanudar en Configuración → Cifrado. Las cuentas se abren ahora.",
+      "tr": "Şifrelemeyi kapatma tamamlanamadı: {0} dosya hâlâ anahtarınızla şifreli veya denetlenemedi (örneğin başka bir program onları açık tutuyor). Bunların şifresi çözülene kadar şifreleme açık kalır ve ana parola gerekmeye devam eder. Onları kullanan programı kapatın veya listedeki dosyaları düzeltin, ardından Ayarlar → Şifreleme'de Sürdür'ü kullanın. Hesaplar şimdi açılıyor.",
+      "kk": "Шифрлауды өшіру аяқталмады: {0} файл әлі де сіздің кілтіңізбен шифрланған немесе тексерілмеді (мысалы, оларды басқа бағдарлама ашып тұр). Олардың шифры шешілмейінше шифрлау қосулы қалады және бас құпиясөз әлі де қажет. Оларды пайдаланатын бағдарламаны жабыңыз немесе тізімдегі файлдарды түзетіңіз, содан кейін «Баптаулар → Шифрлау» бөлімінде «Жалғастыру» түймесін басыңыз. Аккаунттар қазір ашылады."
+    },
+    "Continue": {
+      "en": "Open accounts",
+      "ru": "Открыть аккаунты",
+      "zh": "打开账户",
+      "uk": "Відкрити акаунти",
+      "fr": "Ouvrir les comptes",
+      "es": "Abrir las cuentas",
+      "tr": "Hesapları aç",
+      "kk": "Аккаунттарды ашу"
+    }
+  },
+  "SkippedFiles": {
+    "Title": {
+      "en": "Skipped files",
+      "ru": "Пропущенные файлы",
+      "zh": "跳过的文件",
+      "uk": "Пропущені файли",
+      "fr": "Fichiers ignorés",
+      "es": "Archivos omitidos",
+      "tr": "Atlanan dosyalar",
+      "kk": "Өткізілген файлдар"
+    },
+    "Description": {
+      "en": "These files stay where they are: they were not loaded or not converted to the current storage mode. The other accounts work normally. Fix, move or delete the files yourself; they are checked again on the next start.",
+      "ru": "Эти файлы остаются на месте: они не загружены или не приведены к текущему режиму хранения. Остальные аккаунты работают как обычно. Исправьте, переместите или удалите файлы сами; при следующем запуске они будут проверены снова.",
+      "zh": "这些文件保持原位：它们未被加载或未转换为当前存储模式。其他账户正常工作。请自行修复、移动或删除这些文件；下次启动时会再次检查。",
+      "uk": "Ці файли залишаються на місці: їх не завантажено або не приведено до поточного режиму зберігання. Інші акаунти працюють як зазвичай. Виправте, перемістіть або видаліть файли самостійно; під час наступного запуску їх буде перевірено знову.",
+      "fr": "Ces fichiers restent en place : ils n'ont pas été chargés ou convertis au mode de stockage actuel. Les autres comptes fonctionnent normalement. Corrigez, déplacez ou supprimez ces fichiers vous-même ; ils seront revérifiés au prochain démarrage.",
+      "es": "Estos archivos siguen en su sitio: no se cargaron o no se convirtieron al modo de almacenamiento actual. Las demás cuentas funcionan con normalidad. Corrige, mueve o elimina los archivos tú mismo; se volverán a comprobar en el próximo inicio.",
+      "tr": "Bu dosyalar yerinde kalır: yüklenmediler veya mevcut depolama moduna dönüştürülmediler. Diğer hesaplar normal çalışır. Dosyaları kendiniz düzeltin, taşıyın veya silin; bir sonraki başlatmada tekrar kontrol edilirler.",
+      "kk": "Бұл файлдар орнында қалады: олар жүктелмеді немесе ағымдағы сақтау режиміне келтірілмеді. Басқа аккаунттар әдеттегідей жұмыс істейді. Файлдарды өзіңіз түзетіңіз, жылжытыңыз немесе жойыңыз; келесі іске қосқанда олар қайта тексеріледі."
+    },
+    "Reveal": {
+      "en": "Show in folder",
+      "ru": "Показать в папке",
+      "zh": "在文件夹中显示",
+      "uk": "Показати в папці",
+      "fr": "Afficher dans le dossier",
+      "es": "Mostrar en la carpeta",
+      "tr": "Klasörde göster",
+      "kk": "Қалтада көрсету"
+    },
+    "OpenFolder": {
+      "en": "Open folder",
+      "ru": "Открыть папку",
+      "zh": "打开文件夹",
+      "uk": "Відкрити папку",
+      "fr": "Ouvrir le dossier",
+      "es": "Abrir carpeta",
+      "tr": "Klasörü aç",
+      "kk": "Қалтаны ашу"
+    },
+    "Close": {
+      "en": "Close",
+      "ru": "Закрыть",
+      "zh": "关闭",
+      "uk": "Закрити",
+      "fr": "Fermer",
+      "es": "Cerrar",
+      "tr": "Kapat",
+      "kk": "Жабу"
+    },
+    "Snackbar": {
+      "en": "Skipped files: {0}",
+      "ru": "Пропущено файлов: {0}",
+      "zh": "已跳过的文件：{0}",
+      "uk": "Пропущено файлів: {0}",
+      "fr": "Fichiers ignorés : {0}",
+      "es": "Archivos omitidos: {0}",
+      "tr": "Atlanan dosyalar: {0}",
+      "kk": "Өткізілген файлдар: {0}"
+    },
+    "Details": {
+      "en": "Details",
+      "ru": "Подробнее",
+      "zh": "详情",
+      "uk": "Докладніше",
+      "fr": "Détails",
+      "es": "Detalles",
+      "tr": "Ayrıntılar",
+      "kk": "Толығырақ"
+    },
+    "BadgeUnprotected": {
+      "en": "Not protected: {0}",
+      "ru": "Не защищены: {0}",
+      "zh": "未受保护：{0}",
+      "uk": "Не захищені: {0}",
+      "fr": "Non protégés : {0}",
+      "es": "Sin protección: {0}",
+      "tr": "Korunmayan: {0}",
+      "kk": "Қорғалмаған: {0}"
+    },
+    "BadgeHint": {
+      "en": "Click to show the list",
+      "ru": "Нажмите, чтобы открыть список",
+      "zh": "点击查看列表",
+      "uk": "Натисніть, щоб відкрити список",
+      "fr": "Cliquez pour afficher la liste",
+      "es": "Haz clic para ver la lista",
+      "tr": "Listeyi görmek için tıklayın",
+      "kk": "Тізімді ашу үшін басыңыз"
+    },
+    "Groups": {
+      "Unprotected": {
+        "en": "Not protected",
+        "ru": "Не защищены",
+        "zh": "未受保护",
+        "uk": "Не захищені",
+        "fr": "Non protégés",
+        "es": "Sin protección",
+        "tr": "Korunmayan",
+        "kk": "Қорғалмаған"
+      },
+      "UnprotectedDescription": {
+        "en": "These files are readable and contain account secrets. Move them to a safe place or delete them; a valid mafile left in the maFiles folder is encrypted on the next start.",
+        "ru": "Эти файлы читаемы и содержат секреты аккаунтов. Переместите их в безопасное место или удалите; валидный мафайл, оставшийся в папке maFiles, будет зашифрован при следующем запуске.",
+        "zh": "这些文件可被读取并包含账户密钥。请将其移到安全位置或删除；留在 maFiles 文件夹中的有效 mafile 会在下次启动时被加密。",
+        "uk": "Ці файли читабельні й містять секрети акаунтів. Перемістіть їх у безпечне місце або видаліть; валідний мафайл, що лишився в папці maFiles, буде зашифровано під час наступного запуску.",
+        "fr": "Ces fichiers sont lisibles et contiennent des secrets de compte. Déplacez-les en lieu sûr ou supprimez-les ; un mafile valide laissé dans le dossier maFiles est chiffré au prochain démarrage.",
+        "es": "Estos archivos son legibles y contienen secretos de las cuentas. Muévelos a un lugar seguro o elimínalos; un mafile válido que quede en la carpeta maFiles se cifrará en el próximo inicio.",
+        "tr": "Bu dosyalar okunabilir ve hesap sırlarını içerir. Güvenli bir yere taşıyın veya silin; maFiles klasöründe kalan geçerli bir mafile bir sonraki başlatmada şifrelenir.",
+        "kk": "Бұл файлдар оқылады және аккаунт құпияларын қамтиды. Оларды қауіпсіз жерге жылжытыңыз немесе жойыңыз; maFiles қалтасында қалған жарамды mafile келесі іске қосқанда шифрланады."
+      }
+    },
+    "Reasons": {
+      "Invalid": {
+        "en": "Not a valid mafile: damaged or not readable JSON.",
+        "ru": "Невалидный мафайл: повреждён или не читается как JSON.",
+        "zh": "不是有效的 mafile：已损坏或不是可读的 JSON。",
+        "uk": "Невалідний мафайл: пошкоджений або не читається як JSON.",
+        "fr": "Mafile non valide : endommagé ou JSON illisible.",
+        "es": "No es un mafile válido: está dañado o no es un JSON legible.",
+        "tr": "Geçerli bir mafile değil: bozuk veya okunabilir JSON değil.",
+        "kk": "Жарамсыз mafile: зақымдалған немесе JSON ретінде оқылмайды."
+      },
+      "NeedsRelogin": {
+        "en": "The mafile has no valid SteamID. Import it again (Add mafile) and log in to the account.",
+        "ru": "В мафайле нет валидного SteamID. Импортируйте его заново («Добавить мафайл») и войдите в аккаунт.",
+        "zh": "该 mafile 没有有效的 SteamID。请重新导入（添加 mafile）并登录该账户。",
+        "uk": "У мафайлі немає валідного SteamID. Імпортуйте його знову («Додати мафайл») і увійдіть в акаунт.",
+        "fr": "Le mafile n'a pas de SteamID valide. Importez-le à nouveau (Ajouter un mafile) et connectez-vous au compte.",
+        "es": "El mafile no tiene un SteamID válido. Impórtalo de nuevo (Añadir mafile) e inicia sesión en la cuenta.",
+        "tr": "Mafile geçerli bir SteamID içermiyor. Yeniden içe aktarın (Mafile ekle) ve hesaba giriş yapın.",
+        "kk": "Mafile-да жарамды SteamID жоқ. Оны қайта импорттаңыз (Mafile қосу) және аккаунтқа кіріңіз."
+      },
+      "Unreadable": {
+        "en": "The file can't be read: another program has it open, access is denied or a disk error occurred.",
+        "ru": "Файл не читается: его открыла другая программа, нет доступа или ошибка диска.",
+        "zh": "无法读取该文件：它被其他程序打开、拒绝访问或出现磁盘错误。",
+        "uk": "Файл не читається: його відкрила інша програма, немає доступу або помилка диска.",
+        "fr": "Le fichier est illisible : un autre programme l'a ouvert, l'accès est refusé ou une erreur de disque s'est produite.",
+        "es": "No se puede leer el archivo: otro programa lo tiene abierto, el acceso está denegado o hubo un error de disco.",
+        "tr": "Dosya okunamıyor: başka bir program onu açık tutuyor, erişim reddedildi veya disk hatası oluştu.",
+        "kk": "Файл оқылмайды: оны басқа бағдарлама ашып тұр, қолжетімділік жоқ немесе диск қатесі болды."
+      },
+      "ForeignStorage": {
+        "en": "Encrypted by another NebulaAuth storage (a different master password).",
+        "ru": "Зашифрован другим хранилищем NebulaAuth (другой мастер-пароль).",
+        "zh": "由另一个 NebulaAuth 存储（使用不同的主密码）加密。",
+        "uk": "Зашифрований іншим сховищем NebulaAuth (інший майстер-пароль).",
+        "fr": "Chiffré par un autre stockage NebulaAuth (autre mot de passe principal).",
+        "es": "Cifrado por otro almacenamiento de NebulaAuth (otra contraseña maestra).",
+        "tr": "Başka bir NebulaAuth deposu tarafından şifrelenmiş (farklı ana parola).",
+        "kk": "Басқа NebulaAuth қоймасымен шифрланған (басқа бас құпиясөз)."
+      },
+      "UnsupportedFormat": {
+        "en": "Unknown encrypted format or a newer NebulaAuth version. Mafiles of other programs are imported with Add mafile.",
+        "ru": "Неизвестный зашифрованный формат или более новая версия NebulaAuth. Мафайлы других программ импортируются через «Добавить мафайл».",
+        "zh": "未知的加密格式或更新版本的 NebulaAuth。其他程序的 mafile 请通过“添加 mafile”导入。",
+        "uk": "Невідомий зашифрований формат або новіша версія NebulaAuth. Мафайли інших програм імпортуються через «Додати мафайл».",
+        "fr": "Format chiffré inconnu ou version plus récente de NebulaAuth. Les mafiles d'autres programmes s'importent avec Ajouter un mafile.",
+        "es": "Formato cifrado desconocido o versión más reciente de NebulaAuth. Los mafiles de otros programas se importan con Añadir mafile.",
+        "tr": "Bilinmeyen şifreli biçim veya daha yeni bir NebulaAuth sürümü. Diğer programların mafile dosyaları Mafile ekle ile içe aktarılır.",
+        "kk": "Белгісіз шифрланған пішім немесе NebulaAuth-тың жаңарақ нұсқасы. Басқа бағдарламалардың mafile файлдары «Mafile қосу» арқылы импортталады."
+      },
+      "ExtensionMismatch": {
+        "en": "The file content does not match its extension (was the file renamed?).",
+        "ru": "Содержимое файла не соответствует его расширению (файл переименовали?).",
+        "zh": "文件内容与扩展名不符（文件被重命名了？）。",
+        "uk": "Вміст файлу не відповідає його розширенню (файл перейменували?).",
+        "fr": "Le contenu du fichier ne correspond pas à son extension (fichier renommé ?).",
+        "es": "El contenido del archivo no coincide con su extensión (¿se cambió el nombre del archivo?).",
+        "tr": "Dosya içeriği uzantısıyla eşleşmiyor (dosya yeniden mi adlandırıldı?).",
+        "kk": "Файл мазмұны кеңейтіміне сәйкес келмейді (файл қайта аталды ма?)."
+      },
+      "Corrupted": {
+        "en": "Integrity check failed: the encrypted file is damaged or was changed.",
+        "ru": "Проверка целостности не пройдена: зашифрованный файл повреждён или изменён.",
+        "zh": "完整性检查失败：加密文件已损坏或被修改。",
+        "uk": "Перевірку цілісності не пройдено: зашифрований файл пошкоджено або змінено.",
+        "fr": "Échec du contrôle d'intégrité : le fichier chiffré est endommagé ou a été modifié.",
+        "es": "Falló la comprobación de integridad: el archivo cifrado está dañado o fue modificado.",
+        "tr": "Bütünlük denetimi başarısız: şifreli dosya bozuk veya değiştirilmiş.",
+        "kk": "Тұтастық тексерісі өтпеді: шифрланған файл зақымдалған немесе өзгертілген."
+      },
+      "EncryptedInPlainStorage": {
+        "en": "Encrypted file, but encryption is off: there is no key to read it.",
+        "ru": "Зашифрованный файл, но шифрование выключено: нет ключа, чтобы его прочитать.",
+        "zh": "这是加密文件，但加密已关闭：没有可读取它的密钥。",
+        "uk": "Зашифрований файл, але шифрування вимкнено: немає ключа, щоб його прочитати.",
+        "fr": "Fichier chiffré, mais le chiffrement est désactivé : aucune clé pour le lire.",
+        "es": "Archivo cifrado, pero el cifrado está desactivado: no hay clave para leerlo.",
+        "tr": "Şifreli dosya, ancak şifreleme kapalı: okumak için anahtar yok.",
+        "kk": "Шифрланған файл, бірақ шифрлау өшірулі: оны оқитын кілт жоқ."
+      },
+      "Conflict": {
+        "en": "The readable and the encrypted versions of this file differ. Both are kept: remove the wrong one.",
+        "ru": "Открытая и зашифрованная версии этого файла различаются. Сохранены обе: удалите неверную.",
+        "zh": "该文件的可读版本和加密版本不同。两者均已保留：请删除错误的那个。",
+        "uk": "Відкрита та зашифрована версії цього файлу відрізняються. Збережено обидві: видаліть неправильну.",
+        "fr": "Les versions lisible et chiffrée de ce fichier diffèrent. Les deux sont conservées : supprimez la mauvaise.",
+        "es": "Las versiones legible y cifrada de este archivo son distintas. Se conservan ambas: elimina la incorrecta.",
+        "tr": "Bu dosyanın okunabilir ve şifreli sürümleri farklı. İkisi de korundu: yanlış olanı silin.",
+        "kk": "Бұл файлдың ашық және шифрланған нұсқалары әртүрлі. Екеуі де сақталды: қатесін жойыңыз."
+      },
+      "ConversionFailed": {
+        "en": "Converting to the current storage mode failed. It is retried when the operation is resumed or on the next start.",
+        "ru": "Не удалось привести файл к текущему режиму хранения. Повтор — при возобновлении операции или при следующем запуске.",
+        "zh": "转换为当前存储模式失败。将在恢复操作时或下次启动时重试。",
+        "uk": "Не вдалося привести файл до поточного режиму зберігання. Повтор — під час відновлення операції або наступного запуску.",
+        "fr": "La conversion au mode de stockage actuel a échoué. Elle est retentée à la reprise de l'opération ou au prochain démarrage.",
+        "es": "Falló la conversión al modo de almacenamiento actual. Se reintenta al reanudar la operación o en el próximo inicio.",
+        "tr": "Mevcut depolama moduna dönüştürme başarısız oldu. İşlem sürdürüldüğünde veya bir sonraki başlatmada yeniden denenir.",
+        "kk": "Ағымдағы сақтау режиміне түрлендіру сәтсіз аяқталды. Операцияны жалғастырғанда немесе келесі іске қосқанда қайталанады."
+      },
+      "UnfinishedWrite": {
+        "en": "Temporary file of an interrupted write: the original file is missing or damaged. It may hold the latest data.",
+        "ru": "Временный файл прерванной записи: исходный файл отсутствует или повреждён. В нём могут быть последние данные.",
+        "zh": "中断写入留下的临时文件：原始文件缺失或已损坏。它可能包含最新数据。",
+        "uk": "Тимчасовий файл перерваного запису: вихідний файл відсутній або пошкоджений. У ньому можуть бути останні дані.",
+        "fr": "Fichier temporaire d'une écriture interrompue : le fichier d'origine est absent ou endommagé. Il peut contenir les données les plus récentes.",
+        "es": "Archivo temporal de una escritura interrumpida: el archivo original falta o está dañado. Puede contener los datos más recientes.",
+        "tr": "Yarıda kalan bir yazmanın geçici dosyası: özgün dosya eksik veya bozuk. En son verileri içeriyor olabilir.",
+        "kk": "Үзілген жазудың уақытша файлы: бастапқы файл жоқ немесе зақымдалған. Онда соңғы деректер болуы мүмкін."
+      }
+    },
+    "ReasonTitles": {
+      "Invalid": {
+        "en": "Not a valid mafile",
+        "ru": "Некорректные мафайлы",
+        "zh": "无效的 mafile",
+        "uk": "Некоректні мафайли",
+        "fr": "Mafile non valide",
+        "es": "Mafile no válido",
+        "tr": "Geçersiz mafile",
+        "kk": "Жарамсыз мафайл"
+      },
+      "NeedsRelogin": {
+        "en": "No SteamID",
+        "ru": "Без SteamID",
+        "zh": "缺少 SteamID",
+        "uk": "Без SteamID",
+        "fr": "Sans SteamID",
+        "es": "Sin SteamID",
+        "tr": "SteamID yok",
+        "kk": "SteamID жоқ"
+      },
+      "Unreadable": {
+        "en": "Can't be read",
+        "ru": "Не читаются",
+        "zh": "无法读取",
+        "uk": "Не читаються",
+        "fr": "Illisibles",
+        "es": "No se pueden leer",
+        "tr": "Okunamıyor",
+        "kk": "Оқылмайды"
+      },
+      "ForeignStorage": {
+        "en": "Other key",
+        "ru": "Другой ключ",
+        "zh": "其他密钥",
+        "uk": "Інший ключ",
+        "fr": "Autre clé",
+        "es": "Otra clave",
+        "tr": "Başka anahtar",
+        "kk": "Басқа кілт"
+      },
+      "UnsupportedFormat": {
+        "en": "Unknown format",
+        "ru": "Неизвестный формат",
+        "zh": "未知格式",
+        "uk": "Невідомий формат",
+        "fr": "Format inconnu",
+        "es": "Formato desconocido",
+        "tr": "Bilinmeyen biçim",
+        "kk": "Белгісіз формат"
+      },
+      "ExtensionMismatch": {
+        "en": "Wrong extension",
+        "ru": "Неверное расширение",
+        "zh": "扩展名不符",
+        "uk": "Невірне розширення",
+        "fr": "Extension incorrecte",
+        "es": "Extensión incorrecta",
+        "tr": "Yanlış uzantı",
+        "kk": "Қате кеңейтім"
+      },
+      "Corrupted": {
+        "en": "Damaged",
+        "ru": "Повреждённые",
+        "zh": "已损坏",
+        "uk": "Пошкоджені",
+        "fr": "Endommagés",
+        "es": "Dañados",
+        "tr": "Bozuk",
+        "kk": "Зақымдалған"
+      },
+      "EncryptedInPlainStorage": {
+        "en": "Encrypted, no key",
+        "ru": "Зашифрованы, нет ключа",
+        "zh": "已加密，无密钥",
+        "uk": "Зашифровані, немає ключа",
+        "fr": "Chiffrés, sans clé",
+        "es": "Cifrados, sin clave",
+        "tr": "Şifreli, anahtar yok",
+        "kk": "Шифрланған, кілт жоқ"
+      },
+      "Conflict": {
+        "en": "Two versions",
+        "ru": "Две версии",
+        "zh": "两个版本",
+        "uk": "Дві версії",
+        "fr": "Deux versions",
+        "es": "Dos versiones",
+        "tr": "İki sürüm",
+        "kk": "Екі нұсқа"
+      },
+      "ConversionFailed": {
+        "en": "Not converted",
+        "ru": "Не преобразованы",
+        "zh": "未转换",
+        "uk": "Не перетворені",
+        "fr": "Non convertis",
+        "es": "No convertidos",
+        "tr": "Dönüştürülmedi",
+        "kk": "Түрлендірілмеген"
+      },
+      "UnfinishedWrite": {
+        "en": "Interrupted write",
+        "ru": "Прерванная запись",
+        "zh": "写入中断",
+        "uk": "Перерваний запис",
+        "fr": "Écriture interrompue",
+        "es": "Escritura interrumpida",
+        "tr": "Yarım kalan yazma",
+        "kk": "Үзілген жазу"
+      }
+    }
+  },
+  "SettingsDialog": {
+    "Encryption": {
+      "Tab": {
+        "en": "Encryption",
+        "ru": "Шифрование",
+        "zh": "加密",
+        "uk": "Шифрування",
+        "fr": "Chiffrement",
+        "es": "Cifrado",
+        "tr": "Şifreleme",
+        "kk": "Шифрлау"
+      },
+      "Mode": {
+        "Plain": {
+          "en": "Not encrypted",
+          "ru": "Без шифрования",
+          "zh": "未加密",
+          "uk": "Без шифрування",
+          "fr": "Non chiffré",
+          "es": "Sin cifrar",
+          "tr": "Şifrelenmemiş",
+          "kk": "Шифрланбаған"
+        },
+        "Encrypted": {
+          "en": "Encrypted",
+          "ru": "Зашифровано",
+          "zh": "已加密",
+          "uk": "Зашифровано",
+          "fr": "Chiffré",
+          "es": "Cifrado",
+          "tr": "Şifreli",
+          "kk": "Шифрланған"
+        },
+        "EncryptingShort": {
+          "en": "Encrypting…",
+          "ru": "Шифрование…",
+          "zh": "正在加密…",
+          "uk": "Шифрування…",
+          "fr": "Chiffrement…",
+          "es": "Cifrando…",
+          "tr": "Şifreleniyor…",
+          "kk": "Шифрлау…"
+        },
+        "DecryptingShort": {
+          "en": "Decrypting…",
+          "ru": "Расшифровка…",
+          "zh": "正在解密…",
+          "uk": "Розшифрування…",
+          "fr": "Déchiffrement…",
+          "es": "Descifrando…",
+          "tr": "Şifre çözülüyor…",
+          "kk": "Шифрды ашу…"
+        },
+        "EncryptedSubtitle": {
+          "en": "The master password is requested at startup",
+          "ru": "Мастер-пароль запрашивается при запуске",
+          "zh": "启动时需要输入主密码",
+          "uk": "Майстер-пароль запитується під час запуску",
+          "fr": "Le mot de passe principal est demandé au démarrage",
+          "es": "La contraseña maestra se solicita al iniciar",
+          "tr": "Ana parola başlangıçta istenir",
+          "kk": "Іске қосқанда бас құпиясөз сұралады"
+        },
+        "PlainSubtitle": {
+          "en": "Mafiles are stored as readable files",
+          "ru": "Мафайлы хранятся открытыми файлами",
+          "zh": "mafile 以可读文件形式存储",
+          "uk": "Мафайли зберігаються відкритими файлами",
+          "fr": "Les mafiles sont stockés en clair",
+          "es": "Los mafiles se guardan como archivos legibles",
+          "tr": "Mafile'lar okunabilir dosyalar olarak saklanır",
+          "kk": "Mafile файлдары ашық түрде сақталады"
+        },
+        "TransitionSubtitle": {
+          "en": "Interrupted: resume to convert the remaining files",
+          "ru": "Прервано: продолжите, чтобы обработать оставшиеся файлы",
+          "zh": "已中断：继续以转换剩余文件",
+          "uk": "Перервано: продовжте, щоб обробити решту файлів",
+          "fr": "Interrompu : reprenez pour convertir les fichiers restants",
+          "es": "Interrumpido: reanuda para convertir los archivos restantes",
+          "tr": "Yarıda kaldı: kalan dosyaları dönüştürmek için sürdürün",
+          "kk": "Үзілді: қалған файлдарды өңдеу үшін жалғастырыңыз"
+        },
+        "PlainDescription": {
+          "en": "Mafiles and backups are stored as readable files: anyone with access to the data folder can use the accounts. Steam passwords can't be saved.",
+          "ru": "Мафайлы и резервные копии хранятся открытыми файлами: любой, у кого есть доступ к папке данных, может использовать аккаунты. Пароли Steam сохранить нельзя.",
+          "zh": "mafile 和备份以可读文件形式存储：任何能访问数据文件夹的人都可以使用这些账户。无法保存 Steam 密码。",
+          "uk": "Мафайли та резервні копії зберігаються відкритими файлами: будь-хто з доступом до папки даних може використати акаунти. Паролі Steam зберегти не можна.",
+          "fr": "Les mafiles et sauvegardes sont stockés en clair : toute personne ayant accès au dossier de données peut utiliser les comptes. Les mots de passe Steam ne peuvent pas être enregistrés.",
+          "es": "Los mafiles y las copias de seguridad se guardan como archivos legibles: cualquiera con acceso a la carpeta de datos puede usar las cuentas. No se pueden guardar contraseñas de Steam.",
+          "tr": "Mafile ve yedekler okunabilir dosyalar olarak saklanır: veri klasörüne erişen herkes hesapları kullanabilir. Steam parolaları kaydedilemez.",
+          "kk": "Mafile және сақтық көшірмелер ашық файлдар ретінде сақталады: деректер қалтасына қол жеткізе алатын кез келген адам аккаунттарды пайдалана алады. Steam құпиясөздерін сақтау мүмкін емес."
+        },
+        "EncryptedDescription": {
+          "en": "All accepted mafiles and backups are encrypted. The master password is asked on every start. Saved Steam passwords are kept in a separate encrypted file.",
+          "ru": "Все принятые мафайлы и резервные копии зашифрованы. Мастер-пароль запрашивается при каждом запуске. Сохранённые пароли Steam хранятся в отдельном зашифрованном файле.",
+          "zh": "所有已接收的 mafile 和备份均已加密。每次启动都会要求输入主密码。已保存的 Steam 密码存放在单独的加密文件中。",
+          "uk": "Усі прийняті мафайли та резервні копії зашифровані. Майстер-пароль запитується під час кожного запуску. Збережені паролі Steam зберігаються в окремому зашифрованому файлі.",
+          "fr": "Tous les mafiles acceptés et les sauvegardes sont chiffrés. Le mot de passe principal est demandé à chaque démarrage. Les mots de passe Steam enregistrés sont dans un fichier chiffré séparé.",
+          "es": "Todos los mafiles aceptados y las copias de seguridad están cifrados. La contraseña maestra se pide en cada inicio. Las contraseñas de Steam guardadas están en un archivo cifrado aparte.",
+          "tr": "Kabul edilen tüm mafile ve yedekler şifrelidir. Ana parola her başlatmada sorulur. Kaydedilen Steam parolaları ayrı bir şifreli dosyada tutulur.",
+          "kk": "Қабылданған барлық mafile және сақтық көшірмелер шифрланған. Бас құпиясөз әр іске қосқанда сұралады. Сақталған Steam құпиясөздері бөлек шифрланған файлда сақталады."
+        },
+        "TransitionDescription": {
+          "en": "Some files are still in the previous format. Resume the operation to finish it; it is also resumed on the next start.",
+          "ru": "Часть файлов ещё в прежнем формате. Возобновите операцию, чтобы завершить её; при следующем запуске она также продолжится.",
+          "zh": "部分文件仍为之前的格式。请恢复操作以完成它；下次启动时也会继续。",
+          "uk": "Частина файлів ще в попередньому форматі. Відновіть операцію, щоб завершити її; під час наступного запуску вона також продовжиться.",
+          "fr": "Certains fichiers sont encore dans l'ancien format. Reprenez l'opération pour la terminer ; elle reprend aussi au prochain démarrage.",
+          "es": "Algunos archivos siguen en el formato anterior. Reanuda la operación para terminarla; también se reanuda en el próximo inicio.",
+          "tr": "Bazı dosyalar hâlâ önceki biçimde. Tamamlamak için işlemi sürdürün; bir sonraki başlatmada da sürdürülür.",
+          "kk": "Кейбір файлдар әлі бұрынғы пішімде. Аяқтау үшін операцияны жалғастырыңыз; ол келесі іске қосқанда да жалғасады."
+        }
+      },
+      "SkippedCount": {
+        "en": "Skipped files: {0}",
+        "ru": "Пропущенных файлов: {0}",
+        "zh": "跳过的文件：{0}",
+        "uk": "Пропущених файлів: {0}",
+        "fr": "Fichiers ignorés : {0}",
+        "es": "Archivos omitidos: {0}",
+        "tr": "Atlanan dosyalar: {0}",
+        "kk": "Өткізілген файлдар: {0}"
+      },
+      "Problems": {
+        "Unprotected": {
+          "en": "{0} file is not protected|{0} files are not protected",
+          "ru": "{0} файл не защищён|{0} файла не защищены|{0} файлов не защищены",
+          "zh": "{0} 个文件未受保护",
+          "uk": "{0} файл не захищений|{0} файли не захищені|{0} файлів не захищені",
+          "fr": "{0} fichier n'est pas protégé|{0} fichiers ne sont pas protégés",
+          "es": "{0} archivo no está protegido|{0} archivos no están protegidos",
+          "tr": "{0} dosya korunmuyor",
+          "kk": "{0} файл қорғалмаған"
+        },
+        "Skipped": {
+          "en": "{0} file skipped|{0} files skipped",
+          "ru": "{0} файл пропущен|{0} файла пропущено|{0} файлов пропущено",
+          "zh": "已跳过 {0} 个文件",
+          "uk": "{0} файл пропущено|{0} файли пропущено|{0} файлів пропущено",
+          "fr": "{0} fichier ignoré|{0} fichiers ignorés",
+          "es": "{0} archivo omitido|{0} archivos omitidos",
+          "tr": "{0} dosya atlandı",
+          "kk": "{0} файл өткізіп жіберілді"
+        },
+        "Show": {
+          "en": "Show",
+          "ru": "Показать",
+          "zh": "查看",
+          "uk": "Показати",
+          "fr": "Afficher",
+          "es": "Mostrar",
+          "tr": "Göster",
+          "kk": "Көрсету"
+        }
+      },
+      "Section": {
+        "Passwords": {
+          "en": "Steam passwords",
+          "ru": "Пароли Steam",
+          "zh": "Steam 密码",
+          "uk": "Паролі Steam",
+          "fr": "Mots de passe Steam",
+          "es": "Contraseñas de Steam",
+          "tr": "Steam parolaları",
+          "kk": "Steam құпиясөздері"
+        },
+        "Management": {
+          "en": "Management",
+          "ru": "Управление",
+          "zh": "管理",
+          "uk": "Керування",
+          "fr": "Gestion",
+          "es": "Gestión",
+          "tr": "Yönetim",
+          "kk": "Басқару"
+        }
+      },
+      "Actions": {
+        "EnableHint": {
+          "en": "Protect mafiles and backups with a master password",
+          "ru": "Защитить мафайлы и резервные копии мастер-паролем",
+          "zh": "使用主密码保护 mafile 和备份",
+          "uk": "Захистити мафайли та резервні копії майстер-паролем",
+          "fr": "Protéger les mafiles et sauvegardes par un mot de passe principal",
+          "es": "Proteger los mafiles y las copias de seguridad con una contraseña maestra",
+          "tr": "Mafile ve yedekleri bir ana parolayla koru",
+          "kk": "Mafile және сақтық көшірмелерді бас құпиясөзбен қорғау"
+        },
+        "ResumeHint": {
+          "en": "Finish converting the remaining files",
+          "ru": "Завершить обработку оставшихся файлов",
+          "zh": "完成剩余文件的转换",
+          "uk": "Завершити обробку решти файлів",
+          "fr": "Terminer la conversion des fichiers restants",
+          "es": "Terminar de convertir los archivos restantes",
+          "tr": "Kalan dosyaların dönüştürülmesini tamamla",
+          "kk": "Қалған файлдарды өңдеуді аяқтау"
+        }
+      },
+      "Enable": {
+        "en": "Enable encryption",
+        "ru": "Включить шифрование",
+        "zh": "启用加密",
+        "uk": "Увімкнути шифрування",
+        "fr": "Activer le chiffrement",
+        "es": "Activar el cifrado",
+        "tr": "Şifrelemeyi aç",
+        "kk": "Шифрлауды қосу"
+      },
+      "EnableHelper": {
+        "en": "Encrypts all mafiles and backups with a master password. Saving Steam passwords for automatic login is available only with encryption.",
+        "ru": "Шифрует все мафайлы и резервные копии мастер-паролем. Сохранение паролей Steam для автовхода доступно только с шифрованием.",
+        "zh": "使用主密码加密所有 mafile 和备份。只有启用加密后才能保存用于自动登录的 Steam 密码。",
+        "uk": "Шифрує всі мафайли та резервні копії майстер-паролем. Збереження паролів Steam для автовходу доступне лише з шифруванням.",
+        "fr": "Chiffre tous les mafiles et sauvegardes avec un mot de passe principal. L'enregistrement des mots de passe Steam pour la connexion automatique n'est possible qu'avec le chiffrement.",
+        "es": "Cifra todos los mafiles y copias de seguridad con una contraseña maestra. Guardar contraseñas de Steam para el inicio de sesión automático solo es posible con cifrado.",
+        "tr": "Tüm mafile ve yedekleri bir ana parolayla şifreler. Otomatik giriş için Steam parolalarını kaydetmek yalnızca şifrelemeyle mümkündür.",
+        "kk": "Барлық mafile және сақтық көшірмелерді бас құпиясөзбен шифрлайды. Автоматты кіру үшін Steam құпиясөздерін сақтау тек шифрлаумен қолжетімді."
+      },
+      "ChangePassword": {
+        "en": "Change master password",
+        "ru": "Сменить мастер-пароль",
+        "zh": "更改主密码",
+        "uk": "Змінити майстер-пароль",
+        "fr": "Changer le mot de passe principal",
+        "es": "Cambiar la contraseña maestra",
+        "tr": "Ana parolayı değiştir",
+        "kk": "Бас құпиясөзді өзгерту"
+      },
+      "Disable": {
+        "en": "Disable encryption",
+        "ru": "Выключить шифрование",
+        "zh": "禁用加密",
+        "uk": "Вимкнути шифрування",
+        "fr": "Désactiver le chiffrement",
+        "es": "Desactivar el cifrado",
+        "tr": "Şifrelemeyi kapat",
+        "kk": "Шифрлауды өшіру"
+      },
+      "Resume": {
+        "en": "Resume",
+        "ru": "Возобновить",
+        "zh": "继续",
+        "uk": "Відновити",
+        "fr": "Reprendre",
+        "es": "Reanudar",
+        "tr": "Sürdür",
+        "kk": "Жалғастыру"
+      },
+      "EnableTitle": {
+        "en": "Enable encryption",
+        "ru": "Включение шифрования",
+        "zh": "启用加密",
+        "uk": "Увімкнення шифрування",
+        "fr": "Activer le chiffrement",
+        "es": "Activar el cifrado",
+        "tr": "Şifrelemeyi açma",
+        "kk": "Шифрлауды қосу"
+      },
+      "EnableText": {
+        "en": "Set a master password. It protects the key that encrypts all mafiles and backups and is asked on every start.",
+        "ru": "Задайте мастер-пароль. Он защищает ключ, которым шифруются все мафайлы и резервные копии, и запрашивается при каждом запуске.",
+        "zh": "设置主密码。它保护用于加密所有 mafile 和备份的密钥，并在每次启动时询问。",
+        "uk": "Задайте майстер-пароль. Він захищає ключ, яким шифруються всі мафайли та резервні копії, і запитується під час кожного запуску.",
+        "fr": "Définissez un mot de passe principal. Il protège la clé qui chiffre tous les mafiles et sauvegardes et est demandé à chaque démarrage.",
+        "es": "Establece una contraseña maestra. Protege la clave que cifra todos los mafiles y copias de seguridad y se pide en cada inicio.",
+        "tr": "Bir ana parola belirleyin. Tüm mafile ve yedekleri şifreleyen anahtarı korur ve her başlatmada sorulur.",
+        "kk": "Бас құпиясөзді орнатыңыз. Ол барлық mafile және сақтық көшірмелерді шифрлайтын кілтті қорғайды және әр іске қосқанда сұралады."
+      },
+      "NewPassword": {
+        "en": "New master password",
+        "ru": "Новый мастер-пароль",
+        "zh": "新主密码",
+        "uk": "Новий майстер-пароль",
+        "fr": "Nouveau mot de passe principal",
+        "es": "Nueva contraseña maestra",
+        "tr": "Yeni ana parola",
+        "kk": "Жаңа бас құпиясөз"
+      },
+      "ConfirmPassword": {
+        "en": "Repeat the master password",
+        "ru": "Повторите мастер-пароль",
+        "zh": "再次输入主密码",
+        "uk": "Повторіть майстер-пароль",
+        "fr": "Répétez le mot de passe principal",
+        "es": "Repite la contraseña maestra",
+        "tr": "Ana parolayı tekrarlayın",
+        "kk": "Бас құпиясөзді қайталаңыз"
+      },
+      "CurrentPassword": {
+        "en": "Current master password",
+        "ru": "Текущий мастер-пароль",
+        "zh": "当前主密码",
+        "uk": "Поточний майстер-пароль",
+        "fr": "Mot de passe principal actuel",
+        "es": "Contraseña maestra actual",
+        "tr": "Geçerli ana parola",
+        "kk": "Ағымдағы бас құпиясөз"
+      },
+      "StrengthHelper": {
+        "en": "At least 8 characters. A long phrase of several words is the best choice.",
+        "ru": "Не менее 8 символов. Лучше всего — длинная фраза из нескольких слов.",
+        "zh": "至少 8 个字符。由多个单词组成的长短语是最佳选择。",
+        "uk": "Щонайменше 8 символів. Найкраще — довга фраза з кількох слів.",
+        "fr": "Au moins 8 caractères. Une longue phrase de plusieurs mots est le meilleur choix.",
+        "es": "Al menos 8 caracteres. Una frase larga de varias palabras es la mejor opción.",
+        "tr": "En az 8 karakter. Birkaç kelimeden oluşan uzun bir ifade en iyi seçimdir.",
+        "kk": "Кемінде 8 таңба. Бірнеше сөзден тұратын ұзын фраза — ең жақсы таңдау."
+      },
+      "ForgetWarning": {
+        "en": "If you forget the master password, the accounts can't be recovered. Keep the revocation codes in a safe place.",
+        "ru": "Если вы забудете мастер-пароль, аккаунты не восстановить. Храните коды восстановления в надёжном месте.",
+        "zh": "如果忘记主密码，账户将无法恢复。请将撤销码保存在安全的地方。",
+        "uk": "Якщо ви забудете майстер-пароль, акаунти не відновити. Зберігайте коди відновлення в надійному місці.",
+        "fr": "Si vous oubliez le mot de passe principal, les comptes ne peuvent pas être récupérés. Conservez les codes de révocation en lieu sûr.",
+        "es": "Si olvidas la contraseña maestra, las cuentas no se podrán recuperar. Guarda los códigos de revocación en un lugar seguro.",
+        "tr": "Ana parolayı unutursanız hesaplar kurtarılamaz. İptal kodlarını güvenli bir yerde saklayın.",
+        "kk": "Бас құпиясөзді ұмытсаңыз, аккаунттарды қалпына келтіру мүмкін емес. Қайтарып алу кодтарын қауіпсіз жерде сақтаңыз."
+      },
+      "EncryptedFilesWarning": {
+        "en": "{0} encrypted file(s) are already in the storage folders. They belong to an earlier or another encryption key: enabling encryption creates a new key that can't open them, so they stay unreadable. To open them instead, restore the storage-state.json that belongs to them (for example from storage-state.json.prev or a backup).",
+        "ru": "В папках хранилища уже есть зашифрованные файлы — {0}. Они относятся к прежнему или другому ключу шифрования: при включении шифрования создаётся новый ключ, который не может их открыть, поэтому они останутся нечитаемыми. Чтобы открыть их, вместо этого восстановите относящийся к ним storage-state.json (например, из storage-state.json.prev или резервной копии).",
+        "zh": "存储文件夹中已有 {0} 个加密文件。它们属于以前的或其他的加密密钥：启用加密会创建一个无法打开它们的新密钥，因此它们将保持不可读。若要打开它们，请改为恢复与之对应的 storage-state.json（例如从 storage-state.json.prev 或备份中恢复）。",
+        "uk": "У папках сховища вже є зашифровані файли — {0}. Вони належать до попереднього або іншого ключа шифрування: під час увімкнення шифрування створюється новий ключ, який не може їх відкрити, тож вони лишаться нечитабельними. Щоб відкрити їх, натомість відновіть відповідний їм storage-state.json (наприклад, зі storage-state.json.prev або резервної копії).",
+        "fr": "{0} fichier(s) chiffré(s) se trouvent déjà dans les dossiers du stockage. Ils appartiennent à une clé de chiffrement précédente ou différente : activer le chiffrement crée une nouvelle clé qui ne peut pas les ouvrir, ils resteront donc illisibles. Pour les ouvrir, restaurez plutôt le storage-state.json qui leur correspond (par exemple depuis storage-state.json.prev ou une sauvegarde).",
+        "es": "Ya hay {0} archivo(s) cifrado(s) en las carpetas del almacenamiento. Pertenecen a una clave de cifrado anterior u otra: al activar el cifrado se crea una clave nueva que no puede abrirlos, así que seguirán ilegibles. Para abrirlos, restaura en su lugar el storage-state.json que les corresponde (por ejemplo, desde storage-state.json.prev o una copia de seguridad).",
+        "tr": "Depolama klasörlerinde zaten {0} şifrelenmiş dosya var. Bunlar önceki veya başka bir şifreleme anahtarına ait: şifrelemeyi etkinleştirmek onları açamayan yeni bir anahtar oluşturur, bu yüzden okunamaz kalırlar. Onları açmak için bunun yerine onlara ait storage-state.json dosyasını geri yükleyin (örneğin storage-state.json.prev veya bir yedekten).",
+        "kk": "Қойма қалталарында шифрланған {0} файл бар. Олар бұрынғы немесе басқа шифрлау кілтіне тиесілі: шифрлауды қосқанда оларды аша алмайтын жаңа кілт жасалады, сондықтан олар оқылмайтын күйде қалады. Оларды ашу үшін оның орнына оларға тиесілі storage-state.json файлын қалпына келтіріңіз (мысалы, storage-state.json.prev немесе сақтық көшірмеден)."
+      },
+      "EncryptedFilesConfirm": {
+        "en": "I understand: these files stay unreadable",
+        "ru": "Понимаю: эти файлы останутся нечитаемыми",
+        "zh": "我明白：这些文件将保持不可读",
+        "uk": "Розумію: ці файли лишаться нечитабельними",
+        "fr": "Je comprends : ces fichiers resteront illisibles",
+        "es": "Lo entiendo: estos archivos seguirán ilegibles",
+        "tr": "Anlıyorum: bu dosyalar okunamaz kalacak",
+        "kk": "Түсінемін: бұл файлдар оқылмайтын күйде қалады"
+      },
+      "EnableConfirm": {
+        "en": "Enable encryption",
+        "ru": "Включить шифрование",
+        "zh": "启用加密",
+        "uk": "Увімкнути шифрування",
+        "fr": "Activer le chiffrement",
+        "es": "Activar el cifrado",
+        "tr": "Şifrelemeyi aç",
+        "kk": "Шифрлауды қосу"
+      },
+      "Back": {
+        "en": "Back",
+        "ru": "Назад",
+        "zh": "返回",
+        "uk": "Назад",
+        "fr": "Retour",
+        "es": "Atrás",
+        "tr": "Geri",
+        "kk": "Артқа"
+      },
+      "ChangeTitle": {
+        "en": "Change master password",
+        "ru": "Смена мастер-пароля",
+        "zh": "更改主密码",
+        "uk": "Зміна майстер-пароля",
+        "fr": "Changer le mot de passe principal",
+        "es": "Cambiar la contraseña maestra",
+        "tr": "Ana parolayı değiştirme",
+        "kk": "Бас құпиясөзді өзгерту"
+      },
+      "ChangeText": {
+        "en": "Only the protection of the storage key changes; the mafiles are not rewritten.",
+        "ru": "Меняется только защита ключа хранилища; мафайлы не перезаписываются.",
+        "zh": "只会更改存储密钥的保护方式；mafile 不会被重写。",
+        "uk": "Змінюється лише захист ключа сховища; мафайли не перезаписуються.",
+        "fr": "Seule la protection de la clé du stockage change ; les mafiles ne sont pas réécrits.",
+        "es": "Solo cambia la protección de la clave del almacenamiento; los mafiles no se reescriben.",
+        "tr": "Yalnızca depolama anahtarının koruması değişir; mafile dosyaları yeniden yazılmaz.",
+        "kk": "Тек қойма кілтінің қорғанысы өзгереді; mafile файлдары қайта жазылмайды."
+      },
+      "ChangeHint": {
+        "en": "Copies of the data folder made earlier can still be opened with the old password.",
+        "ru": "Ранее сделанные копии папки данных по-прежнему открываются старым паролем.",
+        "zh": "之前制作的数据文件夹副本仍可用旧密码打开。",
+        "uk": "Раніше зроблені копії папки даних і далі відкриваються старим паролем.",
+        "fr": "Les copies du dossier de données faites auparavant s'ouvrent toujours avec l'ancien mot de passe.",
+        "es": "Las copias de la carpeta de datos hechas antes se pueden seguir abriendo con la contraseña anterior.",
+        "tr": "Veri klasörünün daha önce alınmış kopyaları eski parolayla açılabilmeye devam eder.",
+        "kk": "Деректер қалтасының бұрын жасалған көшірмелері ескі құпиясөзбен әлі де ашылады."
+      },
+      "ChangeConfirm": {
+        "en": "Change password",
+        "ru": "Сменить пароль",
+        "zh": "更改密码",
+        "uk": "Змінити пароль",
+        "fr": "Changer le mot de passe",
+        "es": "Cambiar contraseña",
+        "tr": "Parolayı değiştir",
+        "kk": "Құпиясөзді өзгерту"
+      },
+      "DisableTitle": {
+        "en": "Disable encryption?",
+        "ru": "Выключить шифрование?",
+        "zh": "要禁用加密吗？",
+        "uk": "Вимкнути шифрування?",
+        "fr": "Désactiver le chiffrement ?",
+        "es": "¿Desactivar el cifrado?",
+        "tr": "Şifreleme kapatılsın mı?",
+        "kk": "Шифрлауды өшіру керек пе?"
+      },
+      "DisableText": {
+        "en": "All mafiles and backups will be decrypted and stored as readable files in the data folder. The master password will no longer be asked at start.",
+        "ru": "Все мафайлы и резервные копии будут расшифрованы и сохранены открытыми файлами в папке данных. Мастер-пароль больше не будет запрашиваться при запуске.",
+        "zh": "所有 mafile 和备份将被解密，并以可读文件形式保存在数据文件夹中。启动时将不再询问主密码。",
+        "uk": "Усі мафайли та резервні копії буде розшифровано й збережено відкритими файлами в папці даних. Майстер-пароль більше не запитуватиметься під час запуску.",
+        "fr": "Tous les mafiles et sauvegardes seront déchiffrés et stockés en clair dans le dossier de données. Le mot de passe principal ne sera plus demandé au démarrage.",
+        "es": "Todos los mafiles y copias de seguridad se descifrarán y se guardarán como archivos legibles en la carpeta de datos. La contraseña maestra ya no se pedirá al iniciar.",
+        "tr": "Tüm mafile ve yedeklerin şifresi çözülecek ve veri klasöründe okunabilir dosyalar olarak saklanacak. Ana parola artık başlangıçta sorulmayacak.",
+        "kk": "Барлық mafile және сақтық көшірмелердің шифры ашылып, деректер қалтасында ашық файлдар ретінде сақталады. Бас құпиясөз енді іске қосқанда сұралмайды."
+      },
+      "DisableHint": {
+        "en": "Saved Steam passwords will be deleted. To use automatic login again, enable encryption and set the passwords again.",
+        "ru": "Сохранённые пароли Steam будут удалены. Чтобы снова пользоваться автовходом, включите шифрование и задайте пароли заново.",
+        "zh": "已保存的 Steam 密码将被删除。要再次使用自动登录，请启用加密并重新设置密码。",
+        "uk": "Збережені паролі Steam буде видалено. Щоб знову користуватися автовходом, увімкніть шифрування та задайте паролі заново.",
+        "fr": "Les mots de passe Steam enregistrés seront supprimés. Pour réutiliser la connexion automatique, activez le chiffrement et redéfinissez les mots de passe.",
+        "es": "Se eliminarán las contraseñas de Steam guardadas. Para volver a usar el inicio de sesión automático, activa el cifrado y vuelve a establecer las contraseñas.",
+        "tr": "Kaydedilen Steam parolaları silinecek. Otomatik girişi yeniden kullanmak için şifrelemeyi açın ve parolaları tekrar ayarlayın.",
+        "kk": "Сақталған Steam құпиясөздері жойылады. Автоматты кіруді қайта пайдалану үшін шифрлауды қосып, құпиясөздерді қайта орнатыңыз."
+      },
+      "DisableConfirm": {
+        "en": "Disable encryption",
+        "ru": "Выключить шифрование",
+        "zh": "禁用加密",
+        "uk": "Вимкнути шифрування",
+        "fr": "Désactiver le chiffrement",
+        "es": "Desactivar el cifrado",
+        "tr": "Şifrelemeyi kapat",
+        "kk": "Шифрлауды өшіру"
+      },
+      "BusyHint": {
+        "en": "Don't close NebulaAuth until the operation is finished. If it is interrupted, it resumes on the next start; no mafile is lost.",
+        "ru": "Не закрывайте NebulaAuth до завершения операции. Если она прервётся, то продолжится при следующем запуске; мафайлы не потеряются.",
+        "zh": "操作完成前请不要关闭 NebulaAuth。如果被中断，将在下次启动时继续；不会丢失任何 mafile。",
+        "uk": "Не закривайте NebulaAuth до завершення операції. Якщо вона перерветься, то продовжиться під час наступного запуску; мафайли не загубляться.",
+        "fr": "Ne fermez pas NebulaAuth avant la fin de l'opération. Si elle est interrompue, elle reprend au prochain démarrage ; aucun mafile n'est perdu.",
+        "es": "No cierres NebulaAuth hasta que termine la operación. Si se interrumpe, se reanuda en el próximo inicio; no se pierde ningún mafile.",
+        "tr": "İşlem bitene kadar NebulaAuth'u kapatmayın. Yarıda kalırsa bir sonraki başlatmada sürdürülür; hiçbir mafile kaybolmaz.",
+        "kk": "Операция аяқталғанша NebulaAuth-ты жаппаңыз. Ол үзілсе, келесі іске қосқанда жалғасады; бірде-бір mafile жоғалмайды."
+      },
+      "BusyCantClose": {
+        "en": "Wait until the encryption operation is finished.",
+        "ru": "Дождитесь завершения операции шифрования.",
+        "zh": "请等待加密操作完成。",
+        "uk": "Дочекайтеся завершення операції шифрування.",
+        "fr": "Attendez la fin de l'opération de chiffrement.",
+        "es": "Espera a que termine la operación de cifrado.",
+        "tr": "Şifreleme işleminin bitmesini bekleyin.",
+        "kk": "Шифрлау операциясының аяқталуын күтіңіз."
+      },
+      "SavePasswords": {
+        "Title": {
+          "en": "Save Steam passwords for auto-login",
+          "ru": "Сохранять пароли Steam для автовхода",
+          "zh": "保存 Steam 密码用于自动登录",
+          "uk": "Зберігати паролі Steam для автовходу",
+          "fr": "Enregistrer les mots de passe Steam pour la connexion automatique",
+          "es": "Guardar las contraseñas de Steam para el inicio automático",
+          "tr": "Otomatik giriş için Steam parolalarını kaydet",
+          "kk": "Автокіру үшін Steam құпиясөздерін сақтау"
+        },
+        "Short": {
+          "en": "Save for auto-login",
+          "ru": "Сохранять для автовхода",
+          "zh": "保存以自动登录",
+          "uk": "Зберігати для автовходу",
+          "fr": "Enregistrer pour la connexion auto",
+          "es": "Guardar para el inicio automático",
+          "tr": "Otomatik giriş için kaydet",
+          "kk": "Автокіру үшін сақтау"
+        },
+        "SavedCount": {
+          "en": "(saved: {0})",
+          "ru": "(сохранено: {0})",
+          "zh": "（已保存：{0}）",
+          "uk": "(збережено: {0})",
+          "fr": "(enregistrés : {0})",
+          "es": "(guardadas: {0})",
+          "tr": "(kayıtlı: {0})",
+          "kk": "(сақталған: {0})"
+        },
+        "NeedsEncryptionShort": {
+          "en": "Requires encryption: passwords are saved only in an encrypted storage",
+          "ru": "Нужно шифрование: пароли сохраняются только в зашифрованном хранилище",
+          "zh": "需要加密：密码仅保存在加密存储中",
+          "uk": "Потрібне шифрування: паролі зберігаються лише в зашифрованому сховищі",
+          "fr": "Nécessite le chiffrement : les mots de passe ne sont enregistrés que dans un stockage chiffré",
+          "es": "Requiere cifrado: las contraseñas solo se guardan en un almacenamiento cifrado",
+          "tr": "Şifreleme gerekir: parolalar yalnızca şifreli depolamada saklanır",
+          "kk": "Шифрлау қажет: құпиясөздер тек шифрланған қоймада сақталады"
+        },
+        "NeedsEncryption": {
+          "en": "Available when encryption is on: passwords are saved only in an encrypted storage.",
+          "ru": "Доступно при включённом шифровании: пароли сохраняются только в зашифрованном хранилище.",
+          "zh": "启用加密后可用：密码仅保存在加密存储中。",
+          "uk": "Доступно, коли шифрування увімкнено: паролі зберігаються лише в зашифрованому сховищі.",
+          "fr": "Disponible lorsque le chiffrement est activé : les mots de passe ne sont enregistrés que dans un stockage chiffré.",
+          "es": "Disponible con el cifrado activado: las contraseñas solo se guardan en un almacenamiento cifrado.",
+          "tr": "Şifreleme açıkken kullanılabilir: parolalar yalnızca şifreli depolamada saklanır.",
+          "kk": "Шифрлау қосулы болғанда қолжетімді: құпиясөздер тек шифрланған қоймада сақталады."
+        },
+        "OnHelper": {
+          "en": "Passwords are kept in a separate encrypted file and used for automatic re-login. Saved: {0}.",
+          "ru": "Пароли хранятся в отдельном зашифрованном файле и используются для автоматического повторного входа. Сохранено: {0}.",
+          "zh": "密码保存在单独的加密文件中，用于自动重新登录。已保存：{0}。",
+          "uk": "Паролі зберігаються в окремому зашифрованому файлі й використовуються для автоматичного повторного входу. Збережено: {0}.",
+          "fr": "Les mots de passe sont conservés dans un fichier chiffré séparé et servent à la reconnexion automatique. Enregistrés : {0}.",
+          "es": "Las contraseñas se guardan en un archivo cifrado aparte y se usan para volver a iniciar sesión automáticamente. Guardadas: {0}.",
+          "tr": "Parolalar ayrı bir şifreli dosyada tutulur ve otomatik yeniden giriş için kullanılır. Kayıtlı: {0}.",
+          "kk": "Құпиясөздер бөлек шифрланған файлда сақталады және автоматты қайта кіру үшін қолданылады. Сақталғаны: {0}."
+        },
+        "OffHelper": {
+          "en": "Passwords are not saved and not used for automatic re-login.",
+          "ru": "Пароли не сохраняются и не используются для автоматического повторного входа.",
+          "zh": "不保存密码，也不用于自动重新登录。",
+          "uk": "Паролі не зберігаються й не використовуються для автоматичного повторного входу.",
+          "fr": "Les mots de passe ne sont ni enregistrés ni utilisés pour la reconnexion automatique.",
+          "es": "Las contraseñas no se guardan ni se usan para volver a iniciar sesión automáticamente.",
+          "tr": "Parolalar kaydedilmez ve otomatik yeniden giriş için kullanılmaz.",
+          "kk": "Құпиясөздер сақталмайды және автоматты қайта кіру үшін қолданылмайды."
+        },
+        "ForgetTitle": {
+          "en": "Delete saved Steam passwords?",
+          "ru": "Удалить сохранённые пароли Steam?",
+          "zh": "删除已保存的 Steam 密码？",
+          "uk": "Видалити збережені паролі Steam?",
+          "fr": "Supprimer les mots de passe Steam enregistrés ?",
+          "es": "¿Eliminar las contraseñas de Steam guardadas?",
+          "tr": "Kayıtlı Steam parolaları silinsin mi?",
+          "kk": "Сақталған Steam құпиясөздерін жою керек пе?"
+        },
+        "ForgetText": {
+          "en": "Saving Steam passwords will be turned off and the saved passwords ({0}) will be deleted. Automatic re-login will ask for the password again.",
+          "ru": "Сохранение паролей Steam будет выключено, а сохранённые пароли ({0}) — удалены. При автоматическом повторном входе пароль будет запрошен снова.",
+          "zh": "将关闭保存 Steam 密码，并删除已保存的密码（{0}）。自动重新登录时将再次要求输入密码。",
+          "uk": "Збереження паролів Steam буде вимкнено, а збережені паролі ({0}) — видалено. Під час автоматичного повторного входу пароль буде запитано знову.",
+          "fr": "L'enregistrement des mots de passe Steam sera désactivé et les mots de passe enregistrés ({0}) seront supprimés. La reconnexion automatique demandera à nouveau le mot de passe.",
+          "es": "Se desactivará el guardado de contraseñas de Steam y se eliminarán las contraseñas guardadas ({0}). Al volver a iniciar sesión automáticamente se pedirá la contraseña de nuevo.",
+          "tr": "Steam parolalarının kaydedilmesi kapatılacak ve kayıtlı parolalar ({0}) silinecek. Otomatik yeniden giriş parolayı tekrar soracak.",
+          "kk": "Steam құпиясөздерін сақтау өшіріледі, ал сақталған құпиясөздер ({0}) жойылады. Автоматты қайта кіру кезінде құпиясөз қайта сұралады."
+        },
+        "ForgetHint": {
+          "en": "This can't be undone. To use automatic re-login again, turn saving back on and enter the passwords again.",
+          "ru": "Это действие нельзя отменить. Чтобы снова пользоваться автовходом, включите сохранение и введите пароли заново.",
+          "zh": "此操作无法撤销。若要再次使用自动重新登录，请重新开启保存并再次输入密码。",
+          "uk": "Цю дію не можна скасувати. Щоб знову користуватися автовходом, увімкніть збереження та введіть паролі заново.",
+          "fr": "Cette action est irréversible. Pour réutiliser la reconnexion automatique, réactivez l'enregistrement et saisissez à nouveau les mots de passe.",
+          "es": "Esta acción no se puede deshacer. Para volver a usar el inicio automático, activa de nuevo el guardado e introduce las contraseñas otra vez.",
+          "tr": "Bu işlem geri alınamaz. Otomatik yeniden girişi tekrar kullanmak için kaydetmeyi yeniden açın ve parolaları tekrar girin.",
+          "kk": "Бұл әрекетті болдырмау мүмкін емес. Автокіруді қайта пайдалану үшін сақтауды қосып, құпиясөздерді қайта енгізіңіз."
+        },
+        "ForgetConfirm": {
+          "en": "Delete passwords",
+          "ru": "Удалить пароли",
+          "zh": "删除密码",
+          "uk": "Видалити паролі",
+          "fr": "Supprimer les mots de passe",
+          "es": "Eliminar contraseñas",
+          "tr": "Parolaları sil",
+          "kk": "Құпиясөздерді жою"
+        },
+        "Deleted": {
+          "en": "Saving Steam passwords is off: {0} saved password(s) deleted.",
+          "ru": "Сохранение паролей Steam выключено. Удалено сохранённых паролей: {0}.",
+          "zh": "已关闭保存 Steam 密码：已删除 {0} 个已保存的密码。",
+          "uk": "Збереження паролів Steam вимкнено. Видалено збережених паролів: {0}.",
+          "fr": "L'enregistrement des mots de passe Steam est désactivé : {0} mot(s) de passe supprimé(s).",
+          "es": "El guardado de contraseñas de Steam está desactivado: {0} contraseña(s) eliminada(s).",
+          "tr": "Steam parolalarının kaydedilmesi kapalı: {0} kayıtlı parola silindi.",
+          "kk": "Steam құпиясөздерін сақтау өшірілді: {0} сақталған құпиясөз жойылды."
+        },
+        "TurnedOff": {
+          "en": "Saving Steam passwords is off.",
+          "ru": "Сохранение паролей Steam выключено.",
+          "zh": "已关闭保存 Steam 密码。",
+          "uk": "Збереження паролів Steam вимкнено.",
+          "fr": "L'enregistrement des mots de passe Steam est désactivé.",
+          "es": "El guardado de contraseñas de Steam está desactivado.",
+          "tr": "Steam parolalarının kaydedilmesi kapalı.",
+          "kk": "Steam құпиясөздерін сақтау өшірілді."
+        },
+        "DeleteFailed": {
+          "en": "The saved passwords could not be deleted: {0}. Saving stays on; try again after closing programs that use the data folder.",
+          "ru": "Не удалось удалить сохранённые пароли: {0}. Сохранение остаётся включённым; закройте программы, использующие папку данных, и повторите попытку.",
+          "zh": "无法删除已保存的密码：{0}。保存仍处于开启状态；请关闭正在使用数据文件夹的程序后重试。",
+          "uk": "Не вдалося видалити збережені паролі: {0}. Збереження залишається увімкненим; закрийте програми, що використовують папку даних, і спробуйте ще раз.",
+          "fr": "Impossible de supprimer les mots de passe enregistrés : {0}. L'enregistrement reste activé ; fermez les programmes qui utilisent le dossier de données et réessayez.",
+          "es": "No se pudieron eliminar las contraseñas guardadas: {0}. El guardado sigue activado; cierra los programas que usan la carpeta de datos e inténtalo de nuevo.",
+          "tr": "Kayıtlı parolalar silinemedi: {0}. Kaydetme açık kalıyor; veri klasörünü kullanan programları kapatıp tekrar deneyin.",
+          "kk": "Сақталған құпиясөздерді жою мүмкін болмады: {0}. Сақтау қосулы қалады; деректер қалтасын қолданатын бағдарламаларды жауып, қайталап көріңіз."
+        }
+      },
+      "Strength": {
+        "Weak": {
+          "en": "Weak",
+          "ru": "Слабый",
+          "zh": "弱",
+          "uk": "Слабкий",
+          "fr": "Faible",
+          "es": "Débil",
+          "tr": "Zayıf",
+          "kk": "Әлсіз"
+        },
+        "Fair": {
+          "en": "Fair",
+          "ru": "Средний",
+          "zh": "中等",
+          "uk": "Середній",
+          "fr": "Moyen",
+          "es": "Aceptable",
+          "tr": "Orta",
+          "kk": "Орташа"
+        },
+        "Strong": {
+          "en": "Strong",
+          "ru": "Надёжный",
+          "zh": "强",
+          "uk": "Надійний",
+          "fr": "Fort",
+          "es": "Fuerte",
+          "tr": "Güçlü",
+          "kk": "Мықты"
+        }
+      },
+      "Progress": {
+        "Encrypting": {
+          "en": "Encrypting files…",
+          "ru": "Шифрование файлов…",
+          "zh": "正在加密文件…",
+          "uk": "Шифрування файлів…",
+          "fr": "Chiffrement des fichiers…",
+          "es": "Cifrando archivos…",
+          "tr": "Dosyalar şifreleniyor…",
+          "kk": "Файлдар шифрлануда…"
+        },
+        "Decrypting": {
+          "en": "Decrypting files…",
+          "ru": "Расшифровка файлов…",
+          "zh": "正在解密文件…",
+          "uk": "Розшифрування файлів…",
+          "fr": "Déchiffrement des fichiers…",
+          "es": "Descifrando archivos…",
+          "tr": "Dosyaların şifresi çözülüyor…",
+          "kk": "Файлдардың шифры ашылуда…"
+        },
+        "Changing": {
+          "en": "Changing the master password…",
+          "ru": "Смена мастер-пароля…",
+          "zh": "正在更改主密码…",
+          "uk": "Зміна майстер-пароля…",
+          "fr": "Changement du mot de passe principal…",
+          "es": "Cambiando la contraseña maestra…",
+          "tr": "Ana parola değiştiriliyor…",
+          "kk": "Бас құпиясөз өзгертілуде…"
+        },
+        "Count": {
+          "en": "{0} of {1}",
+          "ru": "{0} из {1}",
+          "zh": "{0} / {1}",
+          "uk": "{0} з {1}",
+          "fr": "{0} sur {1}",
+          "es": "{0} de {1}",
+          "tr": "{0} / {1}",
+          "kk": "{0} / {1}"
+        }
+      },
+      "Result": {
+        "Enabled": {
+          "en": "Encryption is enabled: {0} file(s) encrypted.",
+          "ru": "Шифрование включено: зашифровано файлов — {0}.",
+          "zh": "已启用加密：已加密 {0} 个文件。",
+          "uk": "Шифрування увімкнено: зашифровано файлів — {0}.",
+          "fr": "Le chiffrement est activé : {0} fichier(s) chiffré(s).",
+          "es": "El cifrado está activado: {0} archivo(s) cifrado(s).",
+          "tr": "Şifreleme açıldı: {0} dosya şifrelendi.",
+          "kk": "Шифрлау қосылды: {0} файл шифрланды."
+        },
+        "Disabled": {
+          "en": "Encryption is disabled: {0} file(s) decrypted, saved Steam passwords deleted.",
+          "ru": "Шифрование выключено: расшифровано файлов — {0}, сохранённые пароли Steam удалены.",
+          "zh": "已禁用加密：已解密 {0} 个文件，已删除保存的 Steam 密码。",
+          "uk": "Шифрування вимкнено: розшифровано файлів — {0}, збережені паролі Steam видалено.",
+          "fr": "Le chiffrement est désactivé : {0} fichier(s) déchiffré(s), mots de passe Steam enregistrés supprimés.",
+          "es": "El cifrado está desactivado: {0} archivo(s) descifrado(s), contraseñas de Steam guardadas eliminadas.",
+          "tr": "Şifreleme kapatıldı: {0} dosyanın şifresi çözüldü, kaydedilen Steam parolaları silindi.",
+          "kk": "Шифрлау өшірілді: {0} файлдың шифры ашылды, сақталған Steam құпиясөздері жойылды."
+        },
+        "Changed": {
+          "en": "The master password is changed. Use the new password on the next start.",
+          "ru": "Мастер-пароль изменён. При следующем запуске используйте новый пароль.",
+          "zh": "主密码已更改。下次启动时请使用新密码。",
+          "uk": "Майстер-пароль змінено. Під час наступного запуску використовуйте новий пароль.",
+          "fr": "Le mot de passe principal a été changé. Utilisez le nouveau au prochain démarrage.",
+          "es": "Se ha cambiado la contraseña maestra. Usa la nueva en el próximo inicio.",
+          "tr": "Ana parola değiştirildi. Bir sonraki başlatmada yeni parolayı kullanın.",
+          "kk": "Бас құпиясөз өзгертілді. Келесі іске қосқанда жаңа құпиясөзді пайдаланыңыз."
+        },
+        "Skipped": {
+          "en": "{0} file(s) were skipped: see the list.",
+          "ru": "Пропущено файлов: {0} — см. список.",
+          "zh": "已跳过 {0} 个文件：请查看列表。",
+          "uk": "Пропущено файлів: {0} — див. список.",
+          "fr": "{0} fichier(s) ignoré(s) : voir la liste.",
+          "es": "Se omitieron {0} archivo(s): consulta la lista.",
+          "tr": "{0} dosya atlandı: listeye bakın.",
+          "kk": "{0} файл өткізіліп жіберілді: тізімді қараңыз."
+        },
+        "NotFinished": {
+          "en": "The operation is not finished: {0} file(s) could not be converted and stay unchanged (see the list). Resume to try again; it is also resumed on the next start.",
+          "ru": "Операция не завершена: файлов не удалось преобразовать — {0}, они остались без изменений (см. список). Возобновите, чтобы попробовать снова; при следующем запуске операция также продолжится.",
+          "zh": "操作未完成：有 {0} 个文件无法转换，保持不变（见列表）。请继续以重试；下次启动时也会继续。",
+          "uk": "Операцію не завершено: не вдалося перетворити файлів — {0}, вони лишилися без змін (див. список). Відновіть, щоб спробувати знову; під час наступного запуску операція також продовжиться.",
+          "fr": "L'opération n'est pas terminée : {0} fichier(s) n'ont pas pu être convertis et restent inchangés (voir la liste). Reprenez pour réessayer ; elle reprend aussi au prochain démarrage.",
+          "es": "La operación no ha terminado: {0} archivo(s) no se pudieron convertir y siguen sin cambios (ver la lista). Reanuda para reintentarlo; también se reanuda en el próximo inicio.",
+          "tr": "İşlem tamamlanmadı: {0} dosya dönüştürülemedi ve değişmeden kaldı (listeye bakın). Yeniden denemek için sürdürün; bir sonraki başlatmada da sürdürülür.",
+          "kk": "Операция аяқталмады: {0} файлды түрлендіру мүмкін болмады, олар өзгеріссіз қалды (тізімді қараңыз). Қайталау үшін жалғастырыңыз; ол келесі іске қосқанда да жалғасады."
+        },
+        "NotFinishedDecrypting": {
+          "en": "Encryption is still on: {0} file(s) are still encrypted with your key or could not be checked (see the list). The key and the saved Steam passwords are kept until every file is decrypted. Close the program that uses these files or fix or remove them, then resume.",
+          "ru": "Шифрование всё ещё включено: файлов, которые всё ещё зашифрованы вашим ключом или не удалось проверить, — {0} (см. список). Ключ и сохранённые пароли Steam сохраняются, пока не будут расшифрованы все файлы. Закройте программу, которая использует эти файлы, или исправьте либо удалите их, затем возобновите операцию.",
+          "zh": "加密仍处于开启状态：有 {0} 个文件仍由您的密钥加密或无法检查（见列表）。在所有文件解密之前，密钥和已保存的 Steam 密码会被保留。请关闭使用这些文件的程序，或修复、删除它们，然后继续。",
+          "uk": "Шифрування досі ввімкнене: файлів, які досі зашифровані вашим ключем або які не вдалося перевірити, — {0} (див. список). Ключ і збережені паролі Steam зберігаються, доки не буде розшифровано всі файли. Закрийте програму, яка використовує ці файли, або виправте чи видаліть їх, потім відновіть операцію.",
+          "fr": "Le chiffrement est toujours actif : {0} fichier(s) sont encore chiffrés avec votre clé ou n'ont pas pu être vérifiés (voir la liste). La clé et les mots de passe Steam enregistrés sont conservés jusqu'à ce que tous les fichiers soient déchiffrés. Fermez le programme qui utilise ces fichiers, ou corrigez-les ou supprimez-les, puis reprenez.",
+          "es": "El cifrado sigue activo: {0} archivo(s) siguen cifrados con tu clave o no se pudieron comprobar (ver la lista). La clave y las contraseñas de Steam guardadas se conservan hasta que se descifren todos los archivos. Cierra el programa que usa estos archivos o corrígelos o elimínalos y luego reanuda.",
+          "tr": "Şifreleme hâlâ açık: {0} dosya hâlâ anahtarınızla şifreli veya denetlenemedi (listeye bakın). Tüm dosyaların şifresi çözülene kadar anahtar ve kayıtlı Steam parolaları korunur. Bu dosyaları kullanan programı kapatın ya da dosyaları düzeltin veya silin, ardından sürdürün.",
+          "kk": "Шифрлау әлі қосулы: {0} файл әлі де сіздің кілтіңізбен шифрланған немесе тексерілмеді (тізімді қараңыз). Барлық файлдың шифры шешілгенше кілт пен сақталған Steam құпиясөздері сақталады. Осы файлдарды пайдаланатын бағдарламаны жабыңыз немесе оларды түзетіңіз не жойыңыз, содан кейін жалғастырыңыз."
+        },
+        "Failed": {
+          "en": "The operation failed and is not finished: {0}. No mafile was lost; if the mode shows an unfinished change, resume it.",
+          "ru": "Операция завершилась ошибкой и не выполнена: {0}. Мафайлы не потеряны; если режим показывает незавершённую смену, возобновите её.",
+          "zh": "操作失败且未完成：{0}。没有丢失任何 mafile；如果模式显示更改未完成，请继续该操作。",
+          "uk": "Операція завершилася помилкою і не виконана: {0}. Мафайли не загублено; якщо режим показує незавершену зміну, відновіть її.",
+          "fr": "L'opération a échoué et n'est pas terminée : {0}. Aucun mafile n'a été perdu ; si le mode indique un changement inachevé, reprenez-le.",
+          "es": "La operación falló y no ha terminado: {0}. No se ha perdido ningún mafile; si el modo muestra un cambio sin terminar, reanúdalo.",
+          "tr": "İşlem başarısız oldu ve tamamlanmadı: {0}. Hiçbir mafile kaybolmadı; mod tamamlanmamış bir değişiklik gösteriyorsa sürdürün.",
+          "kk": "Операция қатемен аяқталды және орындалмады: {0}. Бірде-бір mafile жоғалмады; режим аяқталмаған өзгерісті көрсетсе, оны жалғастырыңыз."
+        }
+      },
+      "Errors": {
+        "CurrentEmpty": {
+          "en": "Enter the current master password.",
+          "ru": "Введите текущий мастер-пароль.",
+          "zh": "请输入当前主密码。",
+          "uk": "Введіть поточний майстер-пароль.",
+          "fr": "Saisissez le mot de passe principal actuel.",
+          "es": "Introduce la contraseña maestra actual.",
+          "tr": "Geçerli ana parolayı girin.",
+          "kk": "Ағымдағы бас құпиясөзді енгізіңіз."
+        },
+        "WrongCurrent": {
+          "en": "The current master password is wrong.",
+          "ru": "Текущий мастер-пароль неверен.",
+          "zh": "当前主密码错误。",
+          "uk": "Поточний майстер-пароль неправильний.",
+          "fr": "Le mot de passe principal actuel est incorrect.",
+          "es": "La contraseña maestra actual es incorrecta.",
+          "tr": "Geçerli ana parola yanlış.",
+          "kk": "Ағымдағы бас құпиясөз қате."
+        },
+        "ChangeFailed": {
+          "en": "The master password was not changed: {0}",
+          "ru": "Мастер-пароль не изменён: {0}",
+          "zh": "主密码未更改：{0}",
+          "uk": "Майстер-пароль не змінено: {0}",
+          "fr": "Le mot de passe principal n'a pas été changé : {0}",
+          "es": "No se ha cambiado la contraseña maestra: {0}",
+          "tr": "Ana parola değiştirilmedi: {0}",
+          "kk": "Бас құпиясөз өзгертілмеді: {0}"
+        },
+        "TooShort": {
+          "en": "The master password must have at least {0} characters.",
+          "ru": "Мастер-пароль должен содержать не менее {0} символов.",
+          "zh": "主密码至少需要 {0} 个字符。",
+          "uk": "Майстер-пароль має містити щонайменше {0} символів.",
+          "fr": "Le mot de passe principal doit comporter au moins {0} caractères.",
+          "es": "La contraseña maestra debe tener al menos {0} caracteres.",
+          "tr": "Ana parola en az {0} karakter olmalıdır.",
+          "kk": "Бас құпиясөз кемінде {0} таңбадан тұруы керек."
+        },
+        "Mismatch": {
+          "en": "The passwords do not match.",
+          "ru": "Пароли не совпадают.",
+          "zh": "两次输入的密码不一致。",
+          "uk": "Паролі не збігаються.",
+          "fr": "Les mots de passe ne correspondent pas.",
+          "es": "Las contraseñas no coinciden.",
+          "tr": "Parolalar eşleşmiyor.",
+          "kk": "Құпиясөздер сәйкес келмейді."
+        },
+        "EncryptedFilesNotConfirmed": {
+          "en": "Confirm that the encrypted files stay unreadable, or restore their storage state first.",
+          "ru": "Подтвердите, что зашифрованные файлы останутся нечитаемыми, или сначала восстановите их состояние хранилища.",
+          "zh": "请确认这些加密文件将保持不可读，或先恢复它们的存储状态。",
+          "uk": "Підтвердьте, що зашифровані файли лишаться нечитабельними, або спершу відновіть їхній стан сховища.",
+          "fr": "Confirmez que les fichiers chiffrés resteront illisibles, ou restaurez d'abord leur état de stockage.",
+          "es": "Confirma que los archivos cifrados seguirán ilegibles o restaura primero su estado de almacenamiento.",
+          "tr": "Şifrelenmiş dosyaların okunamaz kalacağını onaylayın veya önce depolama durumlarını geri yükleyin.",
+          "kk": "Шифрланған файлдар оқылмайтын күйде қалатынын растаңыз немесе алдымен олардың қойма күйін қалпына келтіріңіз."
+        }
+      }
+    }
+  },
+  "PasswordHints": {
+    "CapsLock": {
+      "en": "Caps Lock is on",
+      "ru": "Включён Caps Lock",
+      "zh": "大写锁定已开启",
+      "uk": "Увімкнено Caps Lock",
+      "fr": "Verr. Maj est activé",
+      "es": "Bloq Mayús está activado",
+      "tr": "Caps Lock açık",
+      "kk": "Caps Lock қосулы"
+    },
+    "NonLatin": {
+      "en": "The password contains non-Latin characters: check the keyboard layout",
+      "ru": "В пароле есть нелатинские символы: проверьте раскладку клавиатуры",
+      "zh": "密码包含非拉丁字符：请检查键盘布局",
+      "uk": "У паролі є нелатинські символи: перевірте розкладку клавіатури",
+      "fr": "Le mot de passe contient des caractères non latins : vérifiez la disposition du clavier",
+      "es": "La contraseña contiene caracteres no latinos: comprueba la distribución del teclado",
+      "tr": "Parola Latin olmayan karakterler içeriyor: klavye düzenini kontrol edin",
+      "kk": "Құпиясөзде латын емес таңбалар бар: пернетақта тілін тексеріңіз"
+    },
+    "CapsLockShort": {
+      "en": "Caps Lock is on.",
+      "ru": "Включён Caps Lock.",
+      "zh": "大写锁定已开启。",
+      "uk": "Увімкнено Caps Lock.",
+      "fr": "Verr. Maj est activé.",
+      "es": "Bloq Mayús está activado.",
+      "tr": "Caps Lock açık.",
+      "kk": "Caps Lock қосулы."
+    },
+    "NonLatinShort": {
+      "en": "The password contains non-Latin characters: check the keyboard layout.",
+      "ru": "В пароле есть нелатинские символы: проверьте раскладку клавиатуры.",
+      "zh": "密码包含非拉丁字符：请检查键盘布局。",
+      "uk": "У паролі є нелатинські символи: перевірте розкладку клавіатури.",
+      "fr": "Le mot de passe contient des caractères non latins : vérifiez la disposition du clavier.",
+      "es": "La contraseña contiene caracteres no latinos: comprueba la distribución del teclado.",
+      "tr": "Parola Latin olmayan karakterler içeriyor: klavye düzenini kontrol edin.",
+      "kk": "Құпиясөзде латын емес таңбалар бар: пернетақта тілін тексеріңіз."
+    }
+  }
+}

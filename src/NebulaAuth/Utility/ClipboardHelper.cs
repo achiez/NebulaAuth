@@ -89,6 +89,21 @@ public class ClipboardHelper
     }
 
     /// <summary>
+    ///     Empties the clipboard. Errors are logged (no snackbar).
+    /// </summary>
+    public static async Task ClearAsync()
+    {
+        try
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => GetClipboard().ClearAsync());
+        }
+        catch (Exception ex)
+        {
+            Shell.Logger.Error(ex);
+        }
+    }
+
+    /// <summary>
     ///     Returns local paths of the files currently on the clipboard (empty when there are none).
     ///     Errors are logged (no snackbar).
     /// </summary>

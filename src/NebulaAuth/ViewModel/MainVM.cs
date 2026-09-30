@@ -41,6 +41,7 @@ public partial class MainVM : ObservableObject
             new MaProxy(kvp.Key, kvp.Value)));
         Storage.MaFiles.CollectionChanged += MaFilesOnCollectionChanged;
         QueryGroups();
+        InitSkippedFiles();
         UpdateManager.CheckForUpdates();
     }
 
@@ -78,7 +79,7 @@ public partial class MainVM : ObservableObject
     {
         var selectedMafile = SelectedMafile;
         if (selectedMafile == null) return;
-        var currentPassword = PHandler.DecryptPassword(selectedMafile.Password);
+        var currentPassword = SteamPasswords.Get(selectedMafile.AccountName);
         var loginAgainVm = await DialogsController.ShowLoginAgainDialog(selectedMafile.AccountName, currentPassword);
         if (loginAgainVm == null)
         {

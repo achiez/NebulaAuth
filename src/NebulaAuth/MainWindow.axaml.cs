@@ -45,10 +45,10 @@ public partial class MainWindow : Window
         ThemeManager.InitializeTheme();
         ControlsLocale.Initialize();
         Title = Title + " " + Assembly.GetExecutingAssembly().GetName().Version?.ToString(3);
-        Loaded += OnApplicationStarted;
         UpdateManager.PendingUpdateDetected += OnPendingUpdateDetected;
         InitializeInput();
         ViewModel!.PropertyChanged += ViewModel_OnPropertyChanged;
+        Closing += MainWindow_OnClosing;
 #if DEBUG
         ShowStyleGalleryIfRequested();
         ShowMainDemoIfRequested();
@@ -56,6 +56,20 @@ public partial class MainWindow : Window
     }
 
     private MainVM? ViewModel => DataContext as MainVM;
+
+    private static void MainWindow_OnClosing(object? sender, WindowClosingEventArgs e)
+    {
+        // Enabling / disabling encryption must not be cut off (it would be resumed on the next start)
+        if (!StorageOperationLock.IsBusy)
+        {
+            // Closing the main window exits the app: the clipboard is still reachable through this window here
+            DecryptedMafileClipboard.OnAppExit();
+            return;
+        }
+
+        e.Cancel = true;
+        SnackbarController.SendSnackbar(StorageOperationLock.BusyMessage);
+    }
 
     /// <summary>
     ///     Platform hotkeys (Ctrl on Windows/Linux, Cmd on macOS). Same lookup as Avalonia's ItemSelectionEventTriggers.
@@ -154,30 +168,6 @@ public partial class MainWindow : Window
         var brush = tick % 2 == 0 ? Brushes.DodgerBlue : Brushes.OrangeRed;
         UpdateBadgeIcon.Foreground = brush;
         ByAchiesLink.Foreground = brush;
-    }
-
-    private async void OnApplicationStarted(object? sender, RoutedEventArgs e)
-    {
-        if (!Settings.Instance.IsPasswordSet) return;
-        Topmost = false;
-        await Dispatcher.UIThread.InvokeAsync(ShowSetPasswordDialog, DispatcherPriority.ContextIdle);
-    }
-
-
-    private async Task ShowSetPasswordDialog()
-    {
-        var vm = new SetEncryptPasswordVM();
-        var dialog = new SetCryptPasswordDialog
-        {
-            DataContext = vm
-        };
-
-        var result = await DialogService.Show(dialog);
-        var pass = vm.Password;
-        if (result is true && !string.IsNullOrWhiteSpace(pass))
-        {
-            PHandler.SetPassword(pass);
-        }
     }
 
     private void UpdateSnackbarMargin(double footerHeight)

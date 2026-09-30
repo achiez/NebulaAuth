@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using AchiesUtilities.Extensions;
 using CommunityToolkit.Mvvm.Input;
@@ -11,6 +13,7 @@ using NebulaAuth.Model;
 using NebulaAuth.Model.Entities;
 using NebulaAuth.Model.Exceptions;
 using NebulaAuth.Model.Mafiles;
+using NebulaAuth.Model.Mafiles.Protection;
 using NebulaAuth.Model.MafilesLegacy;
 using NebulaAuth.Utility;
 using NebulaAuth.View;
@@ -31,10 +34,12 @@ public partial class MainVM //File //TODO: Refactor
 
     public Settings Settings => Settings.Instance;
 
+    // "*.mafile.encrypted": encrypted mafiles of this storage (e.g. from maFiles_removed). Encrypted files of another
+    // storage are recognized by the header and refused with a reason; SDA encrypted mafiles keep their own import path.
     // File picker globs are case-sensitive on Linux (GTK / portals): match any case of ".mafile" there
     private static readonly string[] MafilePatterns = OperatingSystem.IsLinux()
-        ? ["*.[mM][aA][fF][iI][lL][eE]"]
-        : ["*.mafile", "*.maFile"];
+        ? ["*.[mM][aA][fF][iI][lL][eE]", "*.[mM][aA][fF][iI][lL][eE].[eE][nN][cC][rR][yY][pP][tT][eE][dD]"]
+        : ["*.mafile", "*.maFile", "*.mafile.encrypted"];
 
 
     [RelayCommand]
@@ -197,8 +202,25 @@ public partial class MainVM //File //TODO: Refactor
     {
         try
         {
-            var content = await File.ReadAllTextAsync(path);
             Mafile mafile;
+            var bytes = await File.ReadAllBytesAsync(path);
+            if (StorageCrypto.HasMagic(bytes))
+            {
+                // NebulaAuth encrypted mafile (decided by the header): readable only when it belongs to this storage
+                var plain = MafileStorageService.Current.DecodeImportedFile(bytes);
+                try
+                {
+                    mafile = NebulaSerializer.Deserialize(Encoding.UTF8.GetString(plain), StorageFileNames.ToPlainName(path));
+                }
+                finally
+                {
+                    CryptographicOperations.ZeroMemory(plain);
+                }
+
+                return new MafileReadResult(mafile, sdaPasswordPrompted, sdaContext);
+            }
+
+            var content = await File.ReadAllTextAsync(path);
             if (!SDAEncryptionHelper.LooksLikeSdaEncryptedBlob(content))
             {
                 mafile = NebulaSerializer.Deserialize(content, path);
@@ -226,6 +248,14 @@ public partial class MainVM //File //TODO: Refactor
             mafile = NebulaSerializer.Deserialize(content, path);
             return new MafileReadResult(mafile, sdaPasswordPrompted, sdaContext);
         }
+        catch (StorageFileException ex)
+        {
+            // Encrypted by another storage / format, damaged, or encryption is off: never read with another key
+            Shell.Logger.Warn("Import: {file} refused ({reason})", Path.GetFileName(path), ex.Reason);
+            SnackbarController.SendSnackbar(string.Format(GetLocalization("ImportEncryptedRefused"), Path.GetFileName(path),
+                SkippedFileItemVM.GetReasonText(ex.Reason)), TimeSpan.FromSeconds(8));
+            return new MafileReadResult(null, sdaPasswordPrompted, sdaContext);
+        }
         catch (Exception ex)
             when (ex is not MafileNeedReloginException)
         {
@@ -248,6 +278,9 @@ public partial class MainVM //File //TODO: Refactor
             data.Proxy = loginAgainVm.SelectedProxy;
         }
 
+        // The name of the imported file is not a storage name: the login saves the mafile, which must be written under
+        // the storage name (the one SaveMafileAsync below uses), never under the name of the imported file
+        data.Filename = null;
         var waitDialog = new WaitLoginDialog();
         var wait = DialogService.Show(waitDialog);
         try
@@ -336,14 +369,9 @@ public partial class MainVM //File //TODO: Refactor
     }
 
     [RelayCommand]
-    private async Task OpenSettingsDialog()
+    private Task OpenSettingsDialog()
     {
-        var vm = new SettingsVM();
-        var view = new SettingsView
-        {
-            DataContext = vm
-        };
-        await DialogService.Show(view);
+        return DialogsController.ShowSettingsDialog();
     }
 
     [RelayCommand]
@@ -379,7 +407,34 @@ public partial class MainVM //File //TODO: Refactor
     {
         if (mafile is not Mafile maf) return;
         var path = Storage.TryGetMafilePath(maf);
-        if (await ClipboardHelper.SetFilesAsync(path == null ? [] : [path]))
+        bool copied;
+        if (path != null && maf.Filename != null &&
+            StorageFileNames.IsEncrypted(StorageFileNames.Classify(Path.GetFileName(path))))
+        {
+            // Encrypted storage: the clipboard gets a readable temporary copy (no Steam password), deleted once the
+            // clipboard changes, after a time limit, or on the next start
+            byte[] plain;
+            try
+            {
+                var decrypted = await MafileStorageService.Current.ReadFileAsync(path);
+                plain = StorageContent.StripPassword(decrypted, out _);
+                if (!ReferenceEquals(plain, decrypted)) CryptographicOperations.ZeroMemory(decrypted);
+            }
+            catch (Exception ex) when (ex is StorageFileException or FormatException)
+            {
+                Shell.Logger.Error(ex, "Copy mafile: {file} can't be read", Path.GetFileName(path));
+                SnackbarController.SendSnackbar(GetLocalization("MafileNotCopied"));
+                return;
+            }
+
+            copied = await DecryptedMafileClipboard.CopyAsync(StorageFileNames.ToPlainName(maf.Filename), plain);
+        }
+        else
+        {
+            copied = await ClipboardHelper.SetFilesAsync(path == null ? [] : [path]);
+        }
+
+        if (copied)
             SnackbarController.SendSnackbar(GetLocalization("MafileCopied"));
     }
 
@@ -387,22 +442,20 @@ public partial class MainVM //File //TODO: Refactor
     private void CopyPassword(object? mafile)
     {
         if (mafile is not Mafile maf) return;
-        if (maf.Password == null) return;
-        try
-        {
-            var pass = PHandler.Decrypt(maf.Password);
-            if (ClipboardHelper.Set(pass))
-                SnackbarController.SendSnackbar(GetLocalization("PasswordCopied"));
-        }
-        catch
+        var pass = SteamPasswords.Get(maf.AccountName);
+        if (pass == null)
         {
             SnackbarController.SendSnackbar(GetLocalization("CantDecryptPassword"));
+            return;
         }
+
+        if (ClipboardHelper.Set(pass))
+            SnackbarController.SendSnackbar(GetLocalization("PasswordCopied"));
     }
 
     private bool CanCopyPassword(object? mafile)
     {
         if (mafile is not Mafile maf) return false;
-        return maf.Password != null && PHandler.IsPasswordSet;
+        return SteamPasswords.Has(maf.AccountName);
     }
 }

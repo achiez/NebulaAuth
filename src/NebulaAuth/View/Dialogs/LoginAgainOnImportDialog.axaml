@@ -6,7 +6,6 @@
              xmlns:nebulaAuth="using:NebulaAuth"
              xmlns:mi="using:Material.Icons.Avalonia"
              xmlns:other="using:NebulaAuth.ViewModel.Other"
-             xmlns:model="using:NebulaAuth.Model"
              xmlns:entities="using:NebulaAuth.Model.Entities"
              mc:Ignorable="d"
              x:Class="NebulaAuth.View.Dialogs.LoginAgainOnImportDialog"
@@ -28,6 +27,7 @@
                     <mi:MaterialIcon Classes="InputIcon" Kind="Key" />
                 </TextBox.InnerLeftContent>
             </TextBox>
+            <nebulaAuth:PasswordHints Target="{Binding #PasswordField}" Margin="2,-6,2,0" />
             <ComboBox x:Name="ProxyBox"
                       FontSize="14"
                       ItemsSource="{Binding Proxies}"
@@ -44,10 +44,19 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
+            <!-- Steam passwords are saved only in the encrypted password store -->
             <CheckBox FontSize="14"
-                      IsEnabled="{x:Static model:PHandler.IsPasswordSet}"
+                      IsVisible="{Binding CanSavePassword}"
                       IsChecked="{Binding SavePassword}"
                       Content="{Tr LoginAgainDialog.SaveEncryptedPassword}" />
+            <Panel IsVisible="{Binding !CanSavePassword}" Margin="2,-4,2,0">
+                <TextBlock Classes="FieldHelper" TextWrapping="Wrap"
+                           IsVisible="{Binding !SaveTurnedOff}"
+                           Text="{Tr LoginAgainDialog.SaveRequiresEncryption}" />
+                <TextBlock Classes="FieldHelper" TextWrapping="Wrap"
+                           IsVisible="{Binding SaveTurnedOff}"
+                           Text="{Tr LoginAgainDialog.SaveTurnedOff}" />
+            </Panel>
             <CheckBox FontSize="14"
                       IsEnabled="{Binding MafileHasProxy}"
                       IsChecked="{Binding UseMafileProxy}"

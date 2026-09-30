@@ -201,6 +201,10 @@ public static class ThemeResources
         yield return ("ErrorBorderBrush", ColorMath.WithAlpha(p.Error, 0.35));
         yield return ("SuccessBorderBrush", ColorMath.WithAlpha(p.Success, 0.35));
 
+        // Warning / error text on cards and dialogs (the palette orange is too light on white surfaces)
+        yield return ("WarningTextBrush", AccentOn(p.Base100, p.Warning));
+        yield return ("ErrorTextBrush", AccentOn(p.Base100, p.Error));
+
         // Semi control tokens that Semi hardcodes or points to white/black: overridden app-wide
         yield return ("ButtonSolidForeground", onPrimary);
         yield return ("ButtonSolidPrimaryPressedForeground", onPrimary);

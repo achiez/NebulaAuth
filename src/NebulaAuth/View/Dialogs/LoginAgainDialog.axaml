@@ -6,7 +6,6 @@
              xmlns:nebulaAuth="using:NebulaAuth"
              xmlns:mi="using:Material.Icons.Avalonia"
              xmlns:other="using:NebulaAuth.ViewModel.Other"
-             xmlns:model="using:NebulaAuth.Model"
              mc:Ignorable="d"
              x:Class="NebulaAuth.View.Dialogs.LoginAgainDialog"
              x:DataType="other:LoginAgainVM"
@@ -30,10 +29,20 @@
                     <mi:MaterialIcon Classes="InputIcon" Kind="Key" />
                 </TextBox.InnerLeftContent>
             </TextBox>
+            <nebulaAuth:PasswordHints Target="{Binding #PasswordField}" Margin="2,-6,2,0" />
+            <!-- Steam passwords are saved only in the encrypted password store -->
             <CheckBox FontSize="14"
-                      IsEnabled="{x:Static model:PHandler.IsPasswordSet}"
+                      IsVisible="{Binding CanSavePassword}"
                       IsChecked="{Binding SavePassword}"
                       Content="{Tr LoginAgainDialog.SaveEncryptedPassword}" />
+            <Panel IsVisible="{Binding !CanSavePassword}" Margin="2,-4,2,0">
+                <TextBlock Classes="FieldHelper" TextWrapping="Wrap"
+                           IsVisible="{Binding !SaveTurnedOff}"
+                           Text="{Tr LoginAgainDialog.SaveRequiresEncryption}" />
+                <TextBlock Classes="FieldHelper" TextWrapping="Wrap"
+                           IsVisible="{Binding SaveTurnedOff}"
+                           Text="{Tr LoginAgainDialog.SaveTurnedOff}" />
+            </Panel>
             <StackPanel Classes="DialogActions">
                 <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
                         Content="{Tr LoginAgainDialog.LoginButton}"

@@ -361,6 +361,16 @@
         "tr": "Mafile kopyalanamadı",
         "kk": "Mafile көшірілмеді"
       },
+      "ImportEncryptedRefused": {
+        "en": "{0} can't be imported: {1}",
+        "ru": "{0} нельзя импортировать: {1}",
+        "zh": "无法导入 {0}：{1}",
+        "uk": "{0} не можна імпортувати: {1}",
+        "fr": "{0} ne peut pas être importé : {1}",
+        "es": "No se puede importar {0}: {1}",
+        "tr": "{0} içe aktarılamıyor: {1}",
+        "kk": "{0} импорттау мүмкін емес: {1}"
+      },
       "PasswordCopied": {
         "en": "Password copied",
         "ru": "Пароль скопирован",
@@ -672,16 +682,6 @@
           "es": "Iniciar sesión",
           "tr": "Giriş yap",
           "kk": "Кіру"
-        },
-        "QrLogin": {
-          "en": "Login via QR",
-          "ru": "Войти по QR",
-          "uk": "Увійти за QR",
-          "zh": "扫码登录",
-          "fr": "Connexion par QR",
-          "es": "Entrar con QR",
-          "tr": "QR ile giriş",
-          "kk": "QR арқылы кіру"
         }
       }
     },

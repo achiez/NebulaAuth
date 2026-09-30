@@ -47,11 +47,28 @@
                         <mi:MaterialIcon Classes="InputIcon" Kind="User" />
                     </TextBox.InnerLeftContent>
                 </TextBox>
-                <TextBox Text="{Binding Password}" PlaceholderText="{Tr LinkerDialog.Password}">
+                <TextBox x:Name="PasswordField" Text="{Binding Password}" PlaceholderText="{Tr LinkerDialog.Password}">
                     <TextBox.InnerLeftContent>
                         <mi:MaterialIcon Classes="InputIcon" Kind="Key" />
                     </TextBox.InnerLeftContent>
                 </TextBox>
+                <nebulaAuth:PasswordHints Target="{Binding #PasswordField}" Margin="2,-4,2,0" />
+                <!-- Saved for automatic re-login only in the encrypted password store -->
+                <TextBlock Classes="FieldHelper" TextWrapping="Wrap" Margin="2,-4,2,0"
+                           IsVisible="{Binding CanSavePassword}"
+                           Text="{Tr LinkerDialog.PasswordSavedEncrypted}" />
+                <TextBlock Classes="FieldHelper" TextWrapping="Wrap" Margin="2,-4,2,0"
+                           Text="{Tr LinkerDialog.PasswordNotSaved}">
+                    <TextBlock.IsVisible>
+                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                            <Binding Path="!CanSavePassword" />
+                            <Binding Path="!SaveTurnedOff" />
+                        </MultiBinding>
+                    </TextBlock.IsVisible>
+                </TextBlock>
+                <TextBlock Classes="FieldHelper" TextWrapping="Wrap" Margin="2,-4,2,0"
+                           IsVisible="{Binding SaveTurnedOff}"
+                           Text="{Tr LinkerDialog.PasswordNotSavedTurnedOff}" />
                 <StackPanel Classes="Field">
                     <TextBlock Classes="FieldLabel" Text="{Tr LinkerDialog.Proxy}" />
                     <ComboBox Classes="clearButton" FontSize="13"

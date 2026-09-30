@@ -197,16 +197,6 @@
         "tr": "Proxy",
         "kk": "Прокси"
       },
-      "NebulaPassword": {
-        "ru": "Пароль",
-        "en": "Password",
-        "uk": "Пароль",
-        "fr": "Mot de passe",
-        "zh": "密码",
-        "es": "Contraseña",
-        "tr": "Şifre",
-        "kk": "Құпиясөз"
-      },
       "NebulaGroup": {
         "ru": "Группа",
         "en": "Group",
@@ -298,16 +288,6 @@
         "es": "Incluir datos de proxy compatibles con Nebula.",
         "tr": "Nebula uyumlu proxy verilerini dahil et.",
         "kk": "Nebula үйлесімді прокси деректерін қосу."
-      },
-      "NebulaPassword": {
-        "ru": "Включить Nebula-совместимые данные пароля.",
-        "en": "Include Nebula-compatible password data.",
-        "uk": "Увімкнути Nebula-сумісні дані пароля.",
-        "fr": "Inclure les données de mot de passe compatibles avec Nebula.",
-        "zh": "包含与 Nebula 兼容的密码数据。",
-        "es": "Incluir datos de contraseña compatibles con Nebula.",
-        "tr": "Nebula uyumlu parola verilerini dahil et.",
-        "kk": "Nebula үйлесімді құпиясөз деректерін қосу."
       },
       "NebulaGroup": {
         "ru": "Включить Nebula-совместимые данные группы.",

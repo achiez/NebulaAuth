@@ -1,0 +1,134 @@
+<!--
+    Skipped storage files: summary chips (count per group), then one virtualized list of group headers and compact rows
+    (name, reason for "not protected" rows, folder, reveal button; full path in the tooltip). Scales to hundreds of files:
+    only the visible rows are created. Give the control a bounded height (MaxHeight or a star row); in an unbounded
+    parent every row would be realized. Used by the skipped-files dialog, the Encryption settings tab and the startup
+    window.
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:other="using:NebulaAuth.ViewModel.Other"
+             x:Class="NebulaAuth.View.SkippedFilesList"
+             x:DataType="other:SkippedFilesVM">
+    <UserControl.Styles>
+        <Style Selector="Border.Chip">
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="8,2" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="{DynamicResource SemiColorFill0}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+        </Style>
+        <Style Selector="Border.Chip.Unprotected">
+            <Setter Property="Background" Value="{DynamicResource ErrorTintBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorderBrush}" />
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource ErrorBrush}" />
+        </Style>
+        <Style Selector="Border.GroupHeader">
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="10,7" />
+            <Setter Property="Margin" Value="0,8,0,2" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="{DynamicResource SemiColorFill0}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+        <Style Selector="Border.GroupHeader.Unprotected">
+            <Setter Property="Background" Value="{DynamicResource ErrorTintBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorderBrush}" />
+        </Style>
+        <Style Selector="Border.GroupHeader mi|MaterialIcon.GroupIcon">
+            <Setter Property="Foreground" Value="{DynamicResource WarningBrush}" />
+        </Style>
+        <Style Selector="Border.GroupHeader.Unprotected mi|MaterialIcon.GroupIcon">
+            <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+        </Style>
+        <Style Selector="Border.GroupHeader.Unprotected TextBlock.GroupTitle">
+            <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+        </Style>
+        <Style Selector="Border.FileRow">
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="10,1,2,1" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="Border.FileRow:pointerover">
+            <Setter Property="Background" Value="{DynamicResource HoverFillBrush}" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto,*" RowSpacing="8">
+        <!-- Summary: count per group -->
+        <ItemsControl Grid.Row="0" ItemsSource="{Binding Groups}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel ItemSpacing="6" LineSpacing="6" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="other:SkippedFileGroupVM">
+                    <Border Classes="Chip" Classes.Unprotected="{Binding IsUnprotected}"
+                            ToolTip.Tip="{Binding Description}">
+                        <!-- Runs on one line: whitespace between Run elements would add spaces -->
+                        <TextBlock FontSize="12"><Run Text="{Binding Title}" /><Run Text=" " /><Run FontWeight="Bold" Text="{Binding Count}" /></TextBlock>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Group headers and file rows in one virtualized list -->
+        <Border Grid.Row="1" Classes="Card Flat" Padding="6,0,4,6">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <ItemsControl x:Name="Rows" ItemsSource="{Binding Rows}" Margin="0,0,6,0">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.DataTemplates>
+                        <DataTemplate DataType="other:SkippedFileGroupVM">
+                            <Border Classes="GroupHeader" Classes.Unprotected="{Binding IsUnprotected}">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                                    <mi:MaterialIcon Grid.Column="0" Classes="GroupIcon" IconSize="18"
+                                                     VerticalAlignment="Top" Margin="0,1,0,0"
+                                                     Kind="{Binding Icon}" />
+                                    <StackPanel Grid.Column="1" Spacing="2">
+                                        <TextBlock Classes="GroupTitle" FontSize="13" FontWeight="SemiBold"
+                                                   Text="{Binding Title}" />
+                                        <TextBlock FontSize="12" LineHeight="17" TextWrapping="Wrap"
+                                                   Foreground="{DynamicResource MutedForegroundBrush}"
+                                                   Text="{Binding Description}" />
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="2" FontSize="13" FontWeight="Bold"
+                                               VerticalAlignment="Top"
+                                               Text="{Binding Count}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                        <DataTemplate DataType="other:SkippedFileItemVM">
+                            <Border Classes="FileRow" ToolTip.Tip="{Binding ToolTip}">
+                                <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
+                                    <TextBlock Grid.Column="0" FontSize="13" VerticalAlignment="Center"
+                                               TextTrimming="CharacterEllipsis"
+                                               Text="{Binding Name}" />
+                                    <TextBlock Grid.Column="1" FontSize="11" VerticalAlignment="Center"
+                                               Foreground="{DynamicResource MutedForegroundBrush}"
+                                               IsVisible="{Binding ShowReason}"
+                                               Text="{Binding ReasonTitle}" />
+                                    <TextBlock Grid.Column="2" Classes="Mono" FontSize="11" VerticalAlignment="Center"
+                                               Foreground="{DynamicResource SubtleForegroundBrush}"
+                                               Text="{Binding Folder}" />
+                                    <Button Grid.Column="3" VerticalAlignment="Center"
+                                            Theme="{StaticResource GhostIconButton}" Classes="Small"
+                                            ToolTip.Tip="{Tr SkippedFiles.Reveal}"
+                                            AutomationProperties.Name="{Tr SkippedFiles.Reveal}"
+                                            Command="{Binding RevealCommand}">
+                                        <mi:MaterialIcon Kind="FolderOpenOutline" />
+                                    </Button>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.DataTemplates>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

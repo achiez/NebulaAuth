@@ -23,20 +23,9 @@ public partial class SessionHandler //Helpers
         return !string.IsNullOrWhiteSpace(plainPassword);
     }
 
+    // Saved only in an encrypted storage (separate password store, by Steam login)
     private static string? GetPassword(Mafile mafile)
     {
-        try
-        {
-            if (PHandler.IsPasswordSet && !string.IsNullOrWhiteSpace(mafile.Password))
-            {
-                return PHandler.Decrypt(mafile.Password);
-            }
-        }
-        catch
-        {
-            // ignored
-        }
-
-        return null;
+        return SteamPasswords.Get(mafile.AccountName);
     }
 }

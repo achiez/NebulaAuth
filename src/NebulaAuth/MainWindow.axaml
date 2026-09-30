@@ -288,9 +288,6 @@
                                               Command="{Binding RefreshSessionCommand}" />
                                     <MenuItem Header="{Tr MainWindow.Menu.Account.LoginAgain}"
                                               Command="{Binding LoginAgainCommand}" />
-                                    <Separator />
-                                    <MenuItem Header="{Tr MainWindow.Menu.Account.QrLogin}"
-                                              Command="{Binding QrLoginCommand}" />
                                 </MenuItem>
                             </Menu>
 
@@ -629,6 +626,27 @@
                                 <TextBlock Text="{Binding SelectedMafile.AccountName, FallbackValue=' ', TargetNullValue=' ', Mode=OneWay}" />
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- Storage files that were not loaded / not converted: opens the list (red when some are
+                                     readable files in an encrypted storage) -->
+                                <Button x:Name="SkippedFilesBadge"
+                                        Theme="{StaticResource GhostIconButton}" Classes="Small"
+                                        Width="NaN" Height="24" Padding="6,0" Margin="0,0,8,0"
+                                        IsVisible="{Binding HasSkippedFiles}"
+                                        ToolTip.Tip="{Binding SkippedFilesHint}"
+                                        AutomationProperties.Name="{Binding SkippedFilesHint}"
+                                        Command="{Binding ShowSkippedFilesCommand}">
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <mi:MaterialIcon Kind="FileAlertOutline" IconSize="15"
+                                                         Foreground="{DynamicResource WarningBrush}"
+                                                         IsVisible="{Binding !HasUnprotectedSkipped}" />
+                                        <mi:MaterialIcon Kind="ShieldOffOutline" IconSize="15"
+                                                         Foreground="{DynamicResource ErrorBrush}"
+                                                         IsVisible="{Binding HasUnprotectedSkipped}" />
+                                        <TextBlock FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"
+                                                   Foreground="{DynamicResource FooterForegroundBrush}"
+                                                   Text="{Binding SkippedFilesCount}" />
+                                    </StackPanel>
+                                </Button>
                                 <!-- Shown and blinking for 6 s when an update is detected (StartUpdateBlink) -->
                                 <mi:MaterialIcon x:Name="UpdateBadgeIcon"
                                                  Kind="BellAlert" IconSize="15"

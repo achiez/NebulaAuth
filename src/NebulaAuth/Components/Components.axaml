@@ -118,4 +118,33 @@
             </Style>
         </Style>
     </ControlTheme>
+
+    <!-- PasswordHints: small lines under a password field (Caps Lock warning, keyboard layout note) -->
+    <ControlTheme x:Key="{x:Type nebulaAuth:PasswordHints}" TargetType="nebulaAuth:PasswordHints">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Template">
+            <ControlTemplate TargetType="nebulaAuth:PasswordHints">
+                <StackPanel Spacing="4">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6"
+                          IsVisible="{TemplateBinding IsCapsLockOn}">
+                        <mi:MaterialIcon Grid.Column="0" Kind="KeyboardCaps" IconSize="14" VerticalAlignment="Top"
+                                         Margin="0,1,0,0"
+                                         Foreground="{DynamicResource WarningTextBrush}" />
+                        <TextBlock Grid.Column="1" TextWrapping="Wrap" LineHeight="17" FontWeight="Medium"
+                                   Foreground="{DynamicResource WarningTextBrush}"
+                                   Text="{Tr PasswordHints.CapsLock}" />
+                    </Grid>
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6"
+                          IsVisible="{TemplateBinding HasNonLatin}">
+                        <mi:MaterialIcon Grid.Column="0" Kind="Translate" IconSize="14" VerticalAlignment="Top"
+                                         Margin="0,1,0,0"
+                                         Foreground="{DynamicResource MutedForegroundBrush}" />
+                        <TextBlock Grid.Column="1" TextWrapping="Wrap" LineHeight="17"
+                                   Foreground="{DynamicResource MutedForegroundBrush}"
+                                   Text="{Tr PasswordHints.NonLatin}" />
+                    </Grid>
+                </StackPanel>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
 </ResourceDictionary>

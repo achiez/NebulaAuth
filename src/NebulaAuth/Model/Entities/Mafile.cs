@@ -11,7 +11,6 @@ public partial class Mafile : MobileDataExtended
 {
     public MaProxy? Proxy { get; set; }
     public string? Group { get; set; }
-    public string? Password { get; set; }
 
     [JsonIgnore]
     public PortableMaClient? LinkedClient
@@ -55,13 +54,11 @@ public partial class Mafile : MobileDataExtended
         };
     }
 
-    public static Mafile FromMobileDataExtended(MobileDataExtended data, MaProxy? proxy, string? group,
-        string? password)
+    public static Mafile FromMobileDataExtended(MobileDataExtended data, MaProxy? proxy, string? group)
     {
         var result = FromMobileDataExtended(data);
         result.Proxy = proxy;
         result.Group = group;
-        result.Password = password;
         return result;
     }
 }

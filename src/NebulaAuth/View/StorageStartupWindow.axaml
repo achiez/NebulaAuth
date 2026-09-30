@@ -1,0 +1,123 @@
+<!--
+    Startup storage window, shown before the accounts are loaded (the main window and its dialog host do not exist yet):
+    master password prompt of an encrypted storage, progress of an interrupted encryption mode change that is finished
+    before the app opens (and the explanation when it could not be finished), or a storage that can't be opened
+    (damaged / missing state file, newer format).
+-->
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:nebulaAuth="using:NebulaAuth"
+        xmlns:mi="using:Material.Icons.Avalonia"
+        xmlns:other="using:NebulaAuth.ViewModel.Other"
+        xmlns:view="using:NebulaAuth.View"
+        x:Class="NebulaAuth.View.StorageStartupWindow"
+        x:DataType="other:StorageStartupVM"
+        Title="NebulaAuth"
+        Icon="avares://NebulaAuth/Theme/lock.ico"
+        Width="460"
+        SizeToContent="Height"
+        MaxHeight="720"
+        CanResize="False"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource DialogBackgroundBrush}"
+        FontSize="15">
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0" Background="{DynamicResource DialogHeaderBackgroundBrush}" MinHeight="52"
+                Padding="20,0">
+            <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <mi:MaterialIcon Kind="{Binding HeaderIcon}" IconSize="20"
+                                 Foreground="{DynamicResource DialogHeaderForegroundBrush}" />
+                <TextBlock Text="{Binding HeaderTitle}" FontSize="16" FontWeight="SemiBold"
+                           Foreground="{DynamicResource DialogHeaderForegroundBrush}" VerticalAlignment="Center" />
+            </StackPanel>
+        </Border>
+
+        <!-- ===== Master password ===== -->
+        <StackPanel Grid.Row="1" Classes="DialogBody" IsVisible="{Binding IsUnlockPage}">
+            <TextBlock Classes="DialogText" Text="{Tr StorageUnlock.Prompt}" />
+            <StackPanel Classes="Field">
+                <TextBlock Classes="FieldLabel" Text="{Tr StorageUnlock.PasswordLabel}" />
+                <TextBox x:Name="PasswordBox"
+                         PasswordChar="•"
+                         Classes="revealPasswordButton"
+                         IsEnabled="{Binding !IsChecking}"
+                         Text="{Binding Password}" />
+                <!-- The error of a failed attempt already names the detected hints -->
+                <nebulaAuth:PasswordHints x:Name="PasswordBoxHints" Target="{Binding #PasswordBox}"
+                                          IsSuppressed="{Binding PasswordError, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                <TextBlock Classes="FieldError" TextWrapping="Wrap"
+                           Text="{Binding PasswordError}"
+                           IsVisible="{Binding PasswordError, Converter={x:Static ObjectConverters.IsNotNull}}" />
+            </StackPanel>
+            <!-- The key derivation takes about a second -->
+            <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsChecking}" />
+            <StackPanel Classes="DialogActions">
+                <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                        Content="{Tr StorageUnlock.Unlock}"
+                        IsDefault="True"
+                        Command="{Binding UnlockCommand}" />
+                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                        Content="{Tr StorageUnlock.Quit}"
+                        IsCancel="True"
+                        Command="{Binding QuitCommand}" />
+            </StackPanel>
+        </StackPanel>
+
+        <!-- ===== Resumed mode change ===== -->
+        <StackPanel Grid.Row="1" Classes="DialogBody" IsVisible="{Binding IsProgressPage}">
+            <TextBlock Classes="DialogText" Text="{Tr StorageUnlock.ProgressText}" />
+            <StackPanel Spacing="6">
+                <ProgressBar Minimum="0" Maximum="1"
+                             Value="{Binding ProgressValue}"
+                             IsIndeterminate="{Binding IsProgressIndeterminate}" />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <TextBlock Grid.Column="0" Classes="Mono" FontSize="12" TextTrimming="CharacterEllipsis"
+                               Foreground="{DynamicResource MutedForegroundBrush}"
+                               Text="{Binding ProgressFile}" />
+                    <TextBlock Grid.Column="1" FontSize="12"
+                               Foreground="{DynamicResource MutedForegroundBrush}"
+                               Text="{Binding ProgressCount}" />
+                </Grid>
+            </StackPanel>
+            <nebulaAuth:HintBox FontSize="14" Text="{Tr StorageUnlock.ProgressHint}" />
+        </StackPanel>
+
+        <!-- ===== Resumed mode change could not be finished ===== -->
+        <StackPanel Grid.Row="1" Classes="DialogBody" IsVisible="{Binding IsUnfinishedPage}">
+            <TextBlock Classes="DialogText" Text="{Binding UnfinishedText}" />
+            <view:SkippedFilesList DataContext="{Binding UnfinishedFiles}" MaxHeight="260" />
+            <StackPanel Classes="DialogActions">
+                <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                        Content="{Tr StorageUnlock.Continue}"
+                        IsDefault="True"
+                        Command="{Binding ContinueCommand}" />
+                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                        Content="{Tr StorageUnlock.Quit}"
+                        IsCancel="True"
+                        Command="{Binding QuitCommand}" />
+            </StackPanel>
+        </StackPanel>
+
+        <!-- ===== Can't open ===== -->
+        <StackPanel Grid.Row="1" Classes="DialogBody" IsVisible="{Binding IsErrorPage}">
+            <TextBlock Classes="Heading" TextWrapping="Wrap" Text="{Binding ErrorTitle}" />
+            <TextBlock Classes="DialogText" Text="{Binding ErrorText}" />
+            <nebulaAuth:HintBox FontSize="14" Text="{Tr StorageUnlock.NothingChanged}" />
+            <StackPanel Spacing="4">
+                <TextBlock Classes="FieldLabel" Text="{Tr StorageUnlock.Details}" />
+                <SelectableTextBlock Classes="Mono" FontSize="12" TextWrapping="Wrap"
+                                     Foreground="{DynamicResource MutedForegroundBrush}"
+                                     Text="{Binding ErrorDetails}" />
+            </StackPanel>
+            <StackPanel Classes="DialogActions">
+                <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                        Content="{Tr StorageUnlock.Quit}"
+                        IsDefault="True" IsCancel="True"
+                        Command="{Binding QuitCommand}" />
+                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                        Content="{Tr StorageUnlock.OpenDataFolder}"
+                        Command="{Binding OpenDataFolderCommand}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

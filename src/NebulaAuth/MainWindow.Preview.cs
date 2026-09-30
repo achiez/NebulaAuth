@@ -34,7 +34,10 @@ public partial class MainWindow
     ///     "update" (update dialog with a fake 1.8.4 release + changelog, no network), "remove" / "unlink" (remove mafile /
     ///     remove authenticator confirmations; their results are ignored), "qr" / "qrrisk" / "qrminimal" / "qrexpired"
     ///     (select the first account and run the QR login on the current clipboard image up to the first network call,
-    ///     fake session info in the dialog, see MainVM.DemoQrLogin).
+    ///     fake session info in the dialog, see MainVM.DemoQrLogin), "copymafile" (select the first account and run "Copy
+    ///     mafile" 2 s after start: in an encrypted storage it puts a readable temporary copy on the clipboard),
+    ///     "pastemafiles" (import the files of the clipboard 2 s after start, like Ctrl+V), "closemain" (close the main
+    ///     window 6 s after start: the normal app exit, e.g. deleting the readable "Copy mafile" copy).
     /// </summary>
     private void ShowMainDemoIfRequested()
     {
@@ -61,6 +64,16 @@ public partial class MainWindow
                 SetDropOverlayVisible(true);
             if (parts.Contains("narrow"))
                 Width = MinWidth;
+            if (parts.Contains("copymafile"))
+                DispatcherTimer.RunOnce(() =>
+                {
+                    vm.SelectedMafile = vm.MaFiles.FirstOrDefault();
+                    vm.CopyMafileCommand.Execute(vm.SelectedMafile);
+                }, TimeSpan.FromSeconds(2));
+            if (parts.Contains("pastemafiles"))
+                DispatcherTimer.RunOnce(() => vm.PasteMafilesFromClipboardCommand.Execute(null), TimeSpan.FromSeconds(2));
+            if (parts.Contains("closemain"))
+                DispatcherTimer.RunOnce(Close, TimeSpan.FromSeconds(6));
             if (parts.Contains("snackbar"))
                 SnackbarController.SendSnackbar("Demo snackbar", TimeSpan.FromSeconds(30));
             // Popups: "late" delays them by 4 s (frame captures of the open animation start before the popup exists)

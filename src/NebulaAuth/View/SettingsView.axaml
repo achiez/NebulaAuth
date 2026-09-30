@@ -9,6 +9,7 @@
              xmlns:mi="using:Material.Icons.Avalonia"
              xmlns:scg="using:System.Collections.Generic"
              xmlns:sys="using:System"
+             xmlns:view="using:NebulaAuth.View"
              mc:Ignorable="d"
              d:DesignHeight="650"
              x:Class="NebulaAuth.View.SettingsView"
@@ -34,18 +35,166 @@
             <Setter Property="Margin" Value="0,-4,0,0" />
         </Style>
         <!-- The visible track of the HideActiveTrack sliders comes from the app style + SliderTrackBackground (ThemeResources) -->
+        <!-- Encryption tab: master password strength (3 segments) and the color of the mode icon -->
+        <Style Selector="Grid.StrengthBar > Border.Segment">
+            <Setter Property="Height" Value="4" />
+            <Setter Property="CornerRadius" Value="2" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Background" Value="{DynamicResource SemiColorFill2}" />
+        </Style>
+        <Style Selector="Grid.StrengthBar.weak > Border.S1">
+            <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
+        </Style>
+        <Style Selector="Grid.StrengthBar.fair > Border.S1, Grid.StrengthBar.fair > Border.S2">
+            <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+        </Style>
+        <Style Selector="Grid.StrengthBar.strong > Border.Segment">
+            <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
+        </Style>
+        <!-- Encryption tab overview: groups of settings rows (card, 1px border, rows separated by dividers) -->
+        <Style Selector="Border.SettingsGroup">
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="ClipToBounds" Value="True" />
+        </Style>
+        <Style Selector="Border.RowDivider">
+            <Setter Property="Height" Value="1" />
+            <Setter Property="Background" Value="{DynamicResource DividerBrush}" />
+        </Style>
+        <Style Selector="TextBlock.SectionTitle">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="4,0,0,0" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+        </Style>
+        <Style Selector="TextBlock.RowTitle">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style Selector="TextBlock.RowTitle.Dimmed">
+            <Setter Property="Opacity" Value="0.5" />
+        </Style>
+        <Style Selector="TextBlock.RowText">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="LineHeight" Value="17" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+        </Style>
+        <!-- Status badge: tinted circle with the mode icon (green = encrypted, orange = plain / unfinished) -->
+        <Style Selector="Border.ModeBadge">
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="CornerRadius" Value="18" />
+            <Setter Property="Background" Value="{DynamicResource WarningTintBrush}" />
+        </Style>
+        <Style Selector="Border.ModeBadge > mi|MaterialIcon">
+            <Setter Property="IconSize" Value="20" />
+            <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+        </Style>
+        <Style Selector="Border.ModeBadge.Encrypted">
+            <Setter Property="Background" Value="{DynamicResource SuccessTintBrush}" />
+        </Style>
+        <Style Selector="Border.ModeBadge.Encrypted > mi|MaterialIcon">
+            <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+        </Style>
+        <Style Selector="Border.ModeBadge.Busy">
+            <Setter Property="Background" Value="{DynamicResource PrimaryTintBrush}" />
+        </Style>
+        <!-- Problems row of the status card: warning tint; error tint when a file is not protected -->
+        <Style Selector="Border.ProblemRow">
+            <Setter Property="Background" Value="{DynamicResource WarningTintBrush}" />
+            <Setter Property="Padding" Value="14,0" />
+            <Setter Property="MinHeight" Value="40" />
+        </Style>
+        <Style Selector="Border.ProblemRow mi|MaterialIcon.ProblemIcon">
+            <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+        </Style>
+        <Style Selector="Border.ProblemRow TextBlock.ProblemText">
+            <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+        </Style>
+        <Style Selector="Border.ProblemRow.Danger">
+            <Setter Property="Background" Value="{DynamicResource ErrorTintBrush}" />
+        </Style>
+        <Style Selector="Border.ProblemRow.Danger mi|MaterialIcon.ProblemIcon">
+            <Setter Property="Foreground" Value="{DynamicResource ErrorTextBrush}" />
+        </Style>
+        <Style Selector="Border.ProblemRow.Danger TextBlock.ProblemText">
+            <Setter Property="Foreground" Value="{DynamicResource ErrorTextBrush}" />
+        </Style>
     </UserControl.Styles>
 
+    <UserControl.Resources>
+        <!-- Full-width action row of a settings group: icon, text (+ optional second line), chevron; hover fill.
+             Classes: Primary (main action of the state), Danger (destructive) -->
+        <ControlTheme x:Key="SettingsRowButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="14,10" />
+            <Setter Property="MinHeight" Value="46" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter Name="PART_ContentPresenter"
+                                      Background="{TemplateBinding Background}"
+                                      BorderBrush="{TemplateBinding BorderBrush}"
+                                      BorderThickness="{TemplateBinding BorderThickness}"
+                                      Padding="{TemplateBinding Padding}"
+                                      Foreground="{TemplateBinding Foreground}"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </ControlTemplate>
+            </Setter>
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="{DynamicResource HoverFillBrush}" />
+            </Style>
+            <Style Selector="^:pressed">
+                <Setter Property="Background" Value="{DynamicResource PressedFillBrush}" />
+            </Style>
+            <Style Selector="^:focus-visible">
+                <Setter Property="BorderBrush" Value="{DynamicResource FocusRingBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+            </Style>
+            <Style Selector="^.Primary">
+                <Setter Property="Foreground" Value="{DynamicResource SemiColorPrimary}" />
+            </Style>
+            <Style Selector="^.Danger">
+                <Setter Property="Foreground" Value="{DynamicResource ErrorTextBrush}" />
+            </Style>
+            <Style Selector="^:disabled">
+                <Setter Property="Opacity" Value="0.45" />
+            </Style>
+        </ControlTheme>
+    </UserControl.Resources>
+
     <Grid RowDefinitions="Auto,*">
+        <!-- Not closable while mafiles are renamed or an encryption operation runs -->
         <nebulaAuth:DialogHeader Grid.Row="0"
                                  IconKind="Settings"
-                                 Title="{Tr SettingsDialog.Title}"
-                                 IsCloseEnabled="{Binding !ApplyRenameSettingCommand.IsRunning}" />
+                                 Title="{Tr SettingsDialog.Title}">
+            <nebulaAuth:DialogHeader.IsCloseEnabled>
+                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                    <Binding Path="!ApplyRenameSettingCommand.IsRunning" />
+                    <Binding Path="!Encryption.IsBusy" />
+                </MultiBinding>
+            </nebulaAuth:DialogHeader.IsCloseEnabled>
+        </nebulaAuth:DialogHeader>
 
-        <TabControl Grid.Row="1" x:Name="SettingsTabs" Classes="Uniform" Padding="0">
+        <TabControl Grid.Row="1" x:Name="SettingsTabs" Classes="Uniform" Padding="0" SelectedIndex="{Binding SelectedTab}">
 
             <!-- ===== Main ===== -->
-            <TabItem Header="{Tr SettingsDialog.MainSettings}">
+            <TabItem Header="{Tr SettingsDialog.MainSettings}" IsEnabled="{Binding !Encryption.IsBusy}">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled">
                     <!-- Spacing 22 between groups: the groups differ in kind (select, check boxes, password, action) -->
                     <StackPanel Classes="Form" Spacing="22" Margin="24,20,24,24">
@@ -88,29 +237,6 @@
                         </StackPanel>
 
                         <StackPanel Classes="Field">
-                            <TextBlock Classes="FieldLabel" Text="{Tr SettingsDialog.PasswordBox.CurrentCryptPassword}" />
-                            <Grid ColumnDefinitions="*,6,Auto">
-                                <TextBox Grid.Column="0"
-                                         MinWidth="250"
-                                         Text="{Binding Password}"
-                                         PasswordChar="•"
-                                         Classes="revealPasswordButton">
-                                    <TextBox.KeyBindings>
-                                        <KeyBinding Gesture="Enter" Command="{Binding SetPasswordCommand}" />
-                                    </TextBox.KeyBindings>
-                                </TextBox>
-                                <Button Grid.Column="2"
-                                        Theme="{StaticResource GhostIconButton}"
-                                        Classes="Primary"
-                                        Command="{Binding SetPasswordCommand}"
-                                        ToolTip.Tip="{Tr Common.Save}">
-                                    <mi:MaterialIcon Kind="ContentSave" />
-                                </Button>
-                            </Grid>
-                            <TextBlock Classes="FieldHelper" Text="{Tr SettingsDialog.PasswordBox.Hint}" />
-                        </StackPanel>
-
-                        <StackPanel Classes="Field">
                             <TextBlock Classes="FieldLabel" Text="{Tr SettingsDialog.MafileNamingMode}" />
                             <ComboBox SelectedItem="{Binding UseAccountNameAsMafileNamePreview}">
                                 <x:Boolean>True</x:Boolean>
@@ -144,7 +270,7 @@
             </TabItem>
 
             <!-- ===== Theme ===== -->
-            <TabItem Header="{Tr SettingsDialog.ThemeSettings}">
+            <TabItem Header="{Tr SettingsDialog.ThemeSettings}" IsEnabled="{Binding !Encryption.IsBusy}">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Classes="Form" Margin="24,16,24,24">
                         <StackPanel Classes="Field">
@@ -244,6 +370,341 @@
                             </StackPanel>
                         </Button>
                     </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ===== Encryption ===== -->
+            <TabItem Header="{Tr SettingsDialog.Encryption.Tab}"
+                     IsEnabled="{Binding !ApplyRenameSettingCommand.IsRunning}">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" DataContext="{Binding Encryption}"
+                              x:DataType="other:EncryptionSettingsVM">
+
+                    <Panel Margin="24,20,24,24">
+                        <!-- Overview: status (+ problems), Steam passwords, management. Operation results are
+                             snackbars (EncryptionSettingsVM.Notify), nothing stays in the tab. -->
+                        <StackPanel Spacing="20" IsVisible="{Binding IsOverviewPage}">
+                            <Border Classes="SettingsGroup">
+                                <StackPanel>
+                                    <!-- Mode: the full explanation is the tooltip -->
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="14,12"
+                                          Background="Transparent"
+                                          ToolTip.Tip="{Binding ModeDescription}"
+                                          ToolTip.ShowDelay="300">
+                                        <Border Grid.Column="0" Classes="ModeBadge"
+                                                Classes.Encrypted="{Binding IsEncrypted}"
+                                                VerticalAlignment="Center">
+                                            <mi:MaterialIcon Kind="{Binding ModeIcon}" />
+                                        </Border>
+                                        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                            <TextBlock FontSize="15" FontWeight="SemiBold" TextWrapping="Wrap"
+                                                       Text="{Binding ModeTitle}" />
+                                            <TextBlock Classes="RowText" FontSize="13" Text="{Binding ModeSubtitle}" />
+                                        </StackPanel>
+                                    </Grid>
+                                    <!-- Problems: skipped / not protected files -->
+                                    <Border Classes="ProblemRow" Classes.Danger="{Binding HasUnprotected}"
+                                            IsVisible="{Binding HasSkipped}">
+                                        <Grid ColumnDefinitions="36,*,Auto" ColumnSpacing="12">
+                                            <mi:MaterialIcon Grid.Column="0" Classes="ProblemIcon" Kind="AlertOutline"
+                                                             IconSize="16" VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="1" Classes="ProblemText" FontSize="13"
+                                                       FontWeight="Medium" TextWrapping="Wrap"
+                                                       VerticalAlignment="Center" Margin="0,9"
+                                                       Text="{Binding ProblemText}" />
+                                            <Button Grid.Column="2" Theme="{StaticResource LinkButton}"
+                                                    FontSize="13" VerticalAlignment="Center"
+                                                    Content="{Tr SettingsDialog.Encryption.Problems.Show}"
+                                                    Command="{Binding ShowSkippedCommand}" />
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Saved Steam passwords (encrypted storage only); off = the saved ones are deleted -->
+                            <StackPanel Spacing="8">
+                                <TextBlock Classes="SectionTitle"
+                                           Text="{Tr SettingsDialog.Encryption.Section.Passwords}" />
+                                <Border Classes="SettingsGroup">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" Margin="14,10"
+                                          MinHeight="26"
+                                          Background="Transparent"
+                                          ToolTip.Tip="{Binding SavePasswordsHelper}"
+                                          ToolTip.ShowDelay="300">
+                                        <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                                            <TextBlock Classes="RowTitle" Classes.Dimmed="{Binding !IsEncrypted}">
+                                                <Run Text="{Tr SettingsDialog.Encryption.SavePasswords.Short}" />
+                                                <Run FontWeight="Normal" FontSize="13"
+                                                     Foreground="{DynamicResource MutedForegroundBrush}"
+                                                     Text="{Binding SavedPasswordsText}" />
+                                            </TextBlock>
+                                            <TextBlock Classes="RowText" Text="{Binding SavePasswordsNote}"
+                                                       IsVisible="{Binding SavePasswordsNote, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                        </StackPanel>
+                                        <ToggleSwitch Grid.Column="1" VerticalAlignment="Center"
+                                                      OnContent="{x:Null}" OffContent="{x:Null}"
+                                                      IsEnabled="{Binding IsEncrypted}"
+                                                      AutomationProperties.Name="{Tr SettingsDialog.Encryption.SavePasswords.Title}"
+                                                      IsChecked="{Binding SavePasswordsSwitch}" />
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- Management: one primary action in plain / unfinished mode, change + disable when encrypted -->
+                            <StackPanel Spacing="8">
+                                <TextBlock Classes="SectionTitle"
+                                           Text="{Tr SettingsDialog.Encryption.Section.Management}" />
+                                <Border Classes="SettingsGroup">
+                                    <StackPanel>
+                                        <Button Theme="{StaticResource SettingsRowButton}" Classes="Primary"
+                                                IsVisible="{Binding IsPlain}"
+                                                Command="{Binding ShowEnableCommand}"
+                                                ToolTip.Tip="{Tr SettingsDialog.Encryption.EnableHelper}"
+                                                ToolTip.ShowDelay="500">
+                                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                                <mi:MaterialIcon Grid.Column="0" Kind="ShieldLockOutline" IconSize="18" />
+                                                <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
+                                                    <TextBlock FontWeight="SemiBold"
+                                                               Text="{Tr SettingsDialog.Encryption.Enable}" />
+                                                    <TextBlock Classes="RowText"
+                                                               Text="{Tr SettingsDialog.Encryption.Actions.EnableHint}" />
+                                                </StackPanel>
+                                                <mi:MaterialIcon Grid.Column="2" Kind="ChevronRight" IconSize="18" />
+                                            </Grid>
+                                        </Button>
+                                        <Button Theme="{StaticResource SettingsRowButton}" Classes="Primary"
+                                                IsVisible="{Binding IsTransition}"
+                                                Command="{Binding ResumeCommand}">
+                                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                                <mi:MaterialIcon Grid.Column="0" Kind="Restore" IconSize="18" />
+                                                <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
+                                                    <TextBlock FontWeight="SemiBold"
+                                                               Text="{Tr SettingsDialog.Encryption.Resume}" />
+                                                    <TextBlock Classes="RowText"
+                                                               Text="{Tr SettingsDialog.Encryption.Actions.ResumeHint}" />
+                                                </StackPanel>
+                                                <mi:MaterialIcon Grid.Column="2" Kind="ChevronRight" IconSize="18" />
+                                            </Grid>
+                                        </Button>
+                                        <StackPanel IsVisible="{Binding IsEncrypted}">
+                                            <Button Theme="{StaticResource SettingsRowButton}"
+                                                    Command="{Binding ShowChangeCommand}">
+                                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                                    <mi:MaterialIcon Grid.Column="0" Kind="KeyChange" IconSize="18"
+                                                                     Foreground="{DynamicResource MutedForegroundBrush}" />
+                                                    <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                                               Text="{Tr SettingsDialog.Encryption.ChangePassword}" />
+                                                    <mi:MaterialIcon Grid.Column="2" Kind="ChevronRight" IconSize="18"
+                                                                     Foreground="{DynamicResource SubtleForegroundBrush}" />
+                                                </Grid>
+                                            </Button>
+                                            <Border Classes="RowDivider" Margin="44,0,0,0" />
+                                            <Button Theme="{StaticResource SettingsRowButton}" Classes="Danger"
+                                                    Command="{Binding ShowDisableCommand}">
+                                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                                    <mi:MaterialIcon Grid.Column="0" Kind="LockOpenVariantOutline"
+                                                                     IconSize="18" />
+                                                    <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                                               Text="{Tr SettingsDialog.Encryption.Disable}" />
+                                                    <mi:MaterialIcon Grid.Column="2" Kind="ChevronRight" IconSize="18"
+                                                                     Opacity="0.7" />
+                                                </Grid>
+                                            </Button>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Enable: new master password -->
+                        <StackPanel Classes="Form" IsVisible="{Binding IsEnablePage}">
+                            <TextBlock Classes="Heading" Text="{Tr SettingsDialog.Encryption.EnableTitle}" />
+                            <TextBlock Classes="DialogText" FontSize="14"
+                                       Text="{Tr SettingsDialog.Encryption.EnableText}" />
+                            <StackPanel Classes="Field">
+                                <TextBlock Classes="FieldLabel" Text="{Tr SettingsDialog.Encryption.NewPassword}" />
+                                <TextBox x:Name="EnableNewPassword" PasswordChar="•" Classes="revealPasswordButton"
+                                         Text="{Binding NewPassword}" />
+                                <nebulaAuth:PasswordHints Target="{Binding #EnableNewPassword}" />
+                                <Grid ColumnDefinitions="*,*,*,Auto" ColumnSpacing="4" Classes="StrengthBar"
+                                      Classes.weak="{Binding IsWeak}" Classes.fair="{Binding IsFair}"
+                                      Classes.strong="{Binding IsStrong}" Margin="0,2,0,0">
+                                    <Border Grid.Column="0" Classes="Segment S1" />
+                                    <Border Grid.Column="1" Classes="Segment S2" />
+                                    <Border Grid.Column="2" Classes="Segment S3" />
+                                    <TextBlock Grid.Column="3" FontSize="12" MinWidth="56" Margin="6,0,0,0" TextAlignment="Right"
+                                               Classes.Danger="{Binding IsWeak}" Classes.Warning="{Binding IsFair}"
+                                               Classes.Success="{Binding IsStrong}"
+                                               Text="{Binding StrengthText}" />
+                                </Grid>
+                                <TextBlock Classes="FieldHelper" TextWrapping="Wrap"
+                                           Text="{Tr SettingsDialog.Encryption.StrengthHelper}" />
+                            </StackPanel>
+                            <StackPanel Classes="Field">
+                                <TextBlock Classes="FieldLabel" Text="{Tr SettingsDialog.Encryption.ConfirmPassword}" />
+                                <TextBox x:Name="EnableConfirmPassword" PasswordChar="•" Classes="revealPasswordButton"
+                                         Text="{Binding ConfirmPassword}" />
+                                <nebulaAuth:PasswordHints Target="{Binding #EnableConfirmPassword}" CheckLayout="False" />
+                            </StackPanel>
+                            <!-- Encrypted files already in the plain storage: they stay unreadable with the new key -->
+                            <StackPanel Spacing="8" IsVisible="{Binding HasEncryptedFiles}">
+                                <nebulaAuth:HintBox FontSize="13" Severity="Error"
+                                                    Text="{Binding EncryptedFilesText}" />
+                                <CheckBox IsChecked="{Binding ConfirmEncryptedFiles}">
+                                    <TextBlock TextWrapping="Wrap"
+                                               Text="{Tr SettingsDialog.Encryption.EncryptedFilesConfirm}" />
+                                </CheckBox>
+                            </StackPanel>
+                            <TextBlock Classes="FieldError" TextWrapping="Wrap" Text="{Binding FormError}"
+                                       IsVisible="{Binding FormError, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                            <nebulaAuth:HintBox FontSize="13" Severity="Warning"
+                                                Text="{Tr SettingsDialog.Encryption.ForgetWarning}" />
+                            <StackPanel Classes="DialogActions">
+                                <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                                        Content="{Tr SettingsDialog.Encryption.EnableConfirm}"
+                                        Command="{Binding EnableCommand}" />
+                                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                                        Content="{Tr SettingsDialog.Encryption.Back}"
+                                        Command="{Binding BackCommand}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Change master password -->
+                        <StackPanel Classes="Form" IsVisible="{Binding IsChangePage}">
+                            <TextBlock Classes="Heading" Text="{Tr SettingsDialog.Encryption.ChangeTitle}" />
+                            <TextBlock Classes="DialogText" FontSize="14"
+                                       Text="{Tr SettingsDialog.Encryption.ChangeText}" />
+                            <StackPanel Classes="Field">
+                                <TextBlock Classes="FieldLabel" Text="{Tr SettingsDialog.Encryption.CurrentPassword}" />
+                                <TextBox x:Name="ChangeCurrentPassword" PasswordChar="•" Classes="revealPasswordButton"
+                                         Text="{Binding CurrentPassword}" />
+                                <nebulaAuth:PasswordHints Target="{Binding #ChangeCurrentPassword}" />
+                            </StackPanel>
+                            <StackPanel Classes="Field">
+                                <TextBlock Classes="FieldLabel" Text="{Tr SettingsDialog.Encryption.NewPassword}" />
+                                <TextBox x:Name="ChangeNewPassword" PasswordChar="•" Classes="revealPasswordButton"
+                                         Text="{Binding NewPassword}" />
+                                <nebulaAuth:PasswordHints Target="{Binding #ChangeNewPassword}" />
+                                <Grid ColumnDefinitions="*,*,*,Auto" ColumnSpacing="4" Classes="StrengthBar"
+                                      Classes.weak="{Binding IsWeak}" Classes.fair="{Binding IsFair}"
+                                      Classes.strong="{Binding IsStrong}" Margin="0,2,0,0">
+                                    <Border Grid.Column="0" Classes="Segment S1" />
+                                    <Border Grid.Column="1" Classes="Segment S2" />
+                                    <Border Grid.Column="2" Classes="Segment S3" />
+                                    <TextBlock Grid.Column="3" FontSize="12" MinWidth="56" Margin="6,0,0,0" TextAlignment="Right"
+                                               Classes.Danger="{Binding IsWeak}" Classes.Warning="{Binding IsFair}"
+                                               Classes.Success="{Binding IsStrong}"
+                                               Text="{Binding StrengthText}" />
+                                </Grid>
+                            </StackPanel>
+                            <StackPanel Classes="Field">
+                                <TextBlock Classes="FieldLabel" Text="{Tr SettingsDialog.Encryption.ConfirmPassword}" />
+                                <TextBox x:Name="ChangeConfirmPassword" PasswordChar="•" Classes="revealPasswordButton"
+                                         Text="{Binding ConfirmPassword}" />
+                                <nebulaAuth:PasswordHints Target="{Binding #ChangeConfirmPassword}" CheckLayout="False" />
+                            </StackPanel>
+                            <TextBlock Classes="FieldError" TextWrapping="Wrap" Text="{Binding FormError}"
+                                       IsVisible="{Binding FormError, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                            <nebulaAuth:HintBox FontSize="13" Text="{Tr SettingsDialog.Encryption.ChangeHint}" />
+                            <StackPanel Classes="DialogActions">
+                                <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                                        Content="{Tr SettingsDialog.Encryption.ChangeConfirm}"
+                                        Command="{Binding ChangeCommand}" />
+                                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                                        Content="{Tr SettingsDialog.Encryption.Back}"
+                                        Command="{Binding BackCommand}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Disable: irreversible for the saved Steam passwords -->
+                        <StackPanel Classes="Form" IsVisible="{Binding IsDisablePage}">
+                            <TextBlock Classes="Heading" Text="{Tr SettingsDialog.Encryption.DisableTitle}" />
+                            <TextBlock Classes="DialogText" FontSize="14"
+                                       Text="{Tr SettingsDialog.Encryption.DisableText}" />
+                            <nebulaAuth:HintBox FontSize="13" Severity="Error"
+                                                Text="{Tr SettingsDialog.Encryption.DisableHint}" />
+                            <StackPanel Classes="Field" IsVisible="{Binding DisableRequiresPassword}">
+                                <TextBlock Classes="FieldLabel" Text="{Tr SettingsDialog.Encryption.CurrentPassword}" />
+                                <TextBox x:Name="DisableCurrentPassword" PasswordChar="•" Classes="revealPasswordButton"
+                                         Text="{Binding CurrentPassword}" />
+                                <nebulaAuth:PasswordHints Target="{Binding #DisableCurrentPassword}" />
+                            </StackPanel>
+                            <TextBlock Classes="FieldError" TextWrapping="Wrap" Text="{Binding FormError}"
+                                       IsVisible="{Binding FormError, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                            <StackPanel Classes="DialogActions">
+                                <Button Theme="{DynamicResource SolidButton}" Classes="Danger OnDanger"
+                                        Content="{Tr SettingsDialog.Encryption.DisableConfirm}"
+                                        Command="{Binding DisableCommand}" />
+                                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                                        Content="{Tr SettingsDialog.Encryption.Back}"
+                                        Command="{Binding BackCommand}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Turn off saving Steam passwords: irreversible for the saved ones -->
+                        <StackPanel Classes="Form" IsVisible="{Binding IsForgetPasswordsPage}">
+                            <TextBlock Classes="Heading" Text="{Tr SettingsDialog.Encryption.SavePasswords.ForgetTitle}" />
+                            <TextBlock Classes="DialogText" FontSize="14" Text="{Binding ForgetPasswordsText}" />
+                            <nebulaAuth:HintBox FontSize="13" Severity="Error"
+                                                Text="{Tr SettingsDialog.Encryption.SavePasswords.ForgetHint}" />
+                            <StackPanel Classes="DialogActions">
+                                <Button Theme="{DynamicResource SolidButton}" Classes="Danger OnDanger"
+                                        Content="{Tr SettingsDialog.Encryption.SavePasswords.ForgetConfirm}"
+                                        Command="{Binding ForgetPasswordsCommand}" />
+                                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                                        Content="{Tr SettingsDialog.Encryption.Back}"
+                                        Command="{Binding BackCommand}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Skipped files (same grouped, virtualized list as the dialog) -->
+                        <StackPanel Spacing="12" IsVisible="{Binding IsSkippedPage}">
+                            <TextBlock Classes="Heading" Text="{Binding SkippedCountText}" />
+                            <TextBlock Classes="DialogText" FontSize="14" Text="{Tr SkippedFiles.Description}" />
+                            <view:SkippedFilesList DataContext="{Binding Skipped}" MaxHeight="340" />
+                            <StackPanel Classes="DialogActions">
+                                <Button Theme="{DynamicResource OutlineButton}"
+                                        Content="{Tr SkippedFiles.OpenFolder}"
+                                        Command="{Binding Skipped.OpenFolderCommand}" />
+                                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                                        Content="{Tr SettingsDialog.Encryption.Back}"
+                                        Command="{Binding BackCommand}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Operation in progress: the dialog can't be closed, the other tabs are disabled -->
+                        <StackPanel Spacing="12" IsVisible="{Binding IsBusy}">
+                            <Border Classes="SettingsGroup">
+                                <StackPanel Margin="14,12" Spacing="12">
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                        <Border Grid.Column="0" Classes="ModeBadge Busy" VerticalAlignment="Center">
+                                            <ProgressBar Theme="{DynamicResource ProgressRing}" IsIndeterminate="True"
+                                                         Width="20" Height="20" />
+                                        </Border>
+                                        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                            <TextBlock FontSize="15" FontWeight="SemiBold" TextWrapping="Wrap"
+                                                       Text="{Binding ProgressTitle}" />
+                                            <TextBlock Classes="RowText" FontSize="13" Text="{Binding ProgressCount}"
+                                                       IsVisible="{Binding ProgressCount, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                        </StackPanel>
+                                    </Grid>
+                                    <StackPanel Spacing="6">
+                                        <ProgressBar Minimum="0" Maximum="1" Value="{Binding ProgressValue}"
+                                                     IsIndeterminate="{Binding IsProgressIndeterminate}" />
+                                        <TextBlock Classes="Mono" FontSize="12" TextTrimming="CharacterEllipsis"
+                                                   Foreground="{DynamicResource MutedForegroundBrush}"
+                                                   Text="{Binding ProgressFile}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Margin="4,0">
+                                <mi:MaterialIcon Grid.Column="0" Kind="InformationOutline" IconSize="14"
+                                                 VerticalAlignment="Top" Margin="0,1,0,0"
+                                                 Foreground="{DynamicResource MutedForegroundBrush}" />
+                                <TextBlock Grid.Column="1" Classes="RowText"
+                                           Text="{Tr SettingsDialog.Encryption.BusyHint}" />
+                            </Grid>
+                        </StackPanel>
+                    </Panel>
                 </ScrollViewer>
             </TabItem>
         </TabControl>

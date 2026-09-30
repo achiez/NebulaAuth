@@ -131,7 +131,6 @@ public static class MafileExporter
             Secret1 = template.IncludeOtherInfo ? mafile.Secret1 : null!,
             Proxy = template.IncludeNebulaProxy ? mafile.Proxy : null!,
             Group = template.IncludeNebulaGroup ? mafile.Group : null!,
-            Password = template.IncludeNebulaPassword ? mafile.Password : null!,
             LinkedClient = null,
             Filename = null
         };

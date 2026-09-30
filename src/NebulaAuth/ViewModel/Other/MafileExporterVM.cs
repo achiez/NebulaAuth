@@ -157,7 +157,6 @@ public partial class MafileExporterVM : ObservableObject, IDisposable
             IncludeSessionData = true,
             IncludeOtherInfo = true,
             IncludeNebulaProxy = true,
-            IncludeNebulaPassword = true,
             IncludeNebulaGroup = true,
             ExportToZip = false,
             Path = null
@@ -321,7 +320,6 @@ public partial class MafileExportTemplateVM : ObservableObject
     [ObservableProperty] private bool _exportToZip;
     [ObservableProperty] private bool _includeIdentitySecret;
     [ObservableProperty] private bool _includeNebulaGroup;
-    [ObservableProperty] private bool _includeNebulaPassword;
     [ObservableProperty] private bool _includeNebulaProxy;
     [ObservableProperty] private bool _includeOtherInfo;
     [ObservableProperty] private bool _includeRCode;
@@ -344,7 +342,6 @@ public partial class MafileExportTemplateVM : ObservableObject
             IncludeSessionData = x.IncludeSessionData,
             IncludeOtherInfo = x.IncludeOtherInfo,
             IncludeNebulaProxy = x.IncludeNebulaProxy,
-            IncludeNebulaPassword = x.IncludeNebulaPassword,
             IncludeNebulaGroup = x.IncludeNebulaGroup,
             ExportToZip = x.ExportToZip,
             Path = x.Path
@@ -363,7 +360,6 @@ public partial class MafileExportTemplateVM : ObservableObject
             IncludeSessionData = IncludeSessionData,
             IncludeOtherInfo = IncludeOtherInfo,
             IncludeNebulaProxy = IncludeNebulaProxy,
-            IncludeNebulaPassword = IncludeNebulaPassword,
             IncludeNebulaGroup = IncludeNebulaGroup,
             ExportToZip = ExportToZip,
             Path = Path
@@ -380,7 +376,6 @@ public partial class MafileExportTemplateVM : ObservableObject
         model.IncludeSessionData = IncludeSessionData;
         model.IncludeOtherInfo = IncludeOtherInfo;
         model.IncludeNebulaProxy = IncludeNebulaProxy;
-        model.IncludeNebulaPassword = IncludeNebulaPassword;
         model.IncludeNebulaGroup = IncludeNebulaGroup;
         model.ExportToZip = ExportToZip;
         model.Path = Path;

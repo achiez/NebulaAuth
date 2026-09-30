@@ -244,8 +244,8 @@ public partial class MafileMoverVM : ObservableObject, IAuthProvider, IDisposabl
         {
             if (proxy.HasValue)
                 mafile.Proxy = new MaProxy(proxy.Value.Key, proxy.Value.Value);
-            if (Settings.Instance.IsPasswordSet)
-                mafile.Password = PHandler.Encrypt(pass);
+            // Kept only in an encrypted storage with saving allowed (the login step tells the user); otherwise nothing is saved
+            SteamPasswords.TrySet(mafile.AccountName, pass);
         }
         catch (Exception ex)
         {

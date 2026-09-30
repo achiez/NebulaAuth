@@ -12,13 +12,16 @@ namespace NebulaAuth.ViewModel.Other;
 
 public partial class SettingsVM : ObservableObject
 {
-    public Settings Settings => Settings.Instance;
+    public const int MAIN_TAB = 0;
+    public const int ENCRYPTION_TAB = 2;
 
-    [ObservableProperty] private string? _password;
+    public Settings Settings => Settings.Instance;
 
     [ObservableProperty] private double _renameMafilesProgress;
 
     [ObservableProperty] private string? _renameResultText;
+
+    [ObservableProperty] private int _selectedTab;
 
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ApplyRenameSettingCommand))]
     private bool _useAccountNameAsMafileNamePreview;
@@ -28,11 +31,10 @@ public partial class SettingsVM : ObservableObject
         _useAccountNameAsMafileNamePreview = Settings.UseAccountNameAsMafileName;
     }
 
-    [RelayCommand]
-    private void SetPassword()
-    {
-        Settings.IsPasswordSet = PHandler.SetPassword(Password);
-    }
+    /// <summary>
+    ///     Third tab: storage mode and the encryption operations.
+    /// </summary>
+    public EncryptionSettingsVM Encryption { get; } = new();
 
     [RelayCommand]
     private void ResetThemeDefaults()

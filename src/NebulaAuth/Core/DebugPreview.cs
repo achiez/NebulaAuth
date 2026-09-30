@@ -35,6 +35,13 @@ public static class DebugPreview
                     BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, [typeof(string)]);
                 var view = factory != null ? factory.Invoke(null, [arg]) : Activator.CreateInstance(type);
                 if (view == null) return;
+                // A startup dialog (skipped storage files) would make Show fail: the preview replaces it
+                if (DialogService.IsDialogOpen)
+                {
+                    DialogService.Close();
+                    await Task.Delay(300);
+                }
+
                 await DialogService.Show(view);
             }
             catch (Exception ex)

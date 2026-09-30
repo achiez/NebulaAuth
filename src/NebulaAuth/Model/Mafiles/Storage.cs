@@ -3,53 +3,54 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using AchiesUtilities.Extensions;
-using NebulaAuth.Core;
 using NebulaAuth.Model.Entities;
 using NebulaAuth.Model.Exceptions;
 using NebulaAuth.Model.MAAC;
+using NebulaAuth.Model.Mafiles.Protection;
 using SteamLib;
 using SteamLib.Exceptions.Authorization;
 using SteamLib.SteamMobile;
 
 namespace NebulaAuth.Model.Mafiles;
 
+/// <summary>
+///     Loaded accounts and mafile operations. Files are read / written only through the storage layer
+///     (<see cref="MafileStorageService" />): it applies the storage mode (plain / encrypted) and publishes every file
+///     atomically. <see cref="Mafile.Filename" /> is the logical name ("*.mafile"), also in the encrypted mode.
+/// </summary>
 public static class Storage
 {
-    public const string DIR_MAFILES = "maFiles";
-    public const string DIR_REMOVED_MAFILES = "maFiles_removed";
-    public const string DIR_BACKUP_MAFILES = "maFiles_backup";
+    public const string DIR_MAFILES = StorageLayout.DIR_MAFILES;
+    public const string DIR_REMOVED_MAFILES = StorageLayout.DIR_REMOVED_MAFILES;
+    public const string DIR_BACKUP_MAFILES = StorageLayout.DIR_BACKUP_MAFILES;
 
-    public static readonly string[] MafilesDirectories;
+    private static readonly UTF8Encoding Utf8NoBom = new(false);
+
+    private static MafileStorageService Service => MafileStorageService.Current;
+
+    public static IReadOnlyList<string> MafilesDirectories => Service.Layout.AccountDirectories;
 
     // Absolute paths in the data folder; an existing folder that differs only in case is reused (Linux)
-    public static string MafilesDirectory { get; } = DataRoot.Combine(DIR_MAFILES);
-    public static string RemovedMafilesDirectory { get; } = DataRoot.Combine(DIR_REMOVED_MAFILES);
-    public static string BackupMafilesDirectory { get; } = DataRoot.Combine(DIR_BACKUP_MAFILES);
+    public static string MafilesDirectory => Service.Layout.MafilesDirectory;
+    public static string RemovedMafilesDirectory => Service.Layout.RemovedDirectory;
+    public static string BackupMafilesDirectory => Service.Layout.BackupDirectory;
 
     public static ObservableCollection<Mafile> MaFiles { get; private set; } = [];
 
-    static Storage()
-    {
-        MafilesDirectories = [MafilesDirectory, RemovedMafilesDirectory, BackupMafilesDirectory];
-    }
-
+    /// <summary>
+    ///     Loads the accounts. Must run after <see cref="MafileStorageService.PrepareAsync" /> (storage unlocked and
+    ///     reconciled). Files that can't be loaded are reported to <see cref="MafileStorageService.SkippedFiles" />.
+    /// </summary>
     public static async Task Initialize(int threadCount, CancellationToken token = default)
     {
-        Directory.CreateDirectory(MafilesDirectory);
-        Directory.CreateDirectory(RemovedMafilesDirectory);
-        Directory.CreateDirectory(BackupMafilesDirectory);
+        foreach (var dir in MafilesDirectories) Directory.CreateDirectory(dir);
 
-        var files = Directory
-            .GetFiles(MafilesDirectory)
-            .Where(file => Path.GetExtension(file).EqualsIgnoreCase(".mafile"))
-            .ToList();
-
-
+        var service = Service;
+        var files = service.EnumerateLoadableMafiles(MafilesDirectory);
         var localList = new ConcurrentBag<Mafile>();
         await Task.Run(() =>
         {
@@ -59,17 +60,40 @@ public static class Storage
                 {
                     try
                     {
-                        var data = await ReadMafileAsync(file);
+                        var bytes = await service.ReadFileAsync(file.Path, ct);
+                        var data = NebulaSerializer.Deserialize(Utf8NoBom.GetString(bytes), file.LogicalName,
+                            out var hasLegacyPassword);
                         localList.Add(data);
+                        if (hasLegacyPassword && !file.Encrypted)
+                        {
+                            // Plain mafile added manually with the old Steam password field
+                            service.StripLegacyPassword(file.Path);
+                        }
+                    }
+                    catch (StorageFileException ex)
+                    {
+                        service.ReportSkipped(new SkippedFile(Path.GetFileName(file.Path), file.Path, ex.Reason,
+                            !file.Encrypted && service.Mode != StorageMode.Plain, ex.Message));
+                    }
+                    catch (MafileNeedReloginException)
+                    {
+                        service.ReportSkipped(new SkippedFile(Path.GetFileName(file.Path), file.Path,
+                            SkippedFileReason.NeedsRelogin, !file.Encrypted && service.Mode != StorageMode.Plain,
+                            "The mafile has no valid SteamID"));
                     }
                     catch (Exception ex)
                     {
-                        Shell.Logger.Error(ex, "Can't load mafile {file}", Path.GetFileName(file));
+                        Shell.Logger.Error(ex, "Can't load mafile {file}", Path.GetFileName(file.Path));
+                        service.ReportSkipped(new SkippedFile(Path.GetFileName(file.Path), file.Path,
+                            SkippedFileReason.Invalid, !file.Encrypted && service.Mode != StorageMode.Plain,
+                            ex.Message));
                     }
                 });
         }, token);
 
         MaFiles = new ObservableCollection<Mafile>(localList.OrderBy(m => m.AccountName));
+        Shell.Logger.Info("Loaded {count} mafile(s) of {total} ({mode} storage), skipped files: {skipped}",
+            MaFiles.Count, files.Count, service.Mode, service.SkippedFiles.Count);
     }
 
     /// <summary>
@@ -129,7 +153,7 @@ public static class Storage
 
         data.Filename = null;
 
-        if (!overwrite && File.Exists(MafilesStorageHelper.GetOrUpdateMafilePath(data)))
+        if (!overwrite && Service.AccountFileExists(MafilesDirectory, MafilesStorageHelper.GetOrUpdateMafileName(data)))
         {
             return AddMafileResult.AlreadyExist;
         }
@@ -138,17 +162,23 @@ public static class Storage
         return AddMafileResult.Added;
     }
 
+    /// <summary>
+    ///     Reads a mafile of the storage or an external plain mafile (the format is detected by the file header).
+    /// </summary>
     public static async Task<Mafile> ReadMafileAsync(string path)
     {
-        var str = await File.ReadAllTextAsync(path);
-        return NebulaSerializer.Deserialize(str, path);
+        var bytes = await Service.ReadFileAsync(path);
+        return NebulaSerializer.Deserialize(Utf8NoBom.GetString(bytes), StorageFileNames.ToPlainName(path));
     }
 
+    /// <summary>
+    ///     Writes the mafile and adds it to <see cref="MaFiles" /> (replaces the entry with the same file) after the
+    ///     write succeeded.
+    /// </summary>
     public static async Task SaveMafileAsync(Mafile data)
     {
-        var path = MafilesStorageHelper.GetOrUpdateMafilePath(data);
-        var str = NebulaSerializer.SerializeMafile(data);
-        await File.WriteAllTextAsync(Path.GetFullPath(path), str);
+        var name = MafilesStorageHelper.GetOrUpdateMafileName(data);
+        await Service.WriteAccountFileAsync(MafilesDirectory, name, Serialize(data));
 
         // Replace if exist
         for (var i = 0; i < MaFiles.Count; i++)
@@ -167,42 +197,36 @@ public static class Storage
 
     public static void UpdateMafile(Mafile data)
     {
-        var path = MafilesStorageHelper.GetOrUpdateMafilePath(data);
-        var str = NebulaSerializer.SerializeMafile(data);
-        File.WriteAllText(Path.GetFullPath(path), str);
+        var name = MafilesStorageHelper.GetOrUpdateMafileName(data);
+        Service.WriteAccountFile(MafilesDirectory, name, Serialize(data));
     }
 
     public static async Task UpdateMafileAsync(Mafile data)
     {
-        var path = MafilesStorageHelper.GetOrUpdateMafilePath(data);
-        var str = NebulaSerializer.SerializeMafile(data);
-        await File.WriteAllTextAsync(Path.GetFullPath(path), str);
+        var name = MafilesStorageHelper.GetOrUpdateMafileName(data);
+        await Service.WriteAccountFileAsync(MafilesDirectory, name, Serialize(data));
+    }
+
+    private static byte[] Serialize(Mafile data)
+    {
+        return Utf8NoBom.GetBytes(NebulaSerializer.SerializeMafile(data));
     }
 
     public static void MoveToRemoved(Mafile data)
     {
-        var sourcePath = MafilesStorageHelper.GetOrUpdateMafilePath(data);
-        var fileName = Path.GetFileNameWithoutExtension(data.Filename!);
-        var destinationPathBase = Path.Combine(RemovedMafilesDirectory, fileName);
-        var destinationPathFinal = Path.ChangeExtension(destinationPathBase, MafileNamingStrategy.DEF_EXTENSION);
-        var i = 0;
-        while (File.Exists(destinationPathFinal))
-        {
-            i++;
-            destinationPathFinal = destinationPathBase + $" ({i})";
-            destinationPathFinal = Path.ChangeExtension(destinationPathFinal, MafileNamingStrategy.DEF_EXTENSION);
-        }
-
-        File.Copy(sourcePath, destinationPathFinal, false);
-        File.Delete(sourcePath);
+        var name = MafilesStorageHelper.GetOrUpdateMafileName(data);
+        Service.MoveAccountFile(MafilesDirectory, name, RemovedMafilesDirectory);
         MaFiles.Remove(data);
     }
 
 
+    /// <summary>
+    ///     Physical path of the mafile in the storage (encrypted in the encrypted mode).
+    /// </summary>
     public static string? TryGetMafilePath(Mafile data)
     {
         if (data.Filename == null) return null;
-        return Path.Combine(MafilesDirectory, data.Filename);
+        return Service.GetAccountFilePath(MafilesDirectory, data.Filename);
     }
 
     public static void WriteBackup(MobileDataExtended data)
@@ -214,7 +238,8 @@ public static class Storage
     public static void WriteBackup(string accountName, string data)
     {
         Directory.CreateDirectory(BackupMafilesDirectory);
-        File.WriteAllText(Path.Combine(BackupMafilesDirectory, accountName + MafileNamingStrategy.DEF_EXTENSION), data);
+        Service.WriteAccountFile(BackupMafilesDirectory, accountName + MafileNamingStrategy.DEF_EXTENSION,
+            Utf8NoBom.GetBytes(data));
     }
 
     public static async Task<MafilesBulkRenameResult> RenameMafiles(bool loginAsFileName,
@@ -223,39 +248,43 @@ public static class Storage
         if (MaFiles.Count == 0) return new MafilesBulkRenameResult();
         var now = DateTime.Now;
         var backupFileName = $"rename_backup_{now:yyyy-MM-dd_HH-mm-ss}.zip";
-        var zipPath = Path.Combine(BackupMafilesDirectory, backupFileName);
-        await using (var zipStream = new FileStream(zipPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+
+        // The archive holds plain mafiles; the storage publishes it encrypted in the encrypted mode
+        var service = Service;
+        var files = service.EnumerateLoadableMafiles(MafilesDirectory);
+        var items = new List<ZipItem>(files.Count);
+        // Only files that are in the backup archive are renamed (a file that could not be read has no backup)
+        var backedUp = new HashSet<string>(StringComparer.Ordinal);
+        var counter = 0;
+        foreach (var file in files)
         {
-            using var archive = new ZipArchive(zipStream, ZipArchiveMode.Create, false);
-            var files = Directory
-                .EnumerateFiles(MafilesDirectory, "*.*", SearchOption.TopDirectoryOnly)
-                .Where(f => Path.GetExtension(f).Equals(".mafile", StringComparison.OrdinalIgnoreCase))
-                .ToList();
-
-            var counter = 0;
-            foreach (var file in files)
+            counter++;
+            try
             {
-                counter++;
-                var entry = archive.CreateEntry(Path.GetFileName(file), CompressionLevel.Optimal);
+                var content = await service.ReadFileAsync(file.Path);
+                items.Add(new ZipItem(file.LogicalName, File.GetLastWriteTime(file.Path), content));
+                backedUp.Add(file.LogicalName);
+            }
+            catch (StorageFileException ex)
+            {
+                Shell.Logger.Warn("Rename backup: {file} skipped ({reason})", Path.GetFileName(file.Path), ex.Reason);
+            }
 
-                await using var entryStream = entry.Open();
-                await using var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read, 4096,
-                    true);
-                await fileStream.CopyToAsync(entryStream);
-
-                if (counter % 5 == 0)
-                {
-                    progress?.Report(counter / (double) files.Count);
-                    await Task.Delay(10);
-                }
+            if (counter % 5 == 0)
+            {
+                progress?.Report(counter / (double) files.Count);
+                await Task.Delay(10);
             }
         }
+
+        var publishedName = await service.WriteBackupArchiveAsync(backupFileName,
+            await Task.Run(() => StorageContent.CreateZip(items)));
 
         var mafiles = MaFiles.ToList();
         var res = new MafilesBulkRenameResult
         {
             Total = mafiles.Count,
-            BackupFileName = backupFileName
+            BackupFileName = publishedName
         };
 
         var dic = new Dictionary<string, string>();
@@ -271,26 +300,27 @@ public static class Storage
                 }
 
                 var sourceFileName = mafile.Filename;
-                var fullSourcePath = Path.Combine(MafilesDirectory, sourceFileName);
-                var fullTargetPath = Path.Combine(MafilesDirectory, targetFileName);
-
-                if (!File.Exists(fullSourcePath))
+                if (!backedUp.Contains(sourceFileName))
                 {
-                    Shell.Logger.Warn("Can't rename mafile {old} to {new} because source file not found",
-                        mafile.Filename, targetFileName);
+                    Shell.Logger.Warn("Mafile {file} is not renamed: it is not in the backup archive", sourceFileName);
                     IncErrors();
                     continue;
                 }
 
-                if (File.Exists(fullTargetPath))
+                switch (service.RenameAccountFile(MafilesDirectory, sourceFileName, targetFileName))
                 {
-                    Shell.Logger.Warn("Can't rename mafile {old} to {new} because target file already exist",
-                        mafile.Filename, targetFileName);
-                    res.Conflict += 1;
-                    continue;
+                    case RenameAccountFileResult.SourceMissing:
+                        Shell.Logger.Warn("Can't rename mafile {old} to {new} because source file not found",
+                            mafile.Filename, targetFileName);
+                        IncErrors();
+                        continue;
+                    case RenameAccountFileResult.TargetExists:
+                        Shell.Logger.Warn("Can't rename mafile {old} to {new} because target file already exist",
+                            mafile.Filename, targetFileName);
+                        res.Conflict += 1;
+                        continue;
                 }
 
-                File.Move(fullSourcePath, fullTargetPath);
                 dic[sourceFileName] = targetFileName;
                 res.Renamed += 1;
                 mafile.Filename = targetFileName;
