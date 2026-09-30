@@ -1,0 +1,322 @@
+{
+  "SteamBrowser": {
+    "WindowTitle": {
+      "en": "{0} — Steam",
+      "ru": "{0} — Steam",
+      "zh": "{0} — Steam",
+      "uk": "{0} — Steam",
+      "fr": "{0} — Steam",
+      "es": "{0} — Steam",
+      "tr": "{0} — Steam",
+      "kk": "{0} — Steam"
+    },
+    "Back": {
+      "en": "Back",
+      "ru": "Назад",
+      "zh": "后退",
+      "uk": "Назад",
+      "fr": "Précédent",
+      "es": "Atrás",
+      "tr": "Geri",
+      "kk": "Артқа"
+    },
+    "Forward": {
+      "en": "Forward",
+      "ru": "Вперёд",
+      "zh": "前进",
+      "uk": "Вперед",
+      "fr": "Suivant",
+      "es": "Adelante",
+      "tr": "İleri",
+      "kk": "Алға"
+    },
+    "Reload": {
+      "en": "Reload",
+      "ru": "Обновить",
+      "zh": "刷新",
+      "uk": "Оновити",
+      "fr": "Actualiser",
+      "es": "Recargar",
+      "tr": "Yenile",
+      "kk": "Жаңарту"
+    },
+    "Address": {
+      "en": "Page address",
+      "ru": "Адрес страницы",
+      "zh": "页面地址",
+      "uk": "Адреса сторінки",
+      "fr": "Adresse de la page",
+      "es": "Dirección de la página",
+      "tr": "Sayfa adresi",
+      "kk": "Бет мекенжайы"
+    },
+    "Close": {
+      "en": "Close",
+      "ru": "Закрыть",
+      "zh": "关闭",
+      "uk": "Закрити",
+      "fr": "Fermer",
+      "es": "Cerrar",
+      "tr": "Kapat",
+      "kk": "Жабу"
+    },
+    "Loading": {
+      "Title": {
+        "en": "Opening Steam for {0}",
+        "ru": "Открываем Steam для {0}",
+        "zh": "正在为 {0} 打开 Steam",
+        "uk": "Відкриваємо Steam для {0}",
+        "fr": "Ouverture de Steam pour {0}",
+        "es": "Abriendo Steam para {0}",
+        "tr": "{0} için Steam açılıyor",
+        "kk": "{0} үшін Steam ашылуда"
+      },
+      "Proxy": {
+        "en": "Checking the proxy…",
+        "ru": "Проверяем прокси…",
+        "zh": "正在检查代理…",
+        "uk": "Перевіряємо проксі…",
+        "fr": "Vérification du proxy…",
+        "es": "Comprobando el proxy…",
+        "tr": "Proxy kontrol ediliyor…",
+        "kk": "Прокси тексерілуде…"
+      },
+      "Session": {
+        "en": "Checking the Steam session…",
+        "ru": "Проверяем сессию Steam…",
+        "zh": "正在检查 Steam 会话…",
+        "uk": "Перевіряємо сесію Steam…",
+        "fr": "Vérification de la session Steam…",
+        "es": "Comprobando la sesión de Steam…",
+        "tr": "Steam oturumu kontrol ediliyor…",
+        "kk": "Steam сессиясы тексерілуде…"
+      },
+      "SignInInMain": {
+        "en": "Sign in to Steam in the NebulaAuth window",
+        "ru": "Войдите в Steam в окне NebulaAuth",
+        "zh": "请在 NebulaAuth 窗口中登录 Steam",
+        "uk": "Увійдіть у Steam у вікні NebulaAuth",
+        "fr": "Connectez-vous à Steam dans la fenêtre NebulaAuth",
+        "es": "Inicia sesión en Steam en la ventana de NebulaAuth",
+        "tr": "NebulaAuth penceresinde Steam'e giriş yapın",
+        "kk": "NebulaAuth терезесінде Steam-ге кіріңіз"
+      },
+      "Engine": {
+        "en": "Starting the browser…",
+        "ru": "Запускаем браузер…",
+        "zh": "正在启动浏览器…",
+        "uk": "Запускаємо браузер…",
+        "fr": "Démarrage du navigateur…",
+        "es": "Iniciando el navegador…",
+        "tr": "Tarayıcı başlatılıyor…",
+        "kk": "Браузер іске қосылуда…"
+      },
+      "Verify": {
+        "en": "Signing in to Steam Community…",
+        "ru": "Входим в Steam Community…",
+        "zh": "正在登录 Steam 社区…",
+        "uk": "Входимо в Steam Community…",
+        "fr": "Connexion à la Communauté Steam…",
+        "es": "Iniciando sesión en la Comunidad de Steam…",
+        "tr": "Steam Topluluğu'na giriş yapılıyor…",
+        "kk": "Steam Community-ге кіру…"
+      }
+    },
+    "Notices": {
+      "SignOutBlocked": {
+        "en": "Signing out is disabled here: it would end the session NebulaAuth uses for this account. Close the window instead.",
+        "ru": "Выход из аккаунта здесь отключён: он завершил бы сессию, которую NebulaAuth использует для этого аккаунта. Просто закройте окно.",
+        "zh": "此处已禁用退出登录：这会结束 NebulaAuth 为该账户使用的会话。请直接关闭窗口。",
+        "uk": "Вихід з акаунта тут вимкнено: він завершив би сесію, яку NebulaAuth використовує для цього акаунта. Просто закрийте вікно.",
+        "fr": "La déconnexion est désactivée ici : elle mettrait fin à la session que NebulaAuth utilise pour ce compte. Fermez simplement la fenêtre.",
+        "es": "Cerrar sesión está desactivado aquí: terminaría la sesión que NebulaAuth usa para esta cuenta. Simplemente cierra la ventana.",
+        "tr": "Burada çıkış yapmak devre dışı: NebulaAuth'un bu hesap için kullandığı oturumu sonlandırır. Bunun yerine pencereyi kapatın.",
+        "kk": "Мұнда аккаунттан шығу өшірілген: ол NebulaAuth осы аккаунт үшін пайдаланатын сессияны аяқтайды. Жай ғана терезені жабыңыз."
+      },
+      "DownloadBlocked": {
+        "en": "Downloads are disabled in this window.",
+        "ru": "Загрузка файлов в этом окне отключена.",
+        "zh": "此窗口已禁用下载。",
+        "uk": "Завантаження файлів у цьому вікні вимкнено.",
+        "fr": "Les téléchargements sont désactivés dans cette fenêtre.",
+        "es": "Las descargas están desactivadas en esta ventana.",
+        "tr": "Bu pencerede indirmeler devre dışı.",
+        "kk": "Бұл терезеде файл жүктеу өшірілген."
+      }
+    },
+    "Switch": {
+      "Title": {
+        "en": "Browser is already open",
+        "ru": "Браузер уже открыт",
+        "zh": "浏览器已打开",
+        "uk": "Браузер уже відкрито",
+        "fr": "Le navigateur est déjà ouvert",
+        "es": "El navegador ya está abierto",
+        "tr": "Tarayıcı zaten açık",
+        "kk": "Браузер ашық тұр"
+      },
+      "Description": {
+        "en": "The browser is open for {0}. Close it and open Steam for {1}?",
+        "ru": "Браузер открыт для {0}. Закрыть его и открыть Steam для {1}?",
+        "zh": "浏览器正为 {0} 打开。要关闭它并为 {1} 打开 Steam 吗？",
+        "uk": "Браузер відкрито для {0}. Закрити його та відкрити Steam для {1}?",
+        "fr": "Le navigateur est ouvert pour {0}. Le fermer et ouvrir Steam pour {1} ?",
+        "es": "El navegador está abierto para {0}. ¿Cerrarlo y abrir Steam para {1}?",
+        "tr": "Tarayıcı {0} için açık. Kapatılıp {1} için Steam açılsın mı?",
+        "kk": "Браузер {0} үшін ашық. Оны жауып, {1} үшін Steam ашу керек пе?"
+      },
+      "Hint": {
+        "en": "Only one browser window can be open at a time. Everything of the current window (cookies, history) is deleted when it closes.",
+        "ru": "Одновременно может быть открыто только одно окно браузера. При закрытии всё из текущего окна (cookies, история) удаляется.",
+        "zh": "同一时间只能打开一个浏览器窗口。当前窗口关闭时，其全部数据（Cookie、历史记录）都会被删除。",
+        "uk": "Одночасно може бути відкрито лише одне вікно браузера. Під час закриття все з поточного вікна (cookies, історія) видаляється.",
+        "fr": "Une seule fenêtre de navigateur peut être ouverte à la fois. Tout ce qui concerne la fenêtre actuelle (cookies, historique) est supprimé à sa fermeture.",
+        "es": "Solo puede haber una ventana de navegador abierta a la vez. Todo lo de la ventana actual (cookies, historial) se elimina al cerrarla.",
+        "tr": "Aynı anda yalnızca bir tarayıcı penceresi açık olabilir. Geçerli pencerenin her şeyi (çerezler, geçmiş) kapandığında silinir.",
+        "kk": "Бір уақытта тек бір браузер терезесі ашық бола алады. Жабылғанда ағымдағы терезенің бәрі (cookies, тарих) жойылады."
+      },
+      "Confirm": {
+        "en": "Close and open",
+        "ru": "Закрыть и открыть",
+        "zh": "关闭并打开",
+        "uk": "Закрити й відкрити",
+        "fr": "Fermer et ouvrir",
+        "es": "Cerrar y abrir",
+        "tr": "Kapat ve aç",
+        "kk": "Жабу және ашу"
+      },
+      "CloseFirst": {
+        "en": "Close the browser window of {0} first",
+        "ru": "Сначала закройте окно браузера {0}",
+        "zh": "请先关闭 {0} 的浏览器窗口",
+        "uk": "Спочатку закрийте вікно браузера {0}",
+        "fr": "Fermez d'abord la fenêtre du navigateur de {0}",
+        "es": "Primero cierra la ventana del navegador de {0}",
+        "tr": "Önce {0} hesabının tarayıcı penceresini kapatın",
+        "kk": "Алдымен {0} браузер терезесін жабыңыз"
+      }
+    },
+    "Errors": {
+      "ProxyAuthFailed": {
+        "en": "Browser: the proxy rejected its login or password. Steam was not opened.",
+        "ru": "Браузер: прокси отклонил логин или пароль. Steam не открыт.",
+        "zh": "浏览器：代理拒绝了用户名或密码。未打开 Steam。",
+        "uk": "Браузер: проксі відхилив логін або пароль. Steam не відкрито.",
+        "fr": "Navigateur : le proxy a refusé l'identifiant ou le mot de passe. Steam n'a pas été ouvert.",
+        "es": "Navegador: el proxy rechazó el usuario o la contraseña. Steam no se abrió.",
+        "tr": "Tarayıcı: proxy kullanıcı adını veya şifreyi reddetti. Steam açılmadı.",
+        "kk": "Браузер: прокси логинді немесе құпиясөзді қабылдамады. Steam ашылмады."
+      },
+      "ProxyUnreachable": {
+        "en": "Browser: the proxy server can't be reached. Steam was not opened (a direct connection is never used).",
+        "ru": "Браузер: прокси-сервер недоступен. Steam не открыт (прямое подключение не используется).",
+        "zh": "浏览器：无法连接到代理服务器。未打开 Steam（从不使用直接连接）。",
+        "uk": "Браузер: проксі-сервер недоступний. Steam не відкрито (пряме підключення не використовується).",
+        "fr": "Navigateur : le serveur proxy est injoignable. Steam n'a pas été ouvert (aucune connexion directe n'est utilisée).",
+        "es": "Navegador: no se puede conectar con el servidor proxy. Steam no se abrió (nunca se usa una conexión directa).",
+        "tr": "Tarayıcı: proxy sunucusuna ulaşılamıyor. Steam açılmadı (doğrudan bağlantı asla kullanılmaz).",
+        "kk": "Браузер: прокси-серверге қосылу мүмкін емес. Steam ашылмады (тікелей қосылым қолданылмайды)."
+      },
+      "ProxyRefused": {
+        "en": "Browser: the proxy refused the connection to Steam. Steam was not opened.",
+        "ru": "Браузер: прокси отказал в подключении к Steam. Steam не открыт.",
+        "zh": "浏览器：代理拒绝了到 Steam 的连接。未打开 Steam。",
+        "uk": "Браузер: проксі відмовив у підключенні до Steam. Steam не відкрито.",
+        "fr": "Navigateur : le proxy a refusé la connexion à Steam. Steam n'a pas été ouvert.",
+        "es": "Navegador: el proxy rechazó la conexión con Steam. Steam no se abrió.",
+        "tr": "Tarayıcı: proxy Steam bağlantısını reddetti. Steam açılmadı.",
+        "kk": "Браузер: прокси Steam-ге қосылудан бас тартты. Steam ашылмады."
+      },
+      "ProxyTimeout": {
+        "en": "Browser: the proxy did not respond in time. Steam was not opened.",
+        "ru": "Браузер: прокси не ответил вовремя. Steam не открыт.",
+        "zh": "浏览器：代理未及时响应。未打开 Steam。",
+        "uk": "Браузер: проксі не відповів вчасно. Steam не відкрито.",
+        "fr": "Navigateur : le proxy n'a pas répondu à temps. Steam n'a pas été ouvert.",
+        "es": "Navegador: el proxy no respondió a tiempo. Steam no se abrió.",
+        "tr": "Tarayıcı: proxy zamanında yanıt vermedi. Steam açılmadı.",
+        "kk": "Браузер: прокси уақытында жауап бермеді. Steam ашылмады."
+      },
+      "ProxyProtocol": {
+        "en": "Browser: the proxy gave an unexpected answer. Check its type (HTTP / HTTPS / SOCKS4 / SOCKS5). Steam was not opened.",
+        "ru": "Браузер: прокси ответил неожиданно. Проверьте его тип (HTTP / HTTPS / SOCKS4 / SOCKS5). Steam не открыт.",
+        "zh": "浏览器：代理返回了意外的响应。请检查代理类型（HTTP / HTTPS / SOCKS4 / SOCKS5）。未打开 Steam。",
+        "uk": "Браузер: проксі відповів неочікувано. Перевірте його тип (HTTP / HTTPS / SOCKS4 / SOCKS5). Steam не відкрито.",
+        "fr": "Navigateur : réponse inattendue du proxy. Vérifiez son type (HTTP / HTTPS / SOCKS4 / SOCKS5). Steam n'a pas été ouvert.",
+        "es": "Navegador: el proxy dio una respuesta inesperada. Comprueba su tipo (HTTP / HTTPS / SOCKS4 / SOCKS5). Steam no se abrió.",
+        "tr": "Tarayıcı: proxy beklenmeyen bir yanıt verdi. Türünü kontrol edin (HTTP / HTTPS / SOCKS4 / SOCKS5). Steam açılmadı.",
+        "kk": "Браузер: прокси күтпеген жауап берді. Оның түрін тексеріңіз (HTTP / HTTPS / SOCKS4 / SOCKS5). Steam ашылмады."
+      },
+      "ProxyNotSupported": {
+        "en": "Browser: this system can't route the embedded browser through the proxy (macOS 14 or newer is required). Steam was not opened.",
+        "ru": "Браузер: на этой системе встроенный браузер нельзя направить через прокси (нужна macOS 14 или новее). Steam не открыт.",
+        "zh": "浏览器：此系统无法让内置浏览器通过代理连接（需要 macOS 14 或更高版本）。未打开 Steam。",
+        "uk": "Браузер: у цій системі вбудований браузер не можна спрямувати через проксі (потрібна macOS 14 або новіша). Steam не відкрито.",
+        "fr": "Navigateur : ce système ne peut pas faire passer le navigateur intégré par le proxy (macOS 14 ou plus récent requis). Steam n'a pas été ouvert.",
+        "es": "Navegador: este sistema no puede enviar el navegador integrado a través del proxy (se requiere macOS 14 o posterior). Steam no se abrió.",
+        "tr": "Tarayıcı: bu sistem yerleşik tarayıcıyı proxy üzerinden yönlendiremiyor (macOS 14 veya üstü gerekir). Steam açılmadı.",
+        "kk": "Браузер: бұл жүйеде кіріктірілген браузерді прокси арқылы бағыттау мүмкін емес (macOS 14 немесе жаңасы қажет). Steam ашылмады."
+      },
+      "SessionUnavailable": {
+        "en": "Browser: no valid Steam session for this account (sign-in failed or was cancelled).",
+        "ru": "Браузер: нет действующей сессии Steam для этого аккаунта (вход не удался или отменён).",
+        "zh": "浏览器：该账户没有有效的 Steam 会话（登录失败或已取消）。",
+        "uk": "Браузер: немає чинної сесії Steam для цього акаунта (вхід не вдався або скасовано).",
+        "fr": "Navigateur : aucune session Steam valide pour ce compte (connexion échouée ou annulée).",
+        "es": "Navegador: no hay una sesión de Steam válida para esta cuenta (el inicio de sesión falló o se canceló).",
+        "tr": "Tarayıcı: bu hesap için geçerli bir Steam oturumu yok (giriş başarısız oldu veya iptal edildi).",
+        "kk": "Браузер: бұл аккаунт үшін жарамды Steam сессиясы жоқ (кіру сәтсіз аяқталды немесе тоқтатылды)."
+      },
+      "SessionRejected": {
+        "en": "Browser: Steam did not accept the session of this account, the page did not show it signed in. The window was closed.",
+        "ru": "Браузер: Steam не принял сессию этого аккаунта, страница не показала вход в него. Окно закрыто.",
+        "zh": "浏览器：Steam 未接受该账户的会话，页面未显示已登录该账户。窗口已关闭。",
+        "uk": "Браузер: Steam не прийняв сесію цього акаунта, сторінка не показала вхід у нього. Вікно закрито.",
+        "fr": "Navigateur : Steam n'a pas accepté la session de ce compte, la page ne l'a pas montré connecté. La fenêtre a été fermée.",
+        "es": "Navegador: Steam no aceptó la sesión de esta cuenta, la página no la mostró conectada. La ventana se cerró.",
+        "tr": "Tarayıcı: Steam bu hesabın oturumunu kabul etmedi, sayfa hesaba giriş yapılmış göstermedi. Pencere kapatıldı.",
+        "kk": "Браузер: Steam бұл аккаунттың сессиясын қабылдамады, бет оған кіруді көрсетпеді. Терезе жабылды."
+      },
+      "SteamUnreachable": {
+        "en": "Browser: Steam Community could not be loaded.",
+        "ru": "Браузер: не удалось загрузить Steam Community.",
+        "zh": "浏览器：无法加载 Steam 社区。",
+        "uk": "Браузер: не вдалося завантажити Steam Community.",
+        "fr": "Navigateur : impossible de charger la Communauté Steam.",
+        "es": "Navegador: no se pudo cargar la Comunidad de Steam.",
+        "tr": "Tarayıcı: Steam Topluluğu yüklenemedi.",
+        "kk": "Браузер: Steam Community жүктелмеді."
+      },
+      "EngineUnavailable": {
+        "en": "Browser: the embedded browser could not be started.",
+        "ru": "Браузер: не удалось запустить встроенный браузер.",
+        "zh": "浏览器：无法启动内置浏览器。",
+        "uk": "Браузер: не вдалося запустити вбудований браузер.",
+        "fr": "Navigateur : impossible de démarrer le navigateur intégré.",
+        "es": "Navegador: no se pudo iniciar el navegador integrado.",
+        "tr": "Tarayıcı: yerleşik tarayıcı başlatılamadı.",
+        "kk": "Браузер: кіріктірілген браузерді іске қосу мүмкін болмады."
+      },
+      "EngineUnavailableWindows": {
+        "en": "Install or repair Microsoft Edge WebView2 Runtime.",
+        "ru": "Установите или восстановите Microsoft Edge WebView2 Runtime.",
+        "zh": "请安装或修复 Microsoft Edge WebView2 Runtime。",
+        "uk": "Встановіть або відновіть Microsoft Edge WebView2 Runtime.",
+        "fr": "Installez ou réparez Microsoft Edge WebView2 Runtime.",
+        "es": "Instala o repara Microsoft Edge WebView2 Runtime.",
+        "tr": "Microsoft Edge WebView2 Runtime'ı yükleyin veya onarın.",
+        "kk": "Microsoft Edge WebView2 Runtime орнатыңыз немесе қалпына келтіріңіз."
+      },
+      "ProfilePathTooLong": {
+        "en": "Browser: the temporary folder path is too long for the browser. Set a shorter TEMP folder.",
+        "ru": "Браузер: путь к временной папке слишком длинный для браузера. Задайте более короткую папку TEMP.",
+        "zh": "浏览器：临时文件夹路径对浏览器来说太长。请设置更短的 TEMP 文件夹。",
+        "uk": "Браузер: шлях до тимчасової теки задовгий для браузера. Задайте коротшу теку TEMP.",
+        "fr": "Navigateur : le chemin du dossier temporaire est trop long pour le navigateur. Choisissez un dossier TEMP plus court.",
+        "es": "Navegador: la ruta de la carpeta temporal es demasiado larga para el navegador. Configura una carpeta TEMP más corta.",
+        "tr": "Tarayıcı: geçici klasör yolu tarayıcı için çok uzun. Daha kısa bir TEMP klasörü ayarlayın.",
+        "kk": "Браузер: уақытша қалта жолы браузер үшін тым ұзын. Қысқарақ TEMP қалтасын орнатыңыз."
+      }
+    }
+  }
+}

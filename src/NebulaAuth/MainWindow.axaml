@@ -453,6 +453,14 @@
                                     <ListBox.ContextMenu>
                                         <!-- "Add to group" lists Groups: its items are rebuilt when the menu opens (code-behind) -->
                                         <ContextMenu x:Name="MafileContextMenu">
+                                            <MenuItem Header="{Tr MainWindow.ContextMenus.Mafile.OpenInBrowser}"
+                                                      Command="{Binding OpenInBrowserCommand}"
+                                                      CommandParameter="{Binding #MafileListBox.SelectedItem}">
+                                                <MenuItem.Icon>
+                                                    <mi:MaterialIcon Kind="Web" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <Separator />
                                             <MenuItem x:Name="CopyLoginMenuItem"
                                                       Header="{Tr MainWindow.ContextMenus.Mafile.CopyLogin}"
                                                       InputGesture="Ctrl+C"

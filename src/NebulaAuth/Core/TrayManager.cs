@@ -103,6 +103,22 @@ public static class TrayManager
         }
     }
 
+    /// <summary>
+    ///     Brings the main window to the front (restored from the tray or the taskbar when needed; a maximized window stays
+    ///     maximized).
+    /// </summary>
+    public static void RestoreMainWindow()
+    {
+        if (!Init) return;
+        if (!_mainWindow.IsVisible || _mainWindow.WindowState == WindowState.Minimized)
+        {
+            ShowMainWindow();
+            return;
+        }
+
+        _mainWindow.Activate();
+    }
+
     private static void ShowMainWindow()
     {
         if (!Init) return;

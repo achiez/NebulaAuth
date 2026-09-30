@@ -1035,6 +1035,16 @@
     },
     "ContextMenus": {
       "Mafile": {
+        "OpenInBrowser": {
+          "en": "Open in browser",
+          "ru": "Открыть в браузере",
+          "zh": "在浏览器中打开",
+          "uk": "Відкрити в браузері",
+          "fr": "Ouvrir dans le navigateur",
+          "es": "Abrir en el navegador",
+          "tr": "Tarayıcıda aç",
+          "kk": "Браузерде ашу"
+        },
         "CopyLogin": {
           "en": "Copy login",
           "ru": "Скопировать логин",

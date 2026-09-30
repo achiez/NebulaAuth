@@ -11,6 +11,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
 using NebulaAuth.Core;
+using NebulaAuth.Core.Browser;
 using NebulaAuth.Model;
 using NebulaAuth.Model.Exceptions;
 using NebulaAuth.Model.Mafiles.Protection;
@@ -82,6 +83,8 @@ public partial class App : Application
             Shell.InitializeBase();
             // Readable "Copy mafile" copies of an encrypted storage left by the previous run
             DecryptedMafileClipboard.SweepLeftovers();
+            // Embedded browser profile folders left by a crash are removed before any browser can be opened
+            SteamBrowser.Initialize();
             // The storage is unlocked and reconciled before any mafile is read (accounts, MAAC, proxies)
             switch (await StartupStorage.OpenAsync(splashScreen))
             {
@@ -99,6 +102,8 @@ public partial class App : Application
             await Shell.InitializeAccounts();
             // The readable "Copy mafile" copy must not outlive the app
             desktop.Exit += (_, _) => DecryptedMafileClipboard.OnAppExit();
+            // The embedded browser must not outlive the app (its engine processes and temporary profile)
+            desktop.Exit += (_, _) => SteamBrowser.OnAppExit();
             var mainWindow = new MainWindow();
             desktop.MainWindow = mainWindow;
             mainWindow.Show();

@@ -51,11 +51,25 @@
 		<PackageReference Include="Velopack" Version="1.2.158" />
 		<!-- Managed QR decoder (core library only, no platform bindings): Steam login QR from a clipboard image -->
 		<PackageReference Include="ZXing.Net" Version="0.16.11" />
+		<!-- Embedded Steam browser: WebView2 (Windows), WKWebView (macOS), WebKitGTK (Linux) -->
+		<PackageReference Include="Avalonia.Controls.WebView" Version="12.1.0" />
+		<!-- Managed CoreWebView2 wrapper over the native handle of NativeWebView (proxy auth, cookies, UA, process ids) -->
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4258.31" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\SteamLibForked\SteamLibForked.csproj" />
 	</ItemGroup>
+
+	<!--
+		Only Microsoft.Web.WebView2.Core is used (wrapper over the NativeWebView handle): the package's WinForms / WPF
+		controls are not referenced (they pull WPF's WindowsBase and are never loaded).
+	-->
+	<Target Name="RemoveWebView2UiControls" BeforeTargets="ResolveAssemblyReferences">
+		<ItemGroup>
+			<Reference Remove="@(Reference)" Condition="'%(Filename)' == 'Microsoft.Web.WebView2.Wpf' Or '%(Filename)' == 'Microsoft.Web.WebView2.WinForms'" />
+		</ItemGroup>
+	</Target>
 
 	<!-- Images used by the UI (splash, background, icons) are embedded as avares:// resources -->
 	<ItemGroup>

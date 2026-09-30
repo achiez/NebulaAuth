@@ -30,7 +30,7 @@ public partial class MainWindow
     ///     "narrow" (minimum window width), "proxy" (assign the first proxy of proxies.json to the selected account),
     ///     "menu" (open the first app bar menu), "submenu" (also its "Other" submenu), "accountmenu" (the "Account" menu),
     ///     "groups" / "proxies" (open the groups / proxy drop-down), "context" (account context menu),
-    ///     "late" (open those popups 4 s after start),
+    ///     "late" (open those popups 4 s after start), "browser:<login>" ("Open in browser" for that account 2 s after start),
     ///     "update" (update dialog with a fake 1.8.4 release + changelog, no network), "remove" / "unlink" (remove mafile /
     ///     remove authenticator confirmations; their results are ignored), "qr" / "qrrisk" / "qrminimal" / "qrexpired"
     ///     (select the first account and run the QR login on the current clipboard image up to the first network call,
@@ -43,6 +43,11 @@ public partial class MainWindow
     /// </summary>
     private void ShowMainDemoIfRequested()
     {
+        // NEBULA_BROWSER_TEST=<script>: embedded browser test driver (Core/Browser/BrowserDebugScript.Debug.cs)
+        Loaded += (_, _) =>
+        {
+            if (ViewModel is { } testVm) Core.Browser.BrowserDebugScript.StartIfRequested(testVm);
+        };
         var demo = Environment.GetEnvironmentVariable("NEBULA_MAIN_DEMO");
         if (string.IsNullOrWhiteSpace(demo)) return;
         var parts = demo.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
@@ -80,6 +85,14 @@ public partial class MainWindow
                 DispatcherTimer.RunOnce(vm.DemoImportBusy, TimeSpan.FromSeconds(1));
             if (parts.Contains("closemain"))
                 DispatcherTimer.RunOnce(Close, TimeSpan.FromSeconds(6));
+            // "browser:<login>": "Open in browser" for that account 2 s after start
+            if (parts.FirstOrDefault(p => p.StartsWith("browser:", StringComparison.Ordinal)) is { } browserPart &&
+                vm.MaFiles.FirstOrDefault(m => m.AccountName == browserPart["browser:".Length..]) is { } browserAccount)
+                DispatcherTimer.RunOnce(() =>
+                {
+                    vm.SelectedMafile = browserAccount;
+                    vm.OpenInBrowserCommand.Execute(browserAccount);
+                }, TimeSpan.FromSeconds(2));
             if (parts.Contains("snackbar"))
                 SnackbarController.SendSnackbar("Demo snackbar", TimeSpan.FromSeconds(30));
             // Popups: "late" delays them by 4 s (frame captures of the open animation start before the popup exists)
