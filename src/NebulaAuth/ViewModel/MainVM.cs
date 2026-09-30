@@ -42,6 +42,7 @@ public partial class MainVM : ObservableObject
         Storage.MaFiles.CollectionChanged += MaFilesOnCollectionChanged;
         QueryGroups();
         InitSkippedFiles();
+        _importGate.PhaseChanged += OnImportPhaseChanged;
         UpdateManager.CheckForUpdates();
     }
 

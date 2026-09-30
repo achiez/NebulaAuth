@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.Input;
 using NebulaAuth.Core;
 using NebulaAuth.Model.MafileExport;
 using NebulaAuth.Model.Mafiles;
+using NebulaAuth.Utility;
 
 namespace NebulaAuth.ViewModel.Other;
 
@@ -35,6 +36,16 @@ public partial class MafileExporterVM : ObservableObject, IDisposable
     [ObservableProperty] private HintBoxSeverity _hintBoxSeverity = HintBoxSeverity.Error;
 
     [ObservableProperty] private string? _hintText;
+
+    /// <summary>
+    ///     Folder of the last export that wrote at least one file (resolved when it ran): a later template or path change
+    ///     does not change it.
+    /// </summary>
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(OpenExportFolderCommand))]
+    private string? _lastExportFolder;
+
+    // Opens a folder in the file manager (replaced by tests)
+    private static Action<string> _openFolder = PlatformUtils.OpenFolder;
 
     public MafileExporterVM()
     {
@@ -265,6 +276,23 @@ public partial class MafileExporterVM : ObservableObject, IDisposable
         var text = string.Join(Environment.NewLine, errorLines);
 
         AccountsText = text;
+
+        if (res.Exported.Count > 0 && res.Folder != null)
+        {
+            LastExportFolder = res.Folder;
+            _openFolder(res.Folder);
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(HasLastExportFolder))]
+    private void OpenExportFolder()
+    {
+        if (LastExportFolder != null) _openFolder(LastExportFolder);
+    }
+
+    private bool HasLastExportFolder()
+    {
+        return LastExportFolder != null;
     }
 
     // Strips the password part from "login:password" input lines.

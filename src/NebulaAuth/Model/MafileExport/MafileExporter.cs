@@ -16,6 +16,9 @@ namespace NebulaAuth.Model.MafileExport;
 
 public static class MafileExporter
 {
+    // Mafiles are UTF-8 JSON without a BOM, as in the storage: other tools may reject a BOM
+    private static readonly UTF8Encoding Utf8NoBom = new(false);
+
     public static async Task<ExportResult> ExportMafiles(IEnumerable<string> keys, MafileExportTemplate template)
     {
         if (template.Path == null || !PathIsValid(template.Path))
@@ -83,7 +86,7 @@ public static class MafileExporter
 
                     var entry = archive.CreateEntry(fileName);
                     await using var entryStream = entry.Open();
-                    await using var writer = new StreamWriter(entryStream, Encoding.UTF8);
+                    await using var writer = new StreamWriter(entryStream, Utf8NoBom);
                     await writer.WriteAsync(content);
                     exported[maf] = fileName;
                 }
@@ -101,12 +104,12 @@ public static class MafileExporter
                     continue;
                 }
 
-                await File.WriteAllTextAsync(fullPath, content);
+                await File.WriteAllTextAsync(fullPath, content, Utf8NoBom);
                 exported[maf] = fullPath;
             }
         }
 
-        return new ExportResult(exported, notFound, conflict);
+        return new ExportResult(exported, notFound, conflict, exportPath);
     }
 
     private static (string content, string fileName) BuildMafileContent(MafileExportTemplate template, Mafile mafile)

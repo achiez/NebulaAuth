@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -92,8 +93,40 @@ public static class Storage
         }, token);
 
         MaFiles = new ObservableCollection<Mafile>(localList.OrderBy(m => m.AccountName));
+        await Task.Run(() => ReportDamagedRemovedMafiles(service, token), token);
         Shell.Logger.Info("Loaded {count} mafile(s) of {total} ({mode} storage), skipped files: {skipped}",
             MaFiles.Count, files.Count, service.Mode, service.SkippedFiles.Count);
+    }
+
+    /// <summary>
+    ///     Removed mafiles are not loaded, but one that can't be read or is damaged (integrity check failed, not JSON) is
+    ///     listed in the skipped files like the files of the maFiles folder.
+    /// </summary>
+    private static void ReportDamagedRemovedMafiles(MafileStorageService service, CancellationToken token)
+    {
+        foreach (var file in service.EnumerateLoadableMafiles(RemovedMafilesDirectory))
+        {
+            token.ThrowIfCancellationRequested();
+            SkippedFileReason reason;
+            string details;
+            try
+            {
+                var bytes = service.ReadFile(file.Path);
+                var valid = StorageContent.TryParseObject(bytes) != null;
+                if (file.Encrypted) CryptographicOperations.ZeroMemory(bytes);
+                if (valid) continue;
+                reason = SkippedFileReason.Invalid;
+                details = "Not a JSON object";
+            }
+            catch (StorageFileException ex)
+            {
+                reason = ex.Reason;
+                details = ex.Message;
+            }
+
+            service.ReportSkipped(new SkippedFile(Path.GetFileName(file.Path), file.Path, reason,
+                !file.Encrypted && service.Mode != StorageMode.Plain, details));
+        }
     }
 
     /// <summary>

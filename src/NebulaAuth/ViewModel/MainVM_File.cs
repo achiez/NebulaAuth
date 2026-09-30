@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using AchiesUtilities.Extensions;
 using CommunityToolkit.Mvvm.Input;
@@ -11,10 +10,8 @@ using Material.Icons;
 using NebulaAuth.Core;
 using NebulaAuth.Model;
 using NebulaAuth.Model.Entities;
-using NebulaAuth.Model.Exceptions;
 using NebulaAuth.Model.Mafiles;
 using NebulaAuth.Model.Mafiles.Protection;
-using NebulaAuth.Model.MafilesLegacy;
 using NebulaAuth.Utility;
 using NebulaAuth.View;
 using NebulaAuth.View.Dialogs;
@@ -25,14 +22,15 @@ namespace NebulaAuth.ViewModel;
 
 public partial class MainVM //File //TODO: Refactor
 {
-    private record MafileReadResult(
-        Mafile? Mafile,
-        bool SdaPasswordPrompted,
-        SDAEncryptionHelper.Context? SdaContext);
-
-    private record MafileImportPlanItem(Mafile Mafile, bool RequiresRelogin, bool HasConflict);
+    private readonly ImportGate _importGate = new();
 
     public Settings Settings => Settings.Instance;
+
+    /// <summary>An import runs (from getting the files to the result): new imports are rejected.</summary>
+    public bool IsImportBusy => _importGate.IsBusy;
+
+    /// <summary>The selected files are being checked / confirmed / written (status bar indicator).</summary>
+    public bool IsImportRunning => _importGate.Phase == ImportPhase.Importing;
 
     // "*.mafile.encrypted": encrypted mafiles of this storage (e.g. from maFiles_removed). Encrypted files of another
     // storage are recognized by the header and refused with a reason; SDA encrypted mafiles keep their own import path.
@@ -72,70 +70,68 @@ public partial class MainVM //File //TODO: Refactor
     }
 
 
-    [RelayCommand]
-    private async Task AddMafile()
+    [RelayCommand(CanExecute = nameof(CanStartImport))]
+    private Task AddMafile()
     {
-        var files = await FileDialogs.OpenFilesAsync("Mafile", MafilePatterns);
-        if (files.Length > 0)
+        // Several files at once: the whole set goes through one check, one confirmation and one result
+        return StartImport(() => FileDialogs.OpenFilesAsync("Mafile", MafilePatterns, true));
+    }
+
+    /// <summary>
+    ///     Imports files dropped on the window.
+    /// </summary>
+    public Task ImportMafiles(string[] paths)
+    {
+        return StartImport(() => Task.FromResult(paths));
+    }
+
+    /// <summary>
+    ///     The single entry of every import. Another trigger while an import runs (reading, check, dialog, writing) is
+    ///     rejected with a short message.
+    /// </summary>
+    private async Task StartImport(Func<Task<string[]>> getFiles)
+    {
+        if (!await _importGate.RunAsync(getFiles, ImportCoreAsync))
         {
-            await AddMafile(files);
+            SnackbarController.SendSnackbar(GetLocalization("ImportAlreadyRunning"), TimeSpan.FromSeconds(3));
         }
     }
 
-    //TODO: extract flow and refactor, this method is too long and does too many things
-    public async Task AddMafile(string[] path)
+    private bool CanStartImport()
     {
-        var summary = new MafileImportSummary();
-        var items = new List<MafileImportPlanItem>();
-        SDAEncryptionHelper.Context? sdaContext = null;
-        var sdaPasswordPrompted = false;
-        foreach (var str in path)
-        {
-            try
-            {
-                var (mafile, passwordPrompted, context) = await TryReadMafile(str, sdaContext, sdaPasswordPrompted);
-                sdaContext = context;
-                sdaPasswordPrompted = passwordPrompted;
-                if (mafile == null)
-                {
-                    summary.ErrorOne();
-                    continue;
-                }
+        return !_importGate.IsBusy;
+    }
 
-                items.Add(new MafileImportPlanItem(mafile, false, HasImportConflict(mafile)));
-            }
-            catch (FormatException)
-            {
-                summary.ErrorOne();
-            }
-            catch (MafileNeedReloginException ex)
-            {
-                if (path.Length == 1 && ex.Mafile != null)
-                {
-                    items.Add(new MafileImportPlanItem(ex.Mafile, true, HasImportConflict(ex.Mafile)));
-                }
-                else
-                {
-                    summary.ErrorOne();
-                    SnackbarController.SendSnackbar(
-                        $"{GetLocalization("MafileImportError")} {Path.GetFileName(str)}{GetLocalization("MissingSessionInMafile")}",
-                        TimeSpan.FromSeconds(4));
-                }
-            }
-        }
+    private void OnImportPhaseChanged()
+    {
+        OnPropertyChanged(nameof(IsImportBusy));
+        OnPropertyChanged(nameof(IsImportRunning));
+        AddMafileCommand.NotifyCanExecuteChanged();
+    }
 
-        if (items.Count == 0)
+    private async Task ImportCoreAsync(string[] paths)
+    {
+        var check = await MafileImportChecker.CheckAsync(paths, DialogsController.ShowSdaPasswordDialog);
+        Shell.Logger.Info("Import check: {total} file(s), valid {valid}, conflicts {conflicts}, errors {errors}",
+            check.Total, check.Valid, check.Conflicts, check.Errors);
+        ReportImportFailures(check.Failures);
+
+        if (check.Valid == 0)
         {
-            ShowImportSummary(summary);
+            // Nothing to confirm: the check result only
+            SnackbarController.SendSnackbar(string.Format(GetLocalization("ImportNothingValid"), check.Total,
+                check.Errors), TimeSpan.FromSeconds(5));
             return;
         }
 
-        var conflictCount = items.Count(i => i.HasConflict);
-        var showImportDialog = Settings.ConfirmMafileImport || conflictCount > 0;
+        var summary = new MafileImportSummary();
+        summary.Add(errors: check.Errors);
+        var showImportDialog = Settings.ConfirmMafileImport || check.Conflicts > 0;
         MafileImportDialogResult? importOptions = null;
         if (showImportDialog)
         {
-            importOptions = await DialogsController.ShowMafileImportDialog(Groups, items.Count, conflictCount);
+            importOptions = await DialogsController.ShowMafileImportDialog(Groups,
+                new MafileImportCounts(check.Total, check.Valid, check.Conflicts, check.Errors));
             if (importOptions == null)
             {
                 SnackbarController.SendSnackbar(LocManager.GetCommonOrDefault("Canceled", "Canceled"));
@@ -145,7 +141,7 @@ public partial class MainVM //File //TODO: Refactor
 
         var importGroup = importOptions?.Group;
         var overwriteConflicts = importOptions?.OverwriteConflicts ?? false;
-        foreach (var item in items)
+        foreach (var item in check.Candidates)
         {
             ApplyImportGroup(item.Mafile, importGroup);
             if (item.RequiresRelogin)
@@ -168,8 +164,17 @@ public partial class MainVM //File //TODO: Refactor
                 continue;
             }
 
-            var res = await Storage.AddNewMafileFromData(item.Mafile, overwriteConflicts);
-            summary.Apply(res);
+            try
+            {
+                var res = await Storage.AddNewMafileFromData(item.Mafile, overwriteConflicts);
+                summary.Apply(res);
+            }
+            catch (Exception ex)
+            {
+                // A failed write leaves the existing file intact (atomic publish); the next files are still imported
+                Shell.Logger.Error(ex, "Import: can't write {file}", Path.GetFileName(item.Path));
+                summary.ErrorOne();
+            }
         }
 
         if (summary.Added > 0)
@@ -184,84 +189,31 @@ public partial class MainVM //File //TODO: Refactor
         ShowImportSummary(summary);
     }
 
+    /// <summary>
+    ///     Per-file details for the failures the user can act on (encrypted file of another storage, mafile without a
+    ///     session among several files). A long list is covered by the error count only (details are in the log).
+    /// </summary>
+    private static void ReportImportFailures(IReadOnlyList<MafileImportFailure> failures)
+    {
+        const int maxDetailed = 3;
+        var detailed = failures.Where(f => f.Problem is MafileImportProblem.Refused
+            or MafileImportProblem.NeedsSeparateImport).ToList();
+        if (detailed.Count > maxDetailed) return;
+        foreach (var failure in detailed)
+        {
+            var name = Path.GetFileName(failure.Path);
+            var text = failure.Problem == MafileImportProblem.Refused
+                ? string.Format(GetLocalization("ImportEncryptedRefused"), name,
+                    SkippedFileItemVM.GetReasonText(failure.Reason ?? SkippedFileReason.UnsupportedFormat))
+                : $"{GetLocalization("MafileImportError")} {name}{GetLocalization("MissingSessionInMafile")}";
+            SnackbarController.SendSnackbar(text, TimeSpan.FromSeconds(failure.Problem == MafileImportProblem.Refused ? 8 : 4));
+        }
+    }
+
     private static void ApplyImportGroup(Mafile mafile, string? group)
     {
         if (string.IsNullOrWhiteSpace(group)) return;
         mafile.Group = group;
-    }
-
-    private static bool HasImportConflict(Mafile mafile)
-    {
-        var fileName = MafilesStorageHelper.CreateMafileFileName(mafile, Settings.Instance.UseAccountNameAsMafileName);
-        return MafilesStorageHelper.FindExistingMafileName(fileName) != null;
-    }
-
-
-    private async Task<MafileReadResult> TryReadMafile(string path, SDAEncryptionHelper.Context? sdaContext,
-        bool sdaPasswordPrompted)
-    {
-        try
-        {
-            Mafile mafile;
-            var bytes = await File.ReadAllBytesAsync(path);
-            if (StorageCrypto.HasMagic(bytes))
-            {
-                // NebulaAuth encrypted mafile (decided by the header): readable only when it belongs to this storage
-                var plain = MafileStorageService.Current.DecodeImportedFile(bytes);
-                try
-                {
-                    mafile = NebulaSerializer.Deserialize(Encoding.UTF8.GetString(plain), StorageFileNames.ToPlainName(path));
-                }
-                finally
-                {
-                    CryptographicOperations.ZeroMemory(plain);
-                }
-
-                return new MafileReadResult(mafile, sdaPasswordPrompted, sdaContext);
-            }
-
-            var content = await File.ReadAllTextAsync(path);
-            if (!SDAEncryptionHelper.LooksLikeSdaEncryptedBlob(content))
-            {
-                mafile = NebulaSerializer.Deserialize(content, path);
-                return new MafileReadResult(mafile, sdaPasswordPrompted, sdaContext);
-            }
-
-            // Looks like encrypted, let's see if we have manifest
-            sdaContext ??= SDAEncryptionHelper.TryDetect(path, sdaContext?.SdaManifest);
-            if (sdaContext != null)
-            {
-                // We have manifest, but we must ensure we have password
-                if (sdaContext.Password == null && !sdaPasswordPrompted)
-                {
-                    sdaPasswordPrompted = true;
-                    var password = await DialogsController.ShowSdaPasswordDialog();
-                    sdaContext = sdaContext.WithPassword(password);
-                }
-
-                var decrypted = SDAEncryptionHelper.TryDecrypt(content, path, sdaContext);
-                if (decrypted == null) return new MafileReadResult(null, sdaPasswordPrompted, sdaContext);
-                content = decrypted;
-            }
-
-            // If we are here, it means that either file is not encrypted, or we successfully decrypted it
-            mafile = NebulaSerializer.Deserialize(content, path);
-            return new MafileReadResult(mafile, sdaPasswordPrompted, sdaContext);
-        }
-        catch (StorageFileException ex)
-        {
-            // Encrypted by another storage / format, damaged, or encryption is off: never read with another key
-            Shell.Logger.Warn("Import: {file} refused ({reason})", Path.GetFileName(path), ex.Reason);
-            SnackbarController.SendSnackbar(string.Format(GetLocalization("ImportEncryptedRefused"), Path.GetFileName(path),
-                SkippedFileItemVM.GetReasonText(ex.Reason)), TimeSpan.FromSeconds(8));
-            return new MafileReadResult(null, sdaPasswordPrompted, sdaContext);
-        }
-        catch (Exception ex)
-            when (ex is not MafileNeedReloginException)
-        {
-            Shell.Logger.Warn(ex, "Failed to import mafile");
-            throw new FormatException($"Failed to read mafile {Path.GetFileName(path)}", ex);
-        }
     }
 
     private async Task<bool> HandleAddMafileWithoutSession(Mafile data)
@@ -374,15 +326,16 @@ public partial class MainVM //File //TODO: Refactor
         return DialogsController.ShowSettingsDialog();
     }
 
-    [RelayCommand]
-    private async Task PasteMafilesFromClipboard()
+    // Concurrent executions allowed: a repeated Ctrl+V reaches the import gate, which tells that an import runs
+    [RelayCommand(AllowConcurrentExecutions = true)]
+    private Task PasteMafilesFromClipboard()
     {
-        // Errors are logged inside
-        var arr = await ClipboardHelper.GetFilesAsync();
-        if (arr.All(p => !p.ContainsIgnoreCase("mafile"))) return;
-
-
-        await AddMafile(arr);
+        return StartImport(async () =>
+        {
+            // Errors are logged inside
+            var arr = await ClipboardHelper.GetFilesAsync();
+            return arr.Any(p => p.ContainsIgnoreCase("mafile")) ? arr : [];
+        });
     }
 
     [RelayCommand]

@@ -371,6 +371,26 @@
         "tr": "{0} içe aktarılamıyor: {1}",
         "kk": "{0} импорттау мүмкін емес: {1}"
       },
+      "ImportAlreadyRunning": {
+        "en": "Import is already in progress",
+        "ru": "Импорт уже выполняется",
+        "zh": "导入正在进行中",
+        "uk": "Імпорт уже виконується",
+        "fr": "Une importation est déjà en cours",
+        "es": "Ya hay una importación en curso",
+        "tr": "İçe aktarma zaten devam ediyor",
+        "kk": "Импорт әлі жүріп жатыр"
+      },
+      "ImportNothingValid": {
+        "en": "No mafiles to import. Files checked: {0}, errors: {1}",
+        "ru": "Нет мафайлов для импорта. Проверено файлов: {0}, ошибок: {1}",
+        "zh": "没有可导入的 mafile。已检查文件：{0}，错误：{1}",
+        "uk": "Немає мафайлів для імпорту. Перевірено файлів: {0}, помилок: {1}",
+        "fr": "Aucun mafile à importer. Fichiers vérifiés : {0}, erreurs : {1}",
+        "es": "No hay mafiles para importar. Archivos revisados: {0}, errores: {1}",
+        "tr": "İçe aktarılacak mafile yok. Kontrol edilen dosya: {0}, hata: {1}",
+        "kk": "Импорттайтын mafile жоқ. Тексерілген файлдар: {0}, қателер: {1}"
+      },
       "PasswordCopied": {
         "en": "Password copied",
         "ru": "Пароль скопирован",
@@ -899,6 +919,16 @@
         "es": "Actual: ",
         "tr": "Geçerli: ",
         "kk": "Ағымдағы: "
+      },
+      "Importing": {
+        "en": "Importing…",
+        "ru": "Импорт…",
+        "zh": "正在导入…",
+        "uk": "Імпорт…",
+        "fr": "Importation…",
+        "es": "Importando…",
+        "tr": "İçe aktarılıyor…",
+        "kk": "Импорттау…"
       }
     },
     "ConfirmationTemplates": {

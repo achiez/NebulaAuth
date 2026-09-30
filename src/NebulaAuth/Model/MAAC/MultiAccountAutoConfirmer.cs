@@ -70,6 +70,7 @@ public static class MultiAccountAutoConfirmer
                 {
                     conf = await MAACRequestHandler.HandleRequest(client.LinkedClient!,
                         () => client.LinkedClient!.Confirm());
+                    MaacErrorLog.Instance.Success(client.AccountName);
                 }
                 catch (ObjectDisposedException)
                 {
@@ -77,7 +78,12 @@ public static class MultiAccountAutoConfirmer
                 }
                 catch (Exception ex)
                 {
-                    Shell.Logger.Error(ex, "Internal error while confirming {accountName}", client.AccountName);
+                    // A dead proxy fails on every tick for every account using it: the first failure is logged in
+                    // full, repeats are summarized
+                    var proxy = client.Proxy?.Data ?? MaClient.DefaultProxy;
+                    var proxyLabel = client.Proxy != null ? $"proxy #{client.Proxy.Id}"
+                        : proxy != null ? "default proxy" : "no proxy";
+                    MaacErrorLog.Instance.Failure(client.AccountName, proxyLabel, ex, [proxy?.Password]);
                 }
 
                 confirmed += conf;

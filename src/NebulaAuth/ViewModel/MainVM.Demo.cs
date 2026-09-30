@@ -1,7 +1,9 @@
 #if DEBUG
 using System;
 using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using NebulaAuth.Core;
 using NebulaAuth.Model;
 using NebulaAuth.Model.Entities;
@@ -127,6 +129,34 @@ public partial class MainVM
         SnackbarController.SendSnackbar(
             approved ? "Demo: approval not sent (no network)" : LocManager.GetCommonOrDefault("Canceled", "Canceled"),
             demoDuration);
+    }
+
+    /// <summary>
+    ///     Debug builds only (MainWindow, NEBULA_MAIN_DEMO=import / importtwice): imports every file of the "demo-import"
+    ///     folder of the data folder like a drop (the real check, dialog and result). "importtwice" drops the same files
+    ///     again 300 ms later: the second import is rejected.
+    /// </summary>
+    internal void DemoImportFolder(bool twice)
+    {
+        var dir = DataRoot.Combine("demo-import");
+        var files = Directory.Exists(dir) ? Directory.GetFiles(dir) : [];
+        _ = ImportMafiles(files);
+        if (twice) DispatcherTimer.RunOnce(() => _ = ImportMafiles(files), TimeSpan.FromMilliseconds(300));
+    }
+
+    /// <summary>
+    ///     Debug builds only (MainWindow, NEBULA_MAIN_DEMO=importbusy): an import that stays in the check for 60 s (status
+    ///     bar indicator); a Ctrl+V every 2 s for 20 s is rejected with the "already in progress" message.
+    /// </summary>
+    internal void DemoImportBusy()
+    {
+        _ = _importGate.RunAsync(() => Task.FromResult(new[] {"demo.mafile"}), _ => Task.Delay(TimeSpan.FromSeconds(60)));
+        var pastes = 0;
+        DispatcherTimer.Run(() =>
+        {
+            PasteMafilesFromClipboardCommand.Execute(null);
+            return ++pastes < 10;
+        }, TimeSpan.FromSeconds(2));
     }
 }
 #endif

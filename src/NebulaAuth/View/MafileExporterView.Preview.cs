@@ -37,6 +37,8 @@ public partial class MafileExporterView
                 string.Format(LocManager.GetCodeBehindOrDefault("Exported", "MafileExporterVM.Result.Exported"), 10) +
                 string.Format(LocManager.GetCodeBehindOrDefault("NotFound", "MafileExporterVM.Result.NotFound"), 2);
             vm.HintBoxSeverity = HintBoxSeverity.Info;
+            // "Open folder" of the last export (not opened in the preview)
+            vm.LastExportFolder = DataRoot.Combine("export");
         }
 
         if (arg == "error")

@@ -7,6 +7,7 @@ using NebulaAuth.Model.MAAC;
 using NebulaAuth.Model.MafileExport;
 using NebulaAuth.Model.Mafiles;
 using NebulaAuth.Model.Mafiles.Protection;
+using NebulaAuth.Utility;
 using NLog;
 using NLog.Extensions.Logging;
 using SteamLib.Core;
@@ -33,6 +34,7 @@ public static class Shell
         LocManager.SetApplicationLocalization(Settings.Instance.Language);
         Logger.Info("NebulaAuth {version} started. Data folder: {dataRoot}. Program: {exe}",
             UpdateManager.InstalledVersionText, DataRoot.Describe(), Environment.ProcessPath);
+        CleanupOldLogs();
         var lp = new NLogLoggerProvider();
         var logger = lp.CreateLogger("SteamLib");
         SteamLibErrorMonitor.MonitorLogger = logger;
@@ -67,6 +69,27 @@ public static class Shell
         _ = LinksManager.FetchAsync();
 
         ExtensionsLogger.LogDebug("Application started");
+    }
+
+    /// <summary>
+    ///     Daily logs older than <see cref="LogRetention.DefaultMaxAge" /> are deleted in the background (the folder NLog
+    ///     writes to, set by <see cref="DataRoot" />).
+    /// </summary>
+    private static void CleanupOldLogs()
+    {
+        var logDir = GlobalDiagnosticsContext.GetObject(DataRoot.LOG_DIR_GDC_ITEM) as string;
+        if (string.IsNullOrEmpty(logDir)) return;
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                LogRetention.Cleanup(logDir, LogRetention.DefaultMaxAge, DateTime.Now);
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex, "Log retention failed");
+            }
+        });
     }
 
     private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)

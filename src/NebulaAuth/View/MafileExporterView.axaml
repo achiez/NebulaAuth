@@ -212,6 +212,17 @@
                     <mi:MaterialIcon Kind="FileExport" IconSize="16" />
                 </u:IconButton.Icon>
             </u:IconButton>
+            <!-- Folder of the last successful export (opened automatically once; this reopens it) -->
+            <u:IconButton Theme="{DynamicResource OutlineIconButton}"
+                          Classes="Tertiary"
+                          Content="{Tr ExportDialog.OpenFolder}"
+                          ToolTip.Tip="{Binding LastExportFolder}"
+                          IsVisible="{Binding LastExportFolder, Converter={x:Static ObjectConverters.IsNotNull}}"
+                          Command="{Binding OpenExportFolderCommand}">
+                <u:IconButton.Icon>
+                    <mi:MaterialIcon Kind="FolderOpenOutline" IconSize="16" />
+                </u:IconButton.Icon>
+            </u:IconButton>
         </StackPanel>
     </Grid>
 </UserControl>

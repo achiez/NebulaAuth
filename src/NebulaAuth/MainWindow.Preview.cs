@@ -36,7 +36,9 @@ public partial class MainWindow
     ///     (select the first account and run the QR login on the current clipboard image up to the first network call,
     ///     fake session info in the dialog, see MainVM.DemoQrLogin), "copymafile" (select the first account and run "Copy
     ///     mafile" 2 s after start: in an encrypted storage it puts a readable temporary copy on the clipboard),
-    ///     "pastemafiles" (import the files of the clipboard 2 s after start, like Ctrl+V), "closemain" (close the main
+    ///     "pastemafiles" (import the files of the clipboard 2 s after start, like Ctrl+V), "import" / "importtwice"
+    ///     (import the files of the "demo-import" folder of the data folder 2 s after start like a drop; "importtwice"
+    ///     drops them again 300 ms later), "importbusy" (an import that stays busy for 60 s + a rejected Ctrl+V), "closemain" (close the main
     ///     window 6 s after start: the normal app exit, e.g. deleting the readable "Copy mafile" copy).
     /// </summary>
     private void ShowMainDemoIfRequested()
@@ -72,6 +74,10 @@ public partial class MainWindow
                 }, TimeSpan.FromSeconds(2));
             if (parts.Contains("pastemafiles"))
                 DispatcherTimer.RunOnce(() => vm.PasteMafilesFromClipboardCommand.Execute(null), TimeSpan.FromSeconds(2));
+            if (parts.Contains("import") || parts.Contains("importtwice"))
+                DispatcherTimer.RunOnce(() => vm.DemoImportFolder(parts.Contains("importtwice")), TimeSpan.FromSeconds(2));
+            if (parts.Contains("importbusy"))
+                DispatcherTimer.RunOnce(vm.DemoImportBusy, TimeSpan.FromSeconds(1));
             if (parts.Contains("closemain"))
                 DispatcherTimer.RunOnce(Close, TimeSpan.FromSeconds(6));
             if (parts.Contains("snackbar"))

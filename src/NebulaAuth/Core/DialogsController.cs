@@ -75,9 +75,9 @@ public static class DialogsController
     }
 
     public static async Task<MafileImportDialogResult?> ShowMafileImportDialog(IEnumerable<string> groups,
-        int totalCount, int conflictCount)
+        MafileImportCounts counts)
     {
-        var vm = new MafileImportDialogVM(groups, totalCount, conflictCount);
+        var vm = new MafileImportDialogVM(groups, counts);
         var content = new MafileImportDialog
         {
             DataContext = vm

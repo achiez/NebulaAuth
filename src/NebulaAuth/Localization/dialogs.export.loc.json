@@ -56,6 +56,16 @@
       "tr": "Dışa aktar",
       "kk": "Экспорт"
     },
+    "OpenFolder": {
+      "en": "Open folder",
+      "ru": "Открыть папку",
+      "zh": "打开文件夹",
+      "uk": "Відкрити папку",
+      "fr": "Ouvrir le dossier",
+      "es": "Abrir carpeta",
+      "tr": "Klasörü aç",
+      "kk": "Қалтаны ашу"
+    },
     "TemplateHint": {
       "ru": "Шаблон",
       "en": "Template",

@@ -21,9 +21,9 @@
                 <Border.BorderBrush>
                     <SolidColorBrush Color="{DynamicResource BaseContentColor}" Opacity="0.12" />
                 </Border.BorderBrush>
-                <!-- No RowSpacing: it would still be added while row 1 is hidden and push the single row off-center.
-                     Row 1 gets its gap from its own top margin, which disappears together with it. -->
-                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                <!-- No RowSpacing: it would still be added while rows 1-3 are hidden and push the single row off-center.
+                     Rows 1-3 get their gap from their own top margin, which disappears together with them. -->
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
                     <TextBlock Grid.Row="0" Grid.Column="0"
                                Classes="Muted"
                                VerticalAlignment="Center"
@@ -40,24 +40,54 @@
                                VerticalAlignment="Center"
                                IsVisible="{Binding HasConflicts}"
                                Text="{Tr MafileImportDialog.ConflictCount}" />
-                    <!-- Warning text is unreadable on the light card (Light theme ~1.7:1): a warning-tinted badge with
-                         primary text keeps the warning cue in every theme. -->
-                    <Border Grid.Row="1" Grid.Column="1"
-                            Margin="0,6,0,0"
-                            Padding="6,0"
-                            CornerRadius="6"
-                            BorderThickness="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Background="{DynamicResource WarningTintBrush}"
-                            BorderBrush="{DynamicResource WarningBorderBrush}"
-                            IsVisible="{Binding HasConflicts}">
-                        <TextBlock FontWeight="SemiBold"
-                                   Foreground="{DynamicResource TextPrimaryBrush}"
-                                   Text="{Binding ConflictCount, Mode=OneWay}" />
-                    </Border>
+                    <!-- WarningTextBrush: warning hue contrast-corrected for the card, readable in the Light theme too -->
+                    <TextBlock Grid.Row="1" Grid.Column="1"
+                               Margin="0,6,0,0"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource WarningTextBrush}"
+                               IsVisible="{Binding HasConflicts}"
+                               Text="{Binding ConflictCount, Mode=OneWay}" />
+
+                    <!-- Invalid / unsupported / unreadable files: not imported -->
+                    <TextBlock Grid.Row="2" Grid.Column="0"
+                               Margin="0,6,0,0"
+                               Classes="Muted"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding HasErrors}"
+                               Text="{Tr MafileImportDialog.ErrorCount}" />
+                    <TextBlock Grid.Row="2" Grid.Column="1"
+                               Margin="0,6,0,0"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource ErrorTextBrush}"
+                               IsVisible="{Binding HasErrors}"
+                               Text="{Binding ErrorCount, Mode=OneWay}" />
+
+                    <!-- With errors the counts no longer add up to the selection: show its size too -->
+                    <TextBlock Grid.Row="3" Grid.Column="0"
+                               Margin="0,6,0,0"
+                               Classes="Muted"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding HasErrors}"
+                               Text="{Tr MafileImportDialog.SelectedCount}" />
+                    <TextBlock Grid.Row="3" Grid.Column="1"
+                               Margin="0,6,0,0"
+                               Classes="Muted"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding HasErrors}"
+                               Text="{Binding SelectedCount, Mode=OneWay}" />
                 </Grid>
             </Border>
+
+            <TextBlock Classes="FieldHelper"
+                       Margin="0,-6,0,0"
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding HasErrors}"
+                       Text="{Tr MafileImportDialog.ErrorsHint}" />
 
             <CheckBox IsVisible="{Binding HasConflicts}"
                       IsChecked="{Binding OverwriteConflicts}"

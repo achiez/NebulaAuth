@@ -626,6 +626,36 @@
                                 <TextBlock Text="{Binding SelectedMafile.AccountName, FallbackValue=' ', TargetNullValue=' ', Mode=OneWay}" />
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- Mafile import running (check / writing): further imports are rejected meanwhile -->
+                                <StackPanel x:Name="ImportBusyIndicator"
+                                            Orientation="Horizontal" Spacing="6" Margin="0,0,10,0"
+                                            VerticalAlignment="Center"
+                                            IsVisible="{Binding IsImportRunning}">
+                                    <!-- A ring this small is a filled blob in the Semi theme: a spinning icon instead -->
+                                    <StackPanel.Styles>
+                                        <Style Selector="mi|MaterialIcon.Spinner">
+                                            <Setter Property="RenderTransform">
+                                                <RotateTransform />
+                                            </Setter>
+                                            <Style.Animations>
+                                                <Animation Duration="0:0:0.9" IterationCount="Infinite">
+                                                    <KeyFrame Cue="0%">
+                                                        <Setter Property="RotateTransform.Angle" Value="0" />
+                                                    </KeyFrame>
+                                                    <KeyFrame Cue="100%">
+                                                        <Setter Property="RotateTransform.Angle" Value="360" />
+                                                    </KeyFrame>
+                                                </Animation>
+                                            </Style.Animations>
+                                        </Style>
+                                    </StackPanel.Styles>
+                                    <mi:MaterialIcon Classes="Spinner" Kind="Loading" IconSize="15"
+                                                     VerticalAlignment="Center"
+                                                     Foreground="{DynamicResource FooterForegroundBrush}" />
+                                    <TextBlock FontSize="13" VerticalAlignment="Center"
+                                               Foreground="{DynamicResource FooterForegroundBrush}"
+                                               Text="{Tr MainWindow.Footer.Importing}" />
+                                </StackPanel>
                                 <!-- Storage files that were not loaded / not converted: opens the list (red when some are
                                      readable files in an encrypted storage) -->
                                 <Button x:Name="SkippedFilesBadge"

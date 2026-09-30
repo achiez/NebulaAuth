@@ -289,9 +289,17 @@ public partial class MainWindow : Window
         return e.DataTransfer.Contains(DataFormat.File);
     }
 
+    /// <summary>
+    ///     No drop target while a dialog is open or an import runs (its check / writing has no dialog).
+    /// </summary>
+    private bool CanAcceptDrop(DragEventArgs e)
+    {
+        return !DialogService.IsDialogOpen && ViewModel?.IsImportBusy != true && HasFiles(e);
+    }
+
     private void ContentRoot_OnDragEnter(object? sender, DragEventArgs e)
     {
-        if (DialogService.IsDialogOpen || !HasFiles(e))
+        if (!CanAcceptDrop(e))
         {
             e.DragEffects = DragDropEffects.None;
             e.Handled = true;
@@ -304,7 +312,7 @@ public partial class MainWindow : Window
 
     private void ContentRoot_OnDragOver(object? sender, DragEventArgs e)
     {
-        e.DragEffects = !DialogService.IsDialogOpen && HasFiles(e) ? DragDropEffects.Copy : DragDropEffects.None;
+        e.DragEffects = CanAcceptDrop(e) ? DragDropEffects.Copy : DragDropEffects.None;
     }
 
     private void ContentRoot_OnDragLeave(object? sender, DragEventArgs e)
@@ -325,7 +333,8 @@ public partial class MainWindow : Window
         e.DragEffects = DragDropEffects.Copy;
         if (ViewModel is { } mainVm)
         {
-            await mainVm.AddMafile(filePaths);
+            // A drop during an import is rejected by the import itself (with a message)
+            await mainVm.ImportMafiles(filePaths);
         }
     }
 
