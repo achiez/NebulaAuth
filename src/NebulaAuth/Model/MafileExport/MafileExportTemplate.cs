@@ -15,6 +15,12 @@ public class MafileExportTemplate
     public bool IncludeOtherInfo { get; set; }
     public bool IncludeNebulaProxy { get; set; }
     public bool IncludeNebulaGroup { get; set; }
+
+    /// <summary>
+    ///     "DeviceName" (the device name sent to Steam) in the exported mafile. Templates saved before this option existed
+    ///     have no such field and include it.
+    /// </summary>
+    public bool IncludeDeviceName { get; set; } = true;
     public string? Path { get; set; }
     public bool ExportToZip { get; set; }
 }

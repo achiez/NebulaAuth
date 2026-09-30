@@ -124,6 +124,28 @@
         <Style Selector="Border.ProblemRow.Danger TextBlock.ProblemText">
             <Setter Property="Foreground" Value="{DynamicResource ErrorTextBrush}" />
         </Style>
+        <!-- Devices tab: "Built-in" badge of a model row; remove button tooltip (the last model can't be removed) -->
+        <Style Selector="Border.ModelBadge">
+            <Setter Property="Background" Value="{DynamicResource SemiColorFill0}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="6,1" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Border.ModelBadge > TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+        </Style>
+        <Style Selector="Button.RemoveModel">
+            <Setter Property="ToolTip.Tip" Value="{Tr SettingsDialog.Devices.Remove}" />
+            <Setter Property="AutomationProperties.Name" Value="{Tr SettingsDialog.Devices.Remove}" />
+        </Style>
+        <Style Selector="Button.RemoveModel.Last">
+            <Setter Property="ToolTip.Tip" Value="{Tr SettingsDialog.Devices.LastModel}" />
+            <Setter Property="AutomationProperties.Name" Value="{Tr SettingsDialog.Devices.LastModel}" />
+        </Style>
     </UserControl.Styles>
 
     <UserControl.Resources>
@@ -705,6 +727,116 @@
                             </Grid>
                         </StackPanel>
                     </Panel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ===== Devices: phone models sent to Steam as the device names of the accounts ===== -->
+            <TabItem Header="{Tr SettingsDialog.Devices.Tab}" IsEnabled="{Binding !Encryption.IsBusy}">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" DataContext="{Binding Devices}"
+                              x:DataType="other:DeviceModelsSettingsVM">
+                    <StackPanel Spacing="20" Margin="24,20,24,24">
+                        <TextBlock Classes="RowText" FontSize="13" Text="{Tr SettingsDialog.Devices.Description}" />
+
+                        <!-- One list of built-in and custom models: add field on top, the rows in a bounded scroll area -->
+                        <StackPanel Spacing="8">
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" MinHeight="18">
+                                <TextBlock Grid.Column="0" Classes="SectionTitle" VerticalAlignment="Center">
+                                    <Run Text="{Tr SettingsDialog.Devices.Section.Models}" />
+                                    <Run Text="{Binding Items.Count, StringFormat='· {0}'}"
+                                         Foreground="{DynamicResource SubtleForegroundBrush}" />
+                                </TextBlock>
+                                <Button Grid.Column="1" Theme="{StaticResource LinkButton}" FontSize="12"
+                                        VerticalAlignment="Center"
+                                        IsVisible="{Binding HasRemovedBuiltIns}"
+                                        Command="{Binding RestoreBuiltInCommand}">
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <mi:MaterialIcon Kind="Restore" IconSize="14" />
+                                        <TextBlock>
+                                            <Run Text="{Tr SettingsDialog.Devices.RestoreBuiltIn}" />
+                                            <Run Text="{Binding RemovedBuiltInCount, StringFormat='({0})'}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                            <Border Classes="SettingsGroup">
+                                <StackPanel>
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" Margin="14,12">
+                                        <TextBox x:Name="NewDeviceModelBox" Grid.Column="0"
+                                                 Text="{Binding NewModel}"
+                                                 MaxLength="{Binding MaxLength}"
+                                                 PlaceholderText="{Tr SettingsDialog.Devices.NewPlaceholder}">
+                                            <TextBox.KeyBindings>
+                                                <KeyBinding Gesture="Enter" Command="{Binding AddCommand}" />
+                                            </TextBox.KeyBindings>
+                                        </TextBox>
+                                        <Button Grid.Column="1" Theme="{DynamicResource OutlineButton}"
+                                                Command="{Binding AddCommand}">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <mi:MaterialIcon Kind="Plus" IconSize="16" />
+                                                <TextBlock Text="{Tr SettingsDialog.Devices.Add}" />
+                                            </StackPanel>
+                                        </Button>
+                                    </Grid>
+                                    <TextBlock Classes="FieldError" TextWrapping="Wrap" Margin="14,-4,14,12"
+                                               Text="{Binding Error}"
+                                               IsVisible="{Binding Error, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                    <Border Classes="RowDivider" />
+                                    <!-- Bounded height: the dialog keeps its size, the list scrolls inside -->
+                                    <ScrollViewer x:Name="DeviceModelsScroll" MaxHeight="260"
+                                                  HorizontalScrollBarVisibility="Disabled">
+                                        <ItemsControl x:Name="DeviceModelsList" ItemsSource="{Binding Items}"
+                                                      Margin="0,4">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate x:DataType="other:DeviceModelItemVM">
+                                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10"
+                                                          Margin="14,0,8,0" MinHeight="40">
+                                                        <mi:MaterialIcon Grid.Column="0" Kind="CellphoneText"
+                                                                         IconSize="18" VerticalAlignment="Center"
+                                                                         Foreground="{DynamicResource MutedForegroundBrush}" />
+                                                        <StackPanel Grid.Column="1" VerticalAlignment="Center"
+                                                                    Margin="0,4">
+                                                            <TextBlock Classes="RowTitle" Text="{Binding Name}" />
+                                                            <TextBlock Classes="RowText" TextWrapping="NoWrap"
+                                                                       TextTrimming="CharacterEllipsis"
+                                                                       Text="{Binding Description}"
+                                                                       IsVisible="{Binding IsBuiltIn}" />
+                                                        </StackPanel>
+                                                        <Border Grid.Column="2" Classes="ModelBadge"
+                                                                IsVisible="{Binding IsBuiltIn}"
+                                                                ToolTip.Tip="{Tr SettingsDialog.Devices.BuiltInBadgeTip}">
+                                                            <TextBlock Text="{Tr SettingsDialog.Devices.BuiltInBadge}" />
+                                                        </Border>
+                                                        <Button Grid.Column="3"
+                                                                Theme="{StaticResource GhostIconButton}"
+                                                                Classes="Small Danger RemoveModel"
+                                                                Classes.Last="{Binding !CanRemove}"
+                                                                VerticalAlignment="Center"
+                                                                IsEnabled="{Binding CanRemove}"
+                                                                ToolTip.ShowOnDisabled="True"
+                                                                Command="{Binding #DeviceModelsList.((other:DeviceModelsSettingsVM)DataContext).RemoveCommand}"
+                                                                CommandParameter="{Binding}">
+                                                            <mi:MaterialIcon Kind="TrashCanOutline" />
+                                                        </Button>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </StackPanel>
+                            </Border>
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6" Margin="4,0,0,0"
+                                  IsVisible="{Binding IsLastModel}">
+                                <mi:MaterialIcon Grid.Column="0" Kind="InformationOutline" IconSize="14"
+                                                 VerticalAlignment="Top" Margin="0,1,0,0"
+                                                 Foreground="{DynamicResource WarningTextBrush}" />
+                                <TextBlock Grid.Column="1" Classes="FieldHelper" TextWrapping="Wrap"
+                                           Foreground="{DynamicResource WarningTextBrush}"
+                                           Text="{Tr SettingsDialog.Devices.LastModel}" />
+                            </Grid>
+                            <TextBlock Classes="FieldHelper" TextWrapping="Wrap" Margin="4,0,0,0"
+                                       Text="{Tr SettingsDialog.Devices.RemoveHint}" />
+                        </StackPanel>
+                    </StackPanel>
                 </ScrollViewer>
             </TabItem>
         </TabControl>

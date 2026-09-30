@@ -12,6 +12,12 @@ public partial class Mafile : MobileDataExtended
     public MaProxy? Proxy { get; set; }
     public string? Group { get; set; }
 
+    /// <summary>
+    ///     Phone model sent to Steam as the device name at mobile login ("DeviceName" in the mafile). Assigned once when
+    ///     missing and never changed afterwards. Not related to <see cref="MobileData.DeviceId" />.
+    /// </summary>
+    public string? DeviceName { get; set; }
+
     [JsonIgnore]
     public PortableMaClient? LinkedClient
     {

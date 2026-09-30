@@ -31,6 +31,10 @@ public partial class SettingsView
     ///     <c>enc-as-encrypting</c> / <c>enc-as-decrypting</c> - the tab shows that unfinished mode instead of the real one;
     ///     <c>enc-nonlatin</c> - the enable / change form is filled with a Cyrillic password (layout hint). Caps Lock hint:
     ///     NEBULA_DEBUG_PASSWORD_HINTS=caps (the focused field).
+    ///     Devices tab (changes the model list of the data folder's settings.json): <c>devices</c> - the tab;
+    ///     <c>devices-add</c> - adds "My Galaxy S21"; <c>devices-removed</c> - removes three built-in models (restore link);
+    ///     <c>devices-one</c> - removes every model but one (SM-S911B when listed); <c>devices-error</c> - tries to add
+    ///     "Pixel 8" (duplicate error while it is listed); <c>devices-bottom</c> - the model list scrolled to the end.
     /// </summary>
     internal static object CreatePreview(string? arg)
     {
@@ -42,6 +46,7 @@ public partial class SettingsView
         if (args.Any(a => a.StartsWith("enc", StringComparison.Ordinal)))
             vm.SelectedTab = SettingsVM.ENCRYPTION_TAB;
         PreviewEncryption(view, vm.Encryption, args);
+        PreviewDevices(view, vm, args);
         if (args.Contains("live"))
             view.Loaded += (_, _) => DispatcherTimer.RunOnce(() =>
             {
@@ -64,6 +69,39 @@ public partial class SettingsView
                     window.Deactivated -= view.Window_OnDeactivated;
             }, DispatcherPriority.Background);
         return view;
+    }
+
+    private static void PreviewDevices(SettingsView view, SettingsVM vm, string[] args)
+    {
+        if (!args.Any(a => a.StartsWith("devices", StringComparison.Ordinal))) return;
+        vm.SelectedTab = SettingsVM.DEVICES_TAB;
+        var devices = vm.Devices;
+        if (args.Contains("devices-add"))
+        {
+            devices.NewModel = "My Galaxy S21";
+            devices.AddCommand.Execute(null);
+        }
+
+        if (args.Contains("devices-removed"))
+            foreach (var name in new[] {"Pixel 7", "Pixel 7a", "SM-S901B"})
+                devices.RemoveCommand.Execute(devices.Items.FirstOrDefault(i => i.Name == name));
+
+        if (args.Contains("devices-one"))
+        {
+            var keep = devices.Items.FirstOrDefault(i => i.Name == "SM-S911B") ?? devices.Items[0];
+            foreach (var item in devices.Items.Where(i => i != keep).ToList())
+                devices.RemoveCommand.Execute(item);
+        }
+
+        if (args.Contains("devices-error"))
+        {
+            devices.NewModel = "Pixel 8";
+            devices.AddCommand.Execute(null);
+        }
+
+        if (args.Contains("devices-bottom"))
+            view.Loaded += (_, _) => DispatcherTimer.RunOnce(() => view.DeviceModelsScroll.ScrollToEnd(),
+                TimeSpan.FromMilliseconds(500));
     }
 
     private static void PreviewEncryption(SettingsView view, EncryptionSettingsVM enc, string[] args)

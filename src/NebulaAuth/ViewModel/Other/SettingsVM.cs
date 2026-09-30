@@ -14,6 +14,7 @@ public partial class SettingsVM : ObservableObject
 {
     public const int MAIN_TAB = 0;
     public const int ENCRYPTION_TAB = 2;
+    public const int DEVICES_TAB = 3;
 
     public Settings Settings => Settings.Instance;
 
@@ -35,6 +36,11 @@ public partial class SettingsVM : ObservableObject
     ///     Third tab: storage mode and the encryption operations.
     /// </summary>
     public EncryptionSettingsVM Encryption { get; } = new();
+
+    /// <summary>
+    ///     Fourth tab: phone models used as the device names of the accounts.
+    /// </summary>
+    public DeviceModelsSettingsVM Devices { get; } = new();
 
     [RelayCommand]
     private void ResetThemeDefaults()

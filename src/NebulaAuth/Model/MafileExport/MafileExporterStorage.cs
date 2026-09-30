@@ -96,6 +96,7 @@ public static class MafileExporterStorage
                 IncludeOtherInfo = true,
                 IncludeNebulaProxy = true,
                 IncludeNebulaGroup = true,
+                IncludeDeviceName = true,
                 Path = null
             },
             new MafileExportTemplate
@@ -109,6 +110,7 @@ public static class MafileExporterStorage
                 IncludeOtherInfo = false,
                 IncludeNebulaProxy = false,
                 IncludeNebulaGroup = false,
+                IncludeDeviceName = false,
                 Path = null
             }
         ];

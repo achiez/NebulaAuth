@@ -14,6 +14,12 @@ namespace NebulaAuth.Model;
 
 public static class NebulaSerializer
 {
+    /// <summary>
+    ///     Mafile property of <see cref="Mafile.DeviceName" />. Never "Device": the legacy parser reads "device"
+    ///     (case-insensitive) as the DeviceId.
+    /// </summary>
+    public const string DEVICE_NAME_PROPERTY = "DeviceName";
+
     public static MafileSerializer Serializer { get; }
 
     static NebulaSerializer()
@@ -62,6 +68,7 @@ public static class NebulaSerializer
         var proxy = GetPropertyValue<MaProxy>("Proxy", props);
         var group = GetPropertyValue<string>("Group", props);
         var mafile = Mafile.FromMobileDataExtended((MobileDataExtended) mobileData, proxy, group);
+        mafile.DeviceName = ReadDeviceName(props);
 
         mafile.Filename = Path.GetFileName(path);
 
@@ -69,6 +76,23 @@ public static class NebulaSerializer
             throw new MafileNeedReloginException(mafile);
 
         return mafile;
+    }
+
+    /// <summary>
+    ///     "DeviceName" (any case; the DeviceId aliases "device", "device_id", "deviceid" never match it): a non-blank
+    ///     string, otherwise null (a new name is assigned).
+    /// </summary>
+    private static string? ReadDeviceName(Dictionary<string, JProperty> props)
+    {
+        if (!props.TryGetValue(DEVICE_NAME_PROPERTY, out var prop))
+        {
+            prop = props.Values.FirstOrDefault(p =>
+                string.Equals(p.Name, DEVICE_NAME_PROPERTY, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (prop?.Value is not {Type: JTokenType.String} token) return null;
+        var value = token.Value<string>();
+        return string.IsNullOrWhiteSpace(value) ? null : value;
     }
 
     private static T? GetPropertyValue<T>(string name, Dictionary<string, JProperty> dictionary)
@@ -93,6 +117,8 @@ public static class NebulaSerializer
             {nameof(Mafile.Proxy), data.Proxy},
             {nameof(Mafile.Group), data.Group}
         };
+        // Written only when set: an export without the device name has no such property at all
+        if (!string.IsNullOrWhiteSpace(data.DeviceName)) props[DEVICE_NAME_PROPERTY] = data.DeviceName;
         return SerializeMafile(data, props);
     }
 

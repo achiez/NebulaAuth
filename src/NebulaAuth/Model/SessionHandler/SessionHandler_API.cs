@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using AchiesUtilities.Web.Models;
+using NebulaAuth.Model.DeviceModels;
 using NebulaAuth.Model.Entities;
 using NebulaAuth.Model.Mafiles;
 using SteamLib.Api.Mobile;
 using SteamLib.Authentication;
 using SteamLib.Authentication.LoginV2;
 using SteamLib.Exceptions.Authorization;
-using SteamLib.Factory.Helpers;
 using SteamLib.SteamMobile;
 using SteamLibForked.Models.Session;
 
@@ -36,11 +36,14 @@ public partial class SessionHandler //API
     public static async Task LoginAgain(HttpClientHandlerPair chp, Mafile mafile, string password, bool savePassword)
     {
         var sgGenerator = new SteamGuardCodeGenerator(mafile.SharedSecret);
+        // The account's own device name: assigned now when missing and written to its mafile before the request, so a
+        // failed login keeps it and a retry uses the same device
+        var deviceDetails = await DeviceNames.PrepareLoginDeviceAsync(mafile);
         var options = new LoginV2ExecutorOptions(StaticLoginConsumer.Instance, chp.Client)
         {
             Logger = Shell.ExtensionsLogger,
             AuthProviders = [sgGenerator],
-            DeviceDetails = DeviceDetailsDefaultBuilder.GetMobileDefaultDevice(),
+            DeviceDetails = deviceDetails,
             WebsiteId = "Mobile"
         };
         chp.Handler.CookieContainer.ClearMobileSessionCookies();

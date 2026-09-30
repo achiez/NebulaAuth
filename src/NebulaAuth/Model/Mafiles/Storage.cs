@@ -262,9 +262,16 @@ public static class Storage
         return Service.GetAccountFilePath(MafilesDirectory, data.Filename);
     }
 
-    public static void WriteBackup(MobileDataExtended data)
+    /// <summary>
+    ///     Backup of a newly linked authenticator; <paramref name="deviceName" /> is the device name chosen for it, so a
+    ///     mafile restored from the backup keeps it.
+    /// </summary>
+    public static void WriteBackup(MobileDataExtended data, string? deviceName = null)
     {
-        var json = NebulaSerializer.SerializeMafile(data, null);
+        var props = string.IsNullOrWhiteSpace(deviceName)
+            ? null
+            : new Dictionary<string, object?> {{NebulaSerializer.DEVICE_NAME_PROPERTY, deviceName}};
+        var json = NebulaSerializer.SerializeMafile(data, props);
         WriteBackup(data.AccountName, json);
     }
 

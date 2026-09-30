@@ -169,6 +169,7 @@ public partial class MafileExporterVM : ObservableObject, IDisposable
             IncludeOtherInfo = true,
             IncludeNebulaProxy = true,
             IncludeNebulaGroup = true,
+            IncludeDeviceName = true,
             ExportToZip = false,
             Path = null
         };
@@ -346,6 +347,7 @@ public partial class MafileExporterVM : ObservableObject, IDisposable
 public partial class MafileExportTemplateVM : ObservableObject
 {
     [ObservableProperty] private bool _exportToZip;
+    [ObservableProperty] private bool _includeDeviceName;
     [ObservableProperty] private bool _includeIdentitySecret;
     [ObservableProperty] private bool _includeNebulaGroup;
     [ObservableProperty] private bool _includeNebulaProxy;
@@ -371,6 +373,7 @@ public partial class MafileExportTemplateVM : ObservableObject
             IncludeOtherInfo = x.IncludeOtherInfo,
             IncludeNebulaProxy = x.IncludeNebulaProxy,
             IncludeNebulaGroup = x.IncludeNebulaGroup,
+            IncludeDeviceName = x.IncludeDeviceName,
             ExportToZip = x.ExportToZip,
             Path = x.Path
         };
@@ -389,6 +392,7 @@ public partial class MafileExportTemplateVM : ObservableObject
             IncludeOtherInfo = IncludeOtherInfo,
             IncludeNebulaProxy = IncludeNebulaProxy,
             IncludeNebulaGroup = IncludeNebulaGroup,
+            IncludeDeviceName = IncludeDeviceName,
             ExportToZip = ExportToZip,
             Path = Path
         };
@@ -405,6 +409,7 @@ public partial class MafileExportTemplateVM : ObservableObject
         model.IncludeOtherInfo = IncludeOtherInfo;
         model.IncludeNebulaProxy = IncludeNebulaProxy;
         model.IncludeNebulaGroup = IncludeNebulaGroup;
+        model.IncludeDeviceName = IncludeDeviceName;
         model.ExportToZip = ExportToZip;
         model.Path = Path;
     }

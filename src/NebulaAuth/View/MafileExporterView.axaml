@@ -162,13 +162,19 @@
 
                         <TextBlock Classes="Section" Text="{Tr ExportDialog.ExportSettingsNebula}" />
 
-                        <Grid ColumnDefinitions="Auto,*">
+                        <Grid ColumnDefinitions="Auto,*,Auto">
                             <CheckBox Grid.Column="0"
                                       IsChecked="{Binding CurrentTemplate.IncludeNebulaProxy, FallbackValue=False}"
                                       Content="{Tr ExportDialog.ExportOptions.NebulaProxy}"
                                       ToolTip.ShowDelay="200"
                                       ToolTip.Tip="{Tr ExportDialog.Tooltips.NebulaProxy}" />
                             <CheckBox Grid.Column="1"
+                                      HorizontalAlignment="Center"
+                                      IsChecked="{Binding CurrentTemplate.IncludeDeviceName, FallbackValue=False}"
+                                      Content="{Tr ExportDialog.ExportOptions.DeviceName}"
+                                      ToolTip.ShowDelay="200"
+                                      ToolTip.Tip="{Tr ExportDialog.Tooltips.DeviceName}" />
+                            <CheckBox Grid.Column="2"
                                       HorizontalAlignment="Right"
                                       IsChecked="{Binding CurrentTemplate.IncludeNebulaGroup, FallbackValue=False}"
                                       Content="{Tr ExportDialog.ExportOptions.NebulaGroup}"

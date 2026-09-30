@@ -136,6 +136,31 @@ public partial class Settings : ObservableObject
         if (ReferenceEquals(this, Instance)) SteamPasswords.SavingEnabled = value;
     }
 
+    /// <summary>
+    ///     Device model names added by the user (in addition to the built-in ones) for new accounts. Changed only through
+    ///     <see cref="DeviceModels.DeviceNames" />, which saves the settings. Removing a name does not change accounts.
+    /// </summary>
+    public List<string> CustomDeviceModels
+    {
+        get => _customDeviceModels;
+        set => _customDeviceModels = value ?? [];
+    }
+
+    private List<string> _customDeviceModels = [];
+
+    /// <summary>
+    ///     Built-in device models (<see cref="DeviceModels.DeviceModelInfo.Model" />) the user removed from the list. Only
+    ///     the removed ones are stored, so built-in models added by a newer version appear for everyone. Changed only
+    ///     through <see cref="DeviceModels.DeviceNames" />.
+    /// </summary>
+    public List<string> RemovedBuiltInDeviceModels
+    {
+        get => _removedBuiltInDeviceModels;
+        set => _removedBuiltInDeviceModels = value ?? [];
+    }
+
+    private List<string> _removedBuiltInDeviceModels = [];
+
     #endregion
 }
 

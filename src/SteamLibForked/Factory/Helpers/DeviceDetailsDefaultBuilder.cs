@@ -23,8 +23,23 @@ public static class DeviceDetailsDefaultBuilder
         return new DeviceDetails(deviceName, EAuthTokenPlatformType.MobileApp, EOSType.AndroidUnknown, 528);
     }
 
+    /// <summary>
+    ///     Device name of <see cref="GetMobileDefaultDevice" /> (used when an account has no device name of its own).
+    /// </summary>
+    public const string DEFAULT_MOBILE_DEVICE_NAME = "Pixel 6 Pro";
+
     public static DeviceDetails GetMobileDefaultDevice()
     {
-        return new DeviceDetails("Pixel 6 Pro", EAuthTokenPlatformType.MobileApp, -500, 528);
+        return GetMobileDevice(null);
+    }
+
+    /// <summary>
+    ///     Mobile app device details with the given friendly name (<see cref="DEFAULT_MOBILE_DEVICE_NAME" /> when empty);
+    ///     the platform, OS and gaming device type are those of <see cref="GetMobileDefaultDevice" />.
+    /// </summary>
+    public static DeviceDetails GetMobileDevice(string? deviceFriendlyName)
+    {
+        var name = string.IsNullOrWhiteSpace(deviceFriendlyName) ? DEFAULT_MOBILE_DEVICE_NAME : deviceFriendlyName;
+        return new DeviceDetails(name, EAuthTokenPlatformType.MobileApp, -500, 528);
     }
 }
