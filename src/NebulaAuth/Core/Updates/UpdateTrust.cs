@@ -1,13 +1,12 @@
 namespace NebulaAuth.Core.Updates;
 
 /// <summary>
-///     Where 2.x clients look for updates and which key must have signed the feed.
+///     Where 2.x clients look for updates and which key must have signed the feed. The feed and changelog addresses are
+///     pinned here together with the key on purpose (data the updater fetches, never shown or opened as links); the
+///     release page users open comes from links.json (<see cref="LinksManager.ReleasesUrl" />).
 /// </summary>
 public static class UpdateTrust
 {
-    public const string REPOSITORY_URL =
-        "https://github.com/achiez/NebulaAuth-Steam-Desktop-Authenticator-by-Achies";
-
     /// <summary>
     ///     Signed feeds (<c>releases.{channel}.json</c> + <c>.sig</c>), committed by the release workflow after the GitHub
     ///     release is published. Asset URLs inside the feeds are absolute release download links, so no GitHub API
@@ -21,8 +20,6 @@ public static class UpdateTrust
     /// </summary>
     public const string CHANGELOG_BASE_URL =
         "https://raw.githubusercontent.com/achiez/NebulaAuth-Steam-Desktop-Authenticator-by-Achies/master/changelog/";
-
-    public const string RELEASES_PAGE_URL = REPOSITORY_URL + "/releases/latest";
 
     // =================================================================================================================
     //  PINNED FEED PUBLIC KEY (ECDSA P-256, SubjectPublicKeyInfo PEM).

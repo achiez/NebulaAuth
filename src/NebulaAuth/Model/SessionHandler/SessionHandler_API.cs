@@ -35,7 +35,8 @@ public partial class SessionHandler //API
 
     public static async Task LoginAgain(HttpClientHandlerPair chp, Mafile mafile, string password, bool savePassword)
     {
-        var sgGenerator = new SteamGuardCodeGenerator(mafile.SharedSecret);
+        // The code comes from the shared registry: one login per 30 s window and account
+        var sgGenerator = new LoginGuardCodeProvider(mafile);
         // The account's own device name: assigned now when missing and written to its mafile before the request, so a
         // failed login keeps it and a retry uses the same device
         var deviceDetails = await DeviceNames.PrepareLoginDeviceAsync(mafile);
@@ -62,5 +63,7 @@ public partial class SessionHandler //API
         }
 
         await Storage.UpdateMafileAsync(mafile);
+        // The account can log in again: a stored password rejected earlier is not blocked any more
+        ClearStoredPasswordRejected(mafile.AccountName);
     }
 }

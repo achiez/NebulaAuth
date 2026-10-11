@@ -98,7 +98,7 @@ internal sealed partial class WebView2Engine : BrowserEngine
         DebugConfigureEnvironment(w);
     }
 
-    /// <summary>Debug builds: broken engine location (WebView2Engine.Debug.cs).</summary>
+    /// <summary>Debug builds: broken engine location.</summary>
     partial void DebugConfigureEnvironment(WindowsWebView2EnvironmentRequestedEventArgs args);
 
     public override async Task AttachAsync(NativeWebView view, IPlatformHandle? handle, EngineOptions options)

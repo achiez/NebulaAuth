@@ -121,6 +121,9 @@ public partial class Settings : ObservableObject
     [ObservableProperty] private bool _proxyManagerDisplayProtocol;
     [ObservableProperty] private bool _proxyManagerDisplayCredentials;
 
+    /// <summary>Fewer animations (the Nebula Link waiting / success animations become static).</summary>
+    [ObservableProperty] private bool _reduceMotion;
+
     [ObservableProperty] private TimeSpan _maacErrorThreshold = TimeSpan.FromHours(3);
     [ObservableProperty] private TimeSpan _maacRetryInterval = TimeSpan.FromMinutes(15);
 

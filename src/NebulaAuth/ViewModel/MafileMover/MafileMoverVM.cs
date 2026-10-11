@@ -271,14 +271,12 @@ public partial class MafileMoverVM : ObservableObject, IAuthProvider, IDisposabl
         });
     }
 
-    [RelayCommand]
+    private static bool CanOpenTroubleshooting() => LinksManager.LinkingTroubleshootingUrl != null;
+
+    [RelayCommand(CanExecute = nameof(CanOpenTroubleshooting))]
     private void OpenTroubleshooting()
     {
-        const string troubleshootingURI =
-            "https://achiez.github.io/NebulaAuth-Steam-Desktop-Authenticator-by-Achies/docs/{0}/LinkingTroubleshooting";
-
-        var localized = string.Format(troubleshootingURI, LocManager.GetCurrentLanguageCode());
-        PlatformUtils.OpenUrl(new Uri(localized).ToString());
+        if (LinksManager.LinkingTroubleshootingUrl is { } url) PlatformUtils.OpenUrl(url);
     }
 
     private static string GetLocalizationOrDefault(string key)

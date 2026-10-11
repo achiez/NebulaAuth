@@ -217,7 +217,7 @@
 
             <!-- ===== Main ===== -->
             <TabItem Header="{Tr SettingsDialog.MainSettings}" IsEnabled="{Binding !Encryption.IsBusy}">
-                <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+                <ScrollViewer x:Name="MainSettingsScroll" HorizontalScrollBarVisibility="Disabled">
                     <!-- Spacing 22 between groups: the groups differ in kind (select, check boxes, password, action) -->
                     <StackPanel Classes="Form" Spacing="22" Margin="24,20,24,24">
                         <StackPanel Classes="Field">
@@ -287,6 +287,25 @@
                         <nebulaAuth:HintBox FontSize="13"
                                             Text="{Binding RenameResultText}"
                                             IsVisible="{Binding RenameResultText, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                        <!-- Achiefy integrations: Nebula Link opens its modal (the settings dialog closes first: one
+                             dialog at a time) -->
+                        <StackPanel Spacing="8">
+                            <TextBlock Classes="SectionTitle" Text="Achiefy" />
+                            <Border Classes="SettingsGroup">
+                                <Button Theme="{StaticResource SettingsRowButton}" Command="{Binding OpenNebulaLinkCommand}">
+                                    <Grid ColumnDefinitions="Auto,12,*,Auto">
+                                        <mi:MaterialIcon Grid.Column="0" Kind="LinkVariant" IconSize="20" VerticalAlignment="Center" />
+                                        <StackPanel Grid.Column="2" Spacing="2">
+                                            <TextBlock Classes="RowTitle" VerticalAlignment="Center" Text="Nebula Link" />
+                                            <TextBlock Classes="RowText" FontWeight="Normal" Text="{Tr NebulaLink.Settings.Text}" />
+                                        </StackPanel>
+                                        <mi:MaterialIcon Grid.Column="3" Kind="ChevronRight" IconSize="18" VerticalAlignment="Center"
+                                                         Foreground="{DynamicResource MutedForegroundBrush}" />
+                                    </Grid>
+                                </Button>
+                            </Border>
+                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -380,6 +399,8 @@
 
                         <CheckBox Content="{Tr SettingsDialog.Theme.DialogBlur}"
                                   IsChecked="{Binding ApplyBlurBackground}" />
+                        <CheckBox Content="{Tr SettingsDialog.Theme.ReduceMotion}"
+                                  IsChecked="{Binding ReduceMotion}" />
                         <!-- SettingsDialog.Theme.RippleDisabled is not shown: there are no ripple animations.
                              SettingsVM.RippleDisabled / Settings.RippleDisabled stay for the settings.json round-trip. -->
 

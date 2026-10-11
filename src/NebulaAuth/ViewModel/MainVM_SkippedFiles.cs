@@ -34,7 +34,7 @@ public partial class MainVM //Skipped storage files (status bar badge)
                     UnprotectedSkippedCount);
             }
 
-            return text + " · " + LocManager.GetOrDefault("Click to show the list", "SkippedFiles", "BadgeHint");
+            return text;
         }
     }
 

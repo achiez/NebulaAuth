@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using NebulaAuth.Core;
 using NebulaAuth.Model;
 using NebulaAuth.Model.Entities;
+using NebulaAuth.Model.LinkHost;
 using NebulaAuth.Model.MAAC;
 
 namespace NebulaAuth.ViewModel;
@@ -42,10 +43,36 @@ public partial class MainVM //MAAC
 
     private bool _maacDisplay;
 
+    /// <summary>The selected account is connected through Nebula Link: its auto-confirmation is off and can't be turned on.</summary>
+    public bool IsSelectedLinked => NebulaLinkHost.IsLinked(SelectedMafile);
+
+    public bool CanUseMaac => IsMafileSelected && !IsSelectedLinked;
+
+    public string MarketTimerTip => LocManager.GetOrDefault("Auto-confirm market", "MainWindow", "AppBar", "MarketTimerHint");
+
+    public string TradeTimerTip => LocManager.GetOrDefault("Auto-confirm trades", "MainWindow", "AppBar", "TradeTimerHint");
+
+    /// <summary>Link state of the selected account may have changed (Nebula Link, selection).</summary>
+    private void NotifyMaacAvailability()
+    {
+        OnPropertyChanged(nameof(IsSelectedLinked));
+        OnPropertyChanged(nameof(CanUseMaac));
+        OnPropertyChanged(nameof(MarketTimerTip));
+        OnPropertyChanged(nameof(TradeTimerTip));
+        OnPropertyChanged(nameof(MarketTimerEnabled));
+        OnPropertyChanged(nameof(TradeTimerEnabled));
+    }
+
     private void SetMarketTimer(bool value)
     {
         var selectedMafile = SelectedMafile;
         if (selectedMafile == null) return;
+        if (value && NebulaLinkHost.IsLinked(selectedMafile))
+        {
+            OnPropertyChanged(nameof(MarketTimerEnabled));
+            return;
+        }
+
         if (value && selectedMafile.LinkedClient == null)
         {
             MultiAccountAutoConfirmer.TryAddToConfirm(selectedMafile);
@@ -66,6 +93,12 @@ public partial class MainVM //MAAC
     {
         var selectedMafile = SelectedMafile;
         if (selectedMafile == null) return;
+        if (value && NebulaLinkHost.IsLinked(selectedMafile))
+        {
+            OnPropertyChanged(nameof(TradeTimerEnabled));
+            return;
+        }
+
         if (value && selectedMafile.LinkedClient == null)
         {
             MultiAccountAutoConfirmer.TryAddToConfirm(selectedMafile);

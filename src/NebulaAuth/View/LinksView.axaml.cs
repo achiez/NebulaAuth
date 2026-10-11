@@ -17,16 +17,20 @@ public partial class LinksView : UserControl
         base.OnLoaded(e);
         WebsiteButton.IsEnabled = LinksManager.WebsiteUrl != null;
         DocumentationButton.IsEnabled = LinksManager.DocumentationUrl != null;
+        TelegramButton.IsEnabled = LinksManager.TelegramUrl != null;
+        GitHubButton.IsEnabled = LinksManager.GitHubUrl != null;
     }
 
     private void Telegram_OnClick(object? sender, RoutedEventArgs e)
     {
-        PlatformUtils.OpenUrl("https://t.me/nebulaauth");
+        if (LinksManager.TelegramUrl != null)
+            PlatformUtils.OpenUrl(LinksManager.TelegramUrl);
     }
 
     private void GitHub_OnClick(object? sender, RoutedEventArgs e)
     {
-        PlatformUtils.OpenUrl("https://github.com/achiez/NebulaAuth-Steam-Desktop-Authenticator-by-Achies");
+        if (LinksManager.GitHubUrl != null)
+            PlatformUtils.OpenUrl(LinksManager.GitHubUrl);
     }
 
     private void Website_OnClick(object? sender, RoutedEventArgs e)

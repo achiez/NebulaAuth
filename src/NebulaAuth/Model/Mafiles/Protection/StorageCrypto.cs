@@ -13,7 +13,10 @@ public enum EncryptedContentKind : byte
 {
     Mafile = 1,
     Zip = 2,
-    SteamPasswords = 3
+    SteamPasswords = 3,
+
+    /// <summary>Achiefy device credential (nebula-device.encrypted).</summary>
+    NebulaDevice = 4
 }
 
 public enum EnvelopeError
@@ -80,6 +83,7 @@ public static class StorageCrypto
     private static readonly byte[] MafilesInfo = "NebulaAuth/v1/mafiles"u8.ToArray();
     private static readonly byte[] PasswordsInfo = "NebulaAuth/v1/steam-passwords"u8.ToArray();
     private static readonly byte[] StateInfo = "NebulaAuth/v1/state"u8.ToArray();
+    private static readonly byte[] NebulaDeviceInfo = "NebulaAuth/v1/nebula-device"u8.ToArray();
 
     public static bool HasMagic(ReadOnlySpan<byte> data)
     {
@@ -116,12 +120,17 @@ public static class StorageCrypto
     }
 
     /// <summary>
-    ///     Separate subkeys for mafiles (and backup ZIPs) and for the Steam password store (HKDF-SHA256, salt = storage
-    ///     id).
+    ///     Separate subkeys for mafiles (and backup ZIPs), for the Steam password store and for the Achiefy device
+    ///     credential (HKDF-SHA256, salt = storage id).
     /// </summary>
     public static byte[] DeriveSubkey(byte[] dataKey, byte[] storageId, EncryptedContentKind kind)
     {
-        var info = kind == EncryptedContentKind.SteamPasswords ? PasswordsInfo : MafilesInfo;
+        var info = kind switch
+        {
+            EncryptedContentKind.SteamPasswords => PasswordsInfo,
+            EncryptedContentKind.NebulaDevice => NebulaDeviceInfo,
+            _ => MafilesInfo
+        };
         return HKDF.DeriveKey(HashAlgorithmName.SHA256, dataKey, KEY_SIZE, storageId, info);
     }
 

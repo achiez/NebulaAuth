@@ -46,8 +46,7 @@ public partial class MainVM //QR login
         Shell.Logger.Info("QR login for {name}: QR code read (version {version})", mafile.AccountName,
             challenge.Version);
         try
-        {
-            // Each network step goes through SessionHandler separately: its semaphore is not held while the dialog is open
+        { 
             var info = await SessionHandler.Handle(() => MaClient.GetQrLoginInfo(mafile, challenge), mafile);
             if (!await DialogsController.ShowQrLoginDialog(CreateQrLoginDialogVM(mafile, info)))
             {

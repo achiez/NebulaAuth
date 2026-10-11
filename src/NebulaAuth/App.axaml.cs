@@ -14,6 +14,7 @@ using NebulaAuth.Core;
 using NebulaAuth.Core.Browser;
 using NebulaAuth.Model;
 using NebulaAuth.Model.Exceptions;
+using NebulaAuth.Model.LinkHost;
 using NebulaAuth.Model.Mafiles.Protection;
 using NebulaAuth.Utility;
 using NebulaAuth.View;
@@ -24,6 +25,8 @@ namespace NebulaAuth;
 
 public partial class App : Application
 {
+    static partial void DebugOnStarted();
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -104,6 +107,7 @@ public partial class App : Application
             desktop.Exit += (_, _) => DecryptedMafileClipboard.OnAppExit();
             // The embedded browser must not outlive the app (its engine processes and temporary profile)
             desktop.Exit += (_, _) => SteamBrowser.OnAppExit();
+            desktop.Exit += (_, _) => NebulaLinkHost.Shutdown();
             var mainWindow = new MainWindow();
             desktop.MainWindow = mainWindow;
             mainWindow.Show();
@@ -112,9 +116,7 @@ public partial class App : Application
             splashScreen.Close();
             // Files of the storage folders that were not loaded or not converted to the current mode (snackbar + badge)
             StartupStorage.NotifySkippedFilesIfAny();
-#if DEBUG
-            DebugPreview.TryShow();
-#endif
+            DebugOnStarted();
         }
         catch (Exception ex)
         {

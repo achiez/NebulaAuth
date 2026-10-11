@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AchiesUtilities.Extensions;
 using NebulaAuth.Core;
 using NebulaAuth.Model.Entities;
+using NebulaAuth.Model.LinkHost;
 
 namespace NebulaAuth.Model.MAAC;
 
@@ -127,6 +128,8 @@ public static class MultiAccountAutoConfirmer
         foreach (var maf in clients)
         {
             if (maf.LinkedClient == null) continue;
+            // Nebula Link accounts are confirmed only per request and grant, never in bulk by type
+            if (NebulaLinkHost.IsLinked(maf)) continue;
             if (MAACRequestHandler.IsReady(maf))
             {
                 res.Add(maf);
@@ -136,8 +139,13 @@ public static class MultiAccountAutoConfirmer
         return res;
     }
 
+    /// <summary>
+    ///     Adds the account to the auto-confirmer. False for accounts connected through Nebula Link: automatic
+    ///     confirmation by type would bypass the per-request grants.
+    /// </summary>
     public static bool TryAddToConfirm(Mafile mafile)
     {
+        if (NebulaLinkHost.IsLinked(mafile)) return false;
         return Lock.WriteLock(() =>
         {
             if (Clients.Contains(mafile)) return false;

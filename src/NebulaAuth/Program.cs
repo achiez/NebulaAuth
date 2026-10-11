@@ -34,8 +34,6 @@ internal static class Program
         return AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
-            // Inter everywhere (windows, popups, tooltips) so the UI looks the same on Windows, macOS and Linux;
-            // glyphs missing in Inter (e.g. CJK) fall back to system fonts
             .With(new FontManagerOptions {DefaultFamilyName = "fonts:Inter#Inter"})
             .LogToTrace();
     }

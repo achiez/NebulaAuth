@@ -305,7 +305,8 @@ public sealed class MafileStorageService
         _keys = new StorageKeys(storageId.ToArray(),
             StorageCrypto.DeriveSubkey(dataKey, storageId, EncryptedContentKind.Mafile),
             StorageCrypto.DeriveSubkey(dataKey, storageId, EncryptedContentKind.SteamPasswords),
-            StorageCrypto.DeriveStateMacKey(dataKey, storageId));
+            StorageCrypto.DeriveStateMacKey(dataKey, storageId),
+            StorageCrypto.DeriveSubkey(dataKey, storageId, EncryptedContentKind.NebulaDevice));
         old?.Dispose();
     }
 
@@ -502,6 +503,15 @@ public sealed class MafileStorageService
         IProgress<StorageProgress>? progress = null, CancellationToken token = default,
         bool acceptEncryptedFiles = false)
     {
+        var outcome = await EnableEncryptionCoreAsync(masterPassword, progress, token, acceptEncryptedFiles)
+            .ConfigureAwait(false);
+        RaiseModeChanged(outcome);
+        return outcome;
+    }
+
+    private async Task<StorageOperationResult> EnableEncryptionCoreAsync(string masterPassword,
+        IProgress<StorageProgress>? progress, CancellationToken token, bool acceptEncryptedFiles)
+    {
         ArgumentException.ThrowIfNullOrEmpty(masterPassword);
         EnsureStateLoaded();
         await _gate.WaitAsync(token).ConfigureAwait(false);
@@ -577,6 +587,14 @@ public sealed class MafileStorageService
     public async Task<StorageOperationResult> DisableEncryptionAsync(IProgress<StorageProgress>? progress = null,
         CancellationToken token = default, string? currentPassword = null)
     {
+        var outcome = await DisableEncryptionCoreAsync(progress, token, currentPassword).ConfigureAwait(false);
+        RaiseModeChanged(outcome);
+        return outcome;
+    }
+
+    private async Task<StorageOperationResult> DisableEncryptionCoreAsync(IProgress<StorageProgress>? progress,
+        CancellationToken token, string? currentPassword)
+    {
         await _gate.WaitAsync(token).ConfigureAwait(false);
         try
         {
@@ -625,6 +643,14 @@ public sealed class MafileStorageService
     /// </summary>
     public async Task<StorageOperationResult> ResumeTransitionAsync(IProgress<StorageProgress>? progress = null,
         CancellationToken token = default)
+    {
+        var outcome = await ResumeTransitionCoreAsync(progress, token).ConfigureAwait(false);
+        RaiseModeChanged(outcome);
+        return outcome;
+    }
+
+    private async Task<StorageOperationResult> ResumeTransitionCoreAsync(IProgress<StorageProgress>? progress,
+        CancellationToken token)
     {
         await _gate.WaitAsync(token).ConfigureAwait(false);
         try
@@ -1690,19 +1716,75 @@ public sealed class MafileStorageService
 
     #endregion
 
-    private sealed class StorageKeys(byte[] storageId, byte[] mafileKey, byte[] passwordsKey, byte[] stateMacKey)
+    private sealed class StorageKeys(
+        byte[] storageId,
+        byte[] mafileKey,
+        byte[] passwordsKey,
+        byte[] stateMacKey,
+        byte[] nebulaDeviceKey)
         : IDisposable
     {
         public byte[] StorageId { get; } = storageId;
         public byte[] MafileKey { get; } = mafileKey;
         public byte[] PasswordsKey { get; } = passwordsKey;
         public byte[] StateMacKey { get; } = stateMacKey;
+        public byte[] NebulaDeviceKey { get; } = nebulaDeviceKey;
 
         public void Dispose()
         {
             CryptographicOperations.ZeroMemory(MafileKey);
             CryptographicOperations.ZeroMemory(PasswordsKey);
             CryptographicOperations.ZeroMemory(StateMacKey);
+            CryptographicOperations.ZeroMemory(NebulaDeviceKey);
         }
     }
+
+    #region Achiefy device credential
+
+    /// <summary>nebula-device.encrypted in the data folder (Achiefy device credential of an encrypted storage).</summary>
+    public string NebulaDeviceFile => Path.Combine(Layout.Root, "nebula-device.encrypted");
+
+    /// <summary>
+    ///     The device credential can be kept in this storage: encrypted and unlocked.
+    /// </summary>
+    public bool CanProtectNebulaDevice => Mode == StorageMode.Encrypted && _keys != null;
+
+    /// <summary>Encrypts with the device credential subkey (own HKDF info, content kind NebulaDevice).</summary>
+    /// <exception cref="InvalidOperationException">The storage is not encrypted or is locked.</exception>
+    public byte[] EncryptNebulaDevice(ReadOnlySpan<byte> plaintext)
+    {
+        if (!CanProtectNebulaDevice) throw new InvalidOperationException("The storage is not encrypted or is locked");
+        var keys = RequireKeys();
+        return StorageCrypto.Encrypt(plaintext, keys.NebulaDeviceKey, keys.StorageId, EncryptedContentKind.NebulaDevice);
+    }
+
+    /// <exception cref="EnvelopeException">Not a device credential file of this storage.</exception>
+    /// <exception cref="InvalidOperationException">The storage is not encrypted or is locked.</exception>
+    public byte[] DecryptNebulaDevice(ReadOnlySpan<byte> data)
+    {
+        if (!CanProtectNebulaDevice) throw new InvalidOperationException("The storage is not encrypted or is locked");
+        var keys = RequireKeys();
+        return StorageCrypto.Decrypt(data, keys.NebulaDeviceKey, keys.StorageId, EncryptedContentKind.NebulaDevice);
+    }
+
+    /// <summary>
+    ///     The storage mode changed (encryption enabled or disabled and finished). Raised on a background thread after the
+    ///     operation; the Achiefy device credential moves to the matching store.
+    /// </summary>
+    public event Action<StorageMode>? ModeChanged;
+
+    private void RaiseModeChanged(StorageOperationResult result)
+    {
+        if (!result.Completed) return;
+        try
+        {
+            ModeChanged?.Invoke(Mode);
+        }
+        catch (Exception ex)
+        {
+            Shell.Logger.Error(ex, "Storage mode change handler failed");
+        }
+    }
+
+    #endregion
 }

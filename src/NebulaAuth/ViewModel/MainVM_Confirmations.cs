@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using NebulaAuth.Core;
-using NebulaAuth.Model;
 using NebulaAuth.Model.Entities;
+using NebulaAuth.Model.LinkHost;
+using NebulaAuth.NebulaLink.Confirmations;
 using NebulaAuth.Utility;
 using SteamLib.SteamMobile.Confirmations;
 
@@ -18,16 +20,22 @@ public partial class MainVM //Confirmations
     public bool ConfirmationsVisible => SelectedMafile == _confirmationsLoadedForMafile;
     private Mafile? _confirmationsLoadedForMafile;
 
+    /// <summary>
+    ///     Loads the list of the account selected when the command started (a selection change meanwhile does not mix
+    ///     accounts). Reads go through <see cref="ConfirmationService" />: the same snapshot, per-account order and history
+    ///     as Achiefy requests.
+    /// </summary>
     [RelayCommand]
     private async Task GetConfirmations()
     {
-        if (SelectedMafile == null) return;
         var maf = SelectedMafile;
+        if (maf == null) return;
         List<Confirmation> conf;
         try
         {
-            var confI = await SessionHandler.Handle(() => MaClient.GetConfirmations(SelectedMafile), SelectedMafile);
-            conf = confI.ToList();
+            var snapshot = await NebulaLinkHost.Confirmations.GetAsync(maf, SnapshotPolicy.Manual,
+                SessionMode.Interactive, CancellationToken.None);
+            conf = snapshot.Items.ToList();
         }
         catch (Exception ex)
             when (ExceptionHandler.Handle(ex))
@@ -35,13 +43,15 @@ public partial class MainVM //Confirmations
             return;
         }
 
+        // The user selected another account while the list was loading: the list belongs to the old one
+        if (SelectedMafile != maf) return;
 
         _confirmationsLoadedForMafile = maf;
         OnPropertyChanged(nameof(ConfirmationsVisible));
         Confirmations.Clear();
         var marketConfirmations = conf
             .Where(c => c.ConfType == ConfirmationType.MarketSellTransaction)
-            .Cast<MarketConfirmation>()
+            .OfType<MarketConfirmation>()
             .ToList();
 
         if (marketConfirmations.Count > 1)
@@ -65,38 +75,30 @@ public partial class MainVM //Confirmations
     [RelayCommand]
     private Task Confirm(Confirmation? confirmation)
     {
-        if (SelectedMafile == null || confirmation == null) return Task.CompletedTask;
-        return SendConfirmation(SelectedMafile, confirmation, true);
+        var maf = _confirmationsLoadedForMafile ?? SelectedMafile;
+        if (maf == null || confirmation == null) return Task.CompletedTask;
+        return SendConfirmation(maf, confirmation, true);
     }
 
     [RelayCommand]
     private Task Cancel(Confirmation? confirmation)
     {
-        if (SelectedMafile == null || confirmation == null) return Task.CompletedTask;
-        return SendConfirmation(SelectedMafile, confirmation, false);
+        var maf = _confirmationsLoadedForMafile ?? SelectedMafile;
+        if (maf == null || confirmation == null) return Task.CompletedTask;
+        return SendConfirmation(maf, confirmation, false);
     }
 
 
     private async Task SendConfirmation(Mafile mafile, Confirmation confirmation, bool confirm)
     {
         bool result;
+        IReadOnlyList<Confirmation> items = confirmation is MarketMultiConfirmation multi
+            ? multi.Confirmations.Cast<Confirmation>().ToList()
+            : [confirmation];
 
         try
         {
-            switch (confirmation)
-            {
-                case MarketMultiConfirmation multi:
-                    result = await MaClient.SendMultipleConfirmation(mafile, multi.Confirmations, confirm);
-                    break;
-
-                case MarketConfirmation market:
-                    result = await MaClient.SendConfirmation(mafile, market, confirm);
-                    break;
-
-                default:
-                    result = await MaClient.SendConfirmation(mafile, confirmation, confirm);
-                    break;
-            }
+            result = await NebulaLinkHost.Confirmations.SendManualAsync(mafile, items, confirm, CancellationToken.None);
         }
         catch (Exception ex)
             when (ExceptionHandler.Handle(ex))

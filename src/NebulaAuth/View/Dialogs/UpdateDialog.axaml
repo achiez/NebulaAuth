@@ -328,7 +328,8 @@
                                              Text="{Binding Status.FailureDetail}"
                                              IsVisible="{Binding Status.FailureDetail, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
                     </StackPanel>
-                    <StackPanel Spacing="6">
+                    <StackPanel Spacing="6"
+                                IsVisible="{Binding Status.ManualUrl, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
                         <TextBlock Classes="FieldLabel" Text="{Tr UpdateDialog.ManualHint}" TextWrapping="Wrap" />
                         <Button Theme="{StaticResource LinkButton}"
                                 HorizontalAlignment="Left"

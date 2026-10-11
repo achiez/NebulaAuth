@@ -75,7 +75,7 @@ public static class RemoteImage
             return;
         }
 
-        // Embedded images (debug demo data) are loaded directly
+        // Embedded images are loaded directly
         if (parsed.Scheme == "avares")
         {
             image.Source = LoadAsset(parsed);

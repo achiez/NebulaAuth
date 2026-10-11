@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NebulaAuth.Model.Entities;
 using NebulaAuth.Model.Exceptions;
+using NebulaAuth.Model.LinkHost;
 using NebulaAuth.Model.MAAC;
 using NebulaAuth.Model.Mafiles.Protection;
 using SteamLib;
@@ -232,12 +233,14 @@ public static class Storage
     {
         var name = MafilesStorageHelper.GetOrUpdateMafileName(data);
         Service.WriteAccountFile(MafilesDirectory, name, Serialize(data));
+        NebulaLinkHost.NotifyLocalChange();
     }
 
     public static async Task UpdateMafileAsync(Mafile data)
     {
         var name = MafilesStorageHelper.GetOrUpdateMafileName(data);
         await Service.WriteAccountFileAsync(MafilesDirectory, name, Serialize(data));
+        NebulaLinkHost.NotifyLocalChange();
     }
 
     private static byte[] Serialize(Mafile data)

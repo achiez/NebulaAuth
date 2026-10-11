@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NebulaAuth.Core;
+using NebulaAuth.Model.LinkHost;
 using NebulaAuth.Model.MAAC;
 using NebulaAuth.Model.MafileExport;
 using NebulaAuth.Model.Mafiles;
@@ -21,6 +24,7 @@ public static class Shell
     // Usable before Initialize (data folder choice, startup errors): NLog writes to the temp folder until DataRoot is set
     public static Logger Logger { get; private set; } = LogManager.GetLogger("Logger");
     public static ILogger ExtensionsLogger { get; private set; } = null!;
+    private static volatile Entities.Mafile[] _mafilesSnapshot = [];
 
     /// <summary>
     ///     First startup phase: logging, localization, error handlers. Nothing here reads mafiles; the storage is unlocked
@@ -64,11 +68,22 @@ public static class Shell
         await Storage.Initialize(threads);
         UpdateManager.Initialize();
         ProxyAssignmentCache.Initialize(Storage.MaFiles);
+        _mafilesSnapshot = Storage.MaFiles.ToArray();
+        // Copied on the thread that changes the list: background readers never enumerate the live collection
+        Storage.MaFiles.CollectionChanged += (_, _) => _mafilesSnapshot = Storage.MaFiles.ToArray();
+        // Before the auto-confirmer: accounts linked through Nebula Link are never restored into it
+        NebulaLinkHost.Initialize();
         MAACStorage.Initialize();
         MafileExporterStorage.Initialize();
         _ = LinksManager.FetchAsync();
 
         ExtensionsLogger.LogDebug("Application started");
+    }
+
+    /// <summary>A copy of the account list that is safe to read from any thread.</summary>
+    public static IReadOnlyList<Entities.Mafile> SnapshotMafiles()
+    {
+        return _mafilesSnapshot;
     }
 
     /// <summary>

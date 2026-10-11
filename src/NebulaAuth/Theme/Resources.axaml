@@ -211,6 +211,23 @@
         </Style>
     </ControlTheme>
 
+    <!-- Other icon buttons of a dialog header (menu, expand): the size and color of the close button, the normal hover -->
+    <ControlTheme x:Key="DialogHeaderButton" TargetType="Button" BasedOn="{StaticResource GhostIconButton}">
+        <Setter Property="Width" Value="32" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="Foreground" Value="{DynamicResource DialogHeaderForegroundBrush}" />
+        <Setter Property="Opacity" Value="0.8" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="Foreground" Value="{DynamicResource DialogHeaderForegroundBrush}" />
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Opacity" Value="0.35" />
+            <Setter Property="Foreground" Value="{DynamicResource DialogHeaderForegroundBrush}" />
+        </Style>
+    </ControlTheme>
+
     <!-- Plain text-like link button: <Button Theme="{StaticResource LinkButton}" Content="by achies" Command="..." /> -->
     <ControlTheme x:Key="LinkButton" TargetType="Button">
         <Setter Property="Foreground" Value="{DynamicResource LinkOnSurfaceBrush}" />

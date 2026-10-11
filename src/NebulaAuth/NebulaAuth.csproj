@@ -59,6 +59,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\SteamLibForked\SteamLibForked.csproj" />
+		<ProjectReference Include="..\NebulaAuth.NebulaLink\NebulaAuth.NebulaLink.csproj" />
 	</ItemGroup>
 
 	<!--
@@ -76,15 +77,13 @@
 		<AvaloniaResource Include="Theme\Background.png;Theme\SplashScreen.png;Theme\lock.ico" />
 	</ItemGroup>
 
-	<!-- Debug-only placeholder images of the confirmations demo (NEBULA_MAIN_DEMO=confirmations, ViewModel/MainVM.Demo.cs) -->
+	<!-- DevTools (previews, demo data, debug hooks; see DevTools/README.md) is part of Debug builds only -->
 	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
-		<AvaloniaResource Include="Assets\Demo\*.png" />
+		<AvaloniaResource Include="DevTools\Demo\Assets\*.png" />
 	</ItemGroup>
-
-	<!-- Debug-only style gallery (NEBULA_STYLE_GALLERY=1) -->
 	<ItemGroup Condition="'$(Configuration)' != 'Debug'">
-		<AvaloniaXaml Remove="Theme\StyleGallery.axaml" />
-		<Compile Remove="Theme\StyleGallery.axaml.cs" />
+		<Compile Remove="DevTools\**" />
+		<AvaloniaXaml Remove="DevTools\**" />
 	</ItemGroup>
 
 	<!-- Design sources (*.psd) stay in the project as plain None items (default globbing), never copied to output -->

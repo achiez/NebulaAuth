@@ -43,15 +43,10 @@ namespace NebulaAuth.Theme;
 ///         </item>
 ///     </list>
 /// </remarks>
-public static class Motion
+public static partial class Motion
 {
-    // Debug builds: NEBULA_MOTION_SLOW=<factor> slows every effect down (frame-by-frame checks)
-    internal static double SlowFactor { get; } =
-#if DEBUG
-        double.TryParse(Environment.GetEnvironmentVariable("NEBULA_MOTION_SLOW"), out var slow) && slow > 0 ? slow : 1;
-#else
-        1;
-#endif
+    /// <summary>Multiplier of every effect duration (1 unless a Debug build slows the effects down).</summary>
+    internal static double SlowFactor { get; } = ReadSlowFactor();
 
     // After SlowFactor: static fields are initialized in declaration order
     private static readonly double PopupDurationMs = 140 * SlowFactor;
@@ -151,31 +146,26 @@ public static class Motion
             last = time;
             progress = Math.Min(1, progress + Math.Clamp(step, 0, MAX_STEP));
             Apply(progress);
-#if DEBUG
             Trace($"  frame opacity={content.Opacity:F2}");
-#endif
             if (progress >= 1) Finish();
             else current.RequestAnimationFrame(OnFrame);
         }
 
         // Transparent before the first frame of the popup window
         Apply(0);
-#if DEBUG
         Trace($"open {content.GetType().Name}");
-#endif
         topLevel.RequestAnimationFrame(OnFrame);
     }
 
-#if DEBUG
-    private static readonly System.Diagnostics.Stopwatch TraceClock = System.Diagnostics.Stopwatch.StartNew();
-
-    // NEBULA_MOTION_TRACE=1: frame log of the popup animations in ./motion-trace.log
-    private static void Trace(string text)
+    private static double ReadSlowFactor()
     {
-        if (Environment.GetEnvironmentVariable("NEBULA_MOTION_TRACE") != "1") return;
-        System.IO.File.AppendAllText(global::NebulaAuth.Core.DataRoot.Combine("motion-trace.log"), $"{TraceClock.ElapsedMilliseconds,6} {text}{Environment.NewLine}");
+        var factor = 1d;
+        DebugSlowFactor(ref factor);
+        return factor;
     }
-#endif
+
+    static partial void DebugSlowFactor(ref double factor);
+    static partial void Trace(string text);
 
     /// <summary>
     ///     Opacity 0 -> 1, vertical offset <paramref name="offsetY" /> -> 0 and scale <paramref name="scale" /> -> 1.

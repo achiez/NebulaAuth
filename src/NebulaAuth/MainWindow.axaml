@@ -6,6 +6,7 @@
         xmlns:core="using:NebulaAuth.Core"
         xmlns:entities="using:NebulaAuth.Model.Entities"
         xmlns:maac="using:NebulaAuth.Model.MAAC"
+        xmlns:conv="using:NebulaAuth.Converters"
         xmlns:nebulaAuth="using:NebulaAuth"
         xmlns:mi="using:Material.Icons.Avalonia"
         xmlns:u="https://irihi.tech/ursa"
@@ -202,6 +203,53 @@
             </Style>
         </ContainerQuery>
 
+        <!-- Nebula Link item of the status bar: state dot (after pairing) and the account problems badge -->
+        <Style Selector="Ellipse.LinkDot">
+            <Setter Property="Width" Value="7" />
+            <Setter Property="Height" Value="7" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <Style Selector="Ellipse.LinkDot.Ok">
+            <Setter Property="IsVisible" Value="True" />
+            <Setter Property="Fill" Value="{DynamicResource SuccessBrush}" />
+        </Style>
+        <Style Selector="Ellipse.LinkDot.Idle">
+            <Setter Property="IsVisible" Value="True" />
+            <Setter Property="Fill" Value="{DynamicResource FooterForegroundBrush}" />
+            <Setter Property="Opacity" Value="0.6" />
+        </Style>
+        <Style Selector="Ellipse.LinkDot.Problem">
+            <Setter Property="IsVisible" Value="True" />
+            <Setter Property="Fill" Value="{DynamicResource AttentionBrush}" />
+        </Style>
+        <Style Selector="Border.LinkBadge">
+            <Setter Property="MinWidth" Value="17" />
+            <Setter Property="Height" Value="17" />
+            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="Padding" Value="5,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+        </Style>
+        <Style Selector="Border.LinkBadge > TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource OnWarningBrush}" />
+        </Style>
+        <!-- Account list: Nebula Link icon of connected accounts (orange: needs the user, red: error) -->
+        <Style Selector="mi|MaterialIcon.LinkGlyph">
+            <Setter Property="IconSize" Value="14" />
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorPrimary}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="mi|MaterialIcon.LinkGlyph.Warn">
+            <Setter Property="Foreground" Value="{DynamicResource AttentionTextBrush}" />
+        </Style>
+        <Style Selector="mi|MaterialIcon.LinkGlyph.Bad">
+            <Setter Property="Foreground" Value="{DynamicResource ErrorTextBrush}" />
+        </Style>
         <!-- Status bar link: accent color readable on Base300 -->
         <Style Selector="Button#ByAchiesLink">
             <Setter Property="Foreground" Value="{DynamicResource LinkBrush}" />
@@ -364,8 +412,9 @@
                                 <!-- Auto-confirmation (MAAC) of the selected account; RMB = switch for the group / all -->
                                 <ToggleButton Margin="2,0"
                                               Theme="{StaticResource GhostIconToggleButton}"
-                                              ToolTip.Tip="{Tr MainWindow.AppBar.MarketTimerHint}"
-                                              IsEnabled="{Binding IsMafileSelected}"
+                                              ToolTip.Tip="{Binding MarketTimerTip}"
+                                              ToolTip.ShowOnDisabled="True"
+                                              IsEnabled="{Binding CanUseMaac}"
                                               IsChecked="{Binding MarketTimerEnabled}">
                                     <mi:MaterialIcon Kind="ShoppingCart" />
                                     <ToggleButton.ContextMenu>
@@ -381,8 +430,9 @@
                                 </ToggleButton>
                                 <ToggleButton Margin="2,0"
                                               Theme="{StaticResource GhostIconToggleButton}"
-                                              ToolTip.Tip="{Tr MainWindow.AppBar.TradeTimerHint}"
-                                              IsEnabled="{Binding IsMafileSelected}"
+                                              ToolTip.Tip="{Binding TradeTimerTip}"
+                                              ToolTip.ShowOnDisabled="True"
+                                              IsEnabled="{Binding CanUseMaac}"
                                               IsChecked="{Binding TradeTimerEnabled}">
                                     <mi:MaterialIcon Kind="AccountArrowRight" />
                                     <ToggleButton.ContextMenu>
@@ -499,28 +549,84 @@
                                             <MenuItem Header="{Tr MainWindow.ContextMenus.Mafile.AssignFreeProxy}"
                                                       Command="{Binding AssignFreeProxyCommand}"
                                                       CommandParameter="{Binding #MafileListBox.SelectedItem}" />
+                                            <!-- Nebula Link (while a link exists): opens the Nebula Link modal on this account's
+                                                 row; nothing changes before the user confirms there -->
+                                            <Separator IsVisible="{Binding IsLinkPaired}" />
+                                            <MenuItem Header="{Tr NebulaLink.ContextMenu.Connect}"
+                                                      IsVisible="{Binding CanConnectSelectedToLink}"
+                                                      Command="{Binding ConnectToLinkCommand}"
+                                                      CommandParameter="{Binding #MafileListBox.SelectedItem}">
+                                                <MenuItem.Icon>
+                                                    <mi:MaterialIcon Kind="LinkVariant" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="{Tr NebulaLink.ContextMenu.Disconnect}"
+                                                      IsVisible="{Binding CanDisconnectSelectedFromLink}"
+                                                      Command="{Binding DisconnectFromLinkCommand}"
+                                                      CommandParameter="{Binding #MafileListBox.SelectedItem}">
+                                                <MenuItem.Icon>
+                                                    <mi:MaterialIcon Kind="LinkVariantOff" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
                                         </ContextMenu>
                                     </ListBox.ContextMenu>
                                     <ListBox.ItemTemplate>
                                         <DataTemplate x:DataType="entities:Mafile">
-                                            <Grid ColumnDefinitions="*,Auto" Background="Transparent"
-                                                  ToolTip.Tip="{Binding Filename}">
-                                                <!-- Auto-confirmation status color: Ok / Warning / Error -->
-                                                <TextBlock Grid.Column="0"
-                                                           TextTrimming="CharacterEllipsis"
-                                                           Text="{Binding AccountName}"
-                                                           ToolTip.Tip="{Binding LinkedClient.Status.Message, FallbackValue={x:Null}}"
-                                                           Classes.Success="{Binding LinkedClient.Status.StatusType, FallbackValue=False, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static maac:PortableMaClientStatusType.Ok}}"
-                                                           Classes.Warning="{Binding LinkedClient.Status.StatusType, FallbackValue=False, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static maac:PortableMaClientStatusType.Warning}}"
-                                                           Classes.Danger="{Binding LinkedClient.Status.StatusType, FallbackValue=False, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static maac:PortableMaClientStatusType.Error}}" />
-                                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2"
-                                                            VerticalAlignment="Center" Margin="4,0,0,0"
-                                                            IsVisible="{Binding LinkedClient, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                                    <mi:MaterialIcon Kind="ShoppingCart" IconSize="16"
-                                                                     IsVisible="{Binding LinkedClient.AutoConfirmMarket, FallbackValue=False}" />
-                                                    <mi:MaterialIcon Kind="AccountArrowRight" IconSize="16"
-                                                                     IsVisible="{Binding LinkedClient.AutoConfirmTrades, FallbackValue=False}" />
-                                                </StackPanel>
+                                            <Grid ColumnDefinitions="*,Auto" Background="Transparent">
+                                                <!-- The file name tooltip covers the name part only: the link icon keeps its own tooltip -->
+                                                <Grid Grid.Column="0" ColumnDefinitions="*,Auto" Background="Transparent"
+                                                      ToolTip.Tip="{Binding Filename}">
+                                                    <!-- Auto-confirmation status color: Ok / Warning / Error -->
+                                                    <TextBlock Grid.Column="0"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               Text="{Binding AccountName}"
+                                                               ToolTip.Tip="{Binding LinkedClient.Status.Message, FallbackValue={x:Null}}"
+                                                               Classes.Success="{Binding LinkedClient.Status.StatusType, FallbackValue=False, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static maac:PortableMaClientStatusType.Ok}}"
+                                                               Classes.Warning="{Binding LinkedClient.Status.StatusType, FallbackValue=False, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static maac:PortableMaClientStatusType.Warning}}"
+                                                               Classes.Danger="{Binding LinkedClient.Status.StatusType, FallbackValue=False, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static maac:PortableMaClientStatusType.Error}}" />
+                                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2"
+                                                                VerticalAlignment="Center" Margin="4,0,0,0"
+                                                                IsVisible="{Binding LinkedClient, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                                        <mi:MaterialIcon Kind="ShoppingCart" IconSize="16"
+                                                                         IsVisible="{Binding LinkedClient.AutoConfirmMarket, FallbackValue=False}" />
+                                                        <mi:MaterialIcon Kind="AccountArrowRight" IconSize="16"
+                                                                         IsVisible="{Binding LinkedClient.AutoConfirmTrades, FallbackValue=False}" />
+                                                    </StackPanel>
+                                                </Grid>
+                                                <!-- Connected through Nebula Link: the link icon, orange / red when the account needs
+                                                     attention (tooltip: the state) -->
+                                                <Panel Grid.Column="1" Margin="4,0,0,0" VerticalAlignment="Center" Background="Transparent">
+                                                    <ToolTip.Tip>
+                                                        <MultiBinding Converter="{x:Static conv:NebulaLinkGlyphConverter.Tip}">
+                                                            <Binding />
+                                                            <Binding Path="$parent[ListBox].((vm:MainVM)DataContext).LinkAccountStates" />
+                                                        </MultiBinding>
+                                                    </ToolTip.Tip>
+                                                    <mi:MaterialIcon Classes="LinkGlyph" Kind="LinkVariant">
+                                                        <mi:MaterialIcon.IsVisible>
+                                                            <MultiBinding Converter="{x:Static conv:NebulaLinkGlyphConverter.Ok}">
+                                                                <Binding />
+                                                                <Binding Path="$parent[ListBox].((vm:MainVM)DataContext).LinkAccountStates" />
+                                                            </MultiBinding>
+                                                        </mi:MaterialIcon.IsVisible>
+                                                    </mi:MaterialIcon>
+                                                    <mi:MaterialIcon Classes="LinkGlyph Warn" Kind="LinkVariant">
+                                                        <mi:MaterialIcon.IsVisible>
+                                                            <MultiBinding Converter="{x:Static conv:NebulaLinkGlyphConverter.Warn}">
+                                                                <Binding />
+                                                                <Binding Path="$parent[ListBox].((vm:MainVM)DataContext).LinkAccountStates" />
+                                                            </MultiBinding>
+                                                        </mi:MaterialIcon.IsVisible>
+                                                    </mi:MaterialIcon>
+                                                    <mi:MaterialIcon Classes="LinkGlyph Bad" Kind="LinkVariant">
+                                                        <mi:MaterialIcon.IsVisible>
+                                                            <MultiBinding Converter="{x:Static conv:NebulaLinkGlyphConverter.Bad}">
+                                                                <Binding />
+                                                                <Binding Path="$parent[ListBox].((vm:MainVM)DataContext).LinkAccountStates" />
+                                                            </MultiBinding>
+                                                        </mi:MaterialIcon.IsVisible>
+                                                    </mi:MaterialIcon>
+                                                </Panel>
                                             </Grid>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
@@ -624,7 +730,7 @@
                     </Grid>
 
                     <!-- ===== Status bar ===== -->
-                    <Border x:Name="Footer" Grid.Row="2" Classes="Footer">
+                    <Border x:Name="Footer" Grid.Row="2" Classes="Footer" Container.Name="StatusBar" Container.Sizing="Width">
                         <Grid ColumnDefinitions="*,Auto">
                             <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" ClipToBounds="True">
                                 <TextBlock Text="{Tr MainWindow.Footer.AccountsCount}" />
@@ -683,6 +789,26 @@
                                         <TextBlock FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"
                                                    Foreground="{DynamicResource FooterForegroundBrush}"
                                                    Text="{Binding SkippedFilesCount}" />
+                                    </StackPanel>
+                                </Button>
+                                <!-- Nebula Link (Nebula Protocol): the name, a state dot after pairing (green connected,
+                                     grey connecting / paused, orange connection problem) and the number of accounts that need
+                                     attention. Opens the Nebula Link modal. -->
+                                <Button x:Name="NebulaLinkIndicator"
+                                        Theme="{StaticResource GhostIconButton}" Classes="Small"
+                                        Width="NaN" Height="24" Padding="6,0" Margin="0,0,8,0"
+                                        ToolTip.Tip="{Binding LinkTooltip}"
+                                        AutomationProperties.Name="Nebula Link"
+                                        Command="{Binding OpenNebulaLinkCommand}">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <Ellipse Classes="LinkDot"
+                                                 Classes.Ok="{Binding LinkDotOk}" Classes.Idle="{Binding LinkDotIdle}"
+                                                 Classes.Problem="{Binding LinkDotProblem}" />
+                                        <TextBlock FontSize="13" VerticalAlignment="Center"
+                                                   Foreground="{DynamicResource FooterForegroundBrush}" Text="Nebula Link" />
+                                        <Border Classes="LinkBadge" IsVisible="{Binding HasLinkProblems}">
+                                            <TextBlock Text="{Binding LinkProblemsBadge}" />
+                                        </Border>
                                     </StackPanel>
                                 </Button>
                                 <!-- Shown and blinking for 6 s when an update is detected (StartUpdateBlink) -->

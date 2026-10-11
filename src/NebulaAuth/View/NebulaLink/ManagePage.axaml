@@ -1,0 +1,430 @@
+<!--
+    The connected link: accounts table (search, filter, header checkbox, virtualized rows, bulk actions in one row,
+    details at the side or as an inner page in a narrow modal) and the request history. Confirmations are overlays of
+    this page. Row tooltips are plain bindings on the cells (recycled containers keep them right).
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             xmlns:pages="using:NebulaAuth.ViewModel.NebulaLink.Pages"
+             x:Class="NebulaAuth.View.NebulaLink.ManagePage"
+             x:DataType="pages:ManagePageVM">
+    <UserControl.Styles>
+        <Style Selector="TextBlock.DetailTitle">
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+        <Style Selector="TextBlock.SectionTitle">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="StackPanel.OverlayActions">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="Spacing" Value="8" />
+            <Setter Property="Margin" Value="0,6,0,0" />
+        </Style>
+        <Style Selector="StackPanel.OverlayActions > :is(Button)">
+            <Setter Property="MinWidth" Value="110" />
+        </Style>
+        <Style Selector="Grid.TableRow">
+            <Setter Property="Height" Value="38" />
+        </Style>
+        <!-- Fixed column widths: the header and the rows line up; hidden columns collapse (Auto) -->
+        <Style Selector=":is(Control).ColConnection">
+            <Setter Property="Width" Value="84" />
+        </Style>
+        <Style Selector=":is(Control).ColStatus">
+            <Setter Property="Width" Value="196" />
+        </Style>
+        <Style Selector=":is(Control).ColPermissions">
+            <Setter Property="Width" Value="96" />
+        </Style>
+        <Style Selector=":is(Control).ColLast">
+            <Setter Property="Width" Value="110" />
+        </Style>
+        <Style Selector="CheckBox.Permission">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Margin" Value="0,1" />
+        </Style>
+        <Style Selector="TextBlock.GroupTitle">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+            <Setter Property="Margin" Value="0,0,0,2" />
+        </Style>
+        <Style Selector="Border.Candidate">
+            <Setter Property="Background" Value="{DynamicResource SemiColorFill0}" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="10,8" />
+        </Style>
+        <!-- Status chip of the details panel -->
+        <Style Selector="Border.Chip.Muted TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+        </Style>
+    </UserControl.Styles>
+
+    <UserControl.Resources>
+        <!-- Permissions: mandatory ones checked and disabled, then the optional ones -->
+        <DataTemplate x:Key="GrantTemplate" x:DataType="pages:GrantVM">
+            <CheckBox Classes="Permission" IsChecked="{Binding IsOn}" IsEnabled="{Binding IsEnabled}">
+                <TextBlock Text="{Binding Label}" TextTrimming="CharacterEllipsis" />
+            </CheckBox>
+        </DataTemplate>
+        <!-- Permissions grouped by category (the first group: mandatory, always on) -->
+        <DataTemplate x:Key="PermissionGroupTemplate" x:DataType="pages:PermissionGroupVM">
+            <StackPanel Spacing="1" Margin="0,0,0,8">
+                <TextBlock Classes="GroupTitle" Text="{Binding Title}" />
+                <ItemsControl ItemsSource="{Binding Items}" ItemTemplate="{StaticResource GrantTemplate}" />
+            </StackPanel>
+        </DataTemplate>
+        <!-- A local mafile of a "Duplicate mafile" row -->
+        <DataTemplate x:Key="CandidateTemplate" x:DataType="pages:DuplicateCandidateVM">
+            <Border Classes="Candidate">
+                <StackPanel Spacing="2">
+                    <TextBlock FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                               Text="{Binding FileName}" ToolTip.Tip="{Binding FileName}" />
+                    <TextBlock Classes="Small" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Text="{Binding SteamIdText}" />
+                    <TextBlock Classes="Small" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Text="{Binding ModifiedText}" />
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Ellipse Width="6" Height="6" VerticalAlignment="Center"
+                                 Fill="{DynamicResource SuccessBrush}" IsVisible="{Binding HasSession}" />
+                        <TextBlock Classes="Small" TextWrapping="NoWrap" Text="{Binding SessionText}" />
+                    </StackPanel>
+                    <Button Margin="0,6,0,0" HorizontalAlignment="Left"
+                            Theme="{DynamicResource OutlineButton}" FontSize="12" IsEnabled="{Binding CanUse}"
+                            Command="{Binding $parent[UserControl].((pages:ManagePageVM)DataContext).UseDuplicateCommand}"
+                            CommandParameter="{Binding}" Content="{Tr NebulaLink.Duplicate.Use}" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+        <!-- Details of one account (side panel / inner page) -->
+        <DataTemplate x:Key="DetailsTemplate" x:DataType="pages:AccountRowVM">
+            <StackPanel Spacing="10">
+                <StackPanel Spacing="6">
+                    <TextBlock Classes="DetailTitle" Text="{Binding Login}" ToolTip.Tip="{Binding Login}" />
+                    <Border Classes="Chip" Classes.Ok="{Binding StatusOk}" Classes.Warn="{Binding StatusWarn}"
+                            Classes.Bad="{Binding StatusBad}" Classes.Muted="{Binding StatusMuted}">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <mi:MaterialIcon Kind="LinkVariant" IconSize="12" VerticalAlignment="Center"
+                                             IsVisible="{Binding IsLinked}" />
+                            <TextBlock Text="{Binding StatusText}" />
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Classes="Small" Text="{Binding StatusHint}" IsVisible="{Binding HasStatusHint}" />
+                    <TextBlock Classes="Small" Opacity="0.8" Text="{Binding SteamIdText, StringFormat='SteamID {0}'}"
+                               IsVisible="{Binding SteamIdText, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                </StackPanel>
+                <!-- Several local mafiles of this login: the user picks one (files are never changed) -->
+                <StackPanel Spacing="6" IsVisible="{Binding IsDuplicate}">
+                    <TextBlock Classes="SectionTitle" Text="{Tr NebulaLink.Duplicate.Title}" />
+                    <ItemsControl ItemsSource="{Binding DuplicateCandidates}" ItemTemplate="{StaticResource CandidateTemplate}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Spacing="6" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </StackPanel>
+                <StackPanel Spacing="10" IsVisible="{Binding !IsDuplicate}">
+                <Border Classes="Divider" Margin="0,2" />
+                <TextBlock Classes="SectionTitle" Text="{Tr NebulaLink.Details.Permissions}" />
+                <ItemsControl ItemsSource="{Binding Grants}" ItemTemplate="{StaticResource PermissionGroupTemplate}" />
+                <TextBlock Classes="Small" IsVisible="{Binding !IsLinked}" Text="{Tr NebulaLink.Details.GrantsAfterConnect}" />
+                <TextBlock Classes="Small" IsVisible="{Binding $parent[UserControl].((pages:ManagePageVM)DataContext).NoCatalog}"
+                           Text="{Tr NebulaLink.Details.NoCatalog}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+        <!-- Actions under the details: connect / disconnect this account, update the password -->
+        <DataTemplate x:Key="DetailActions" x:DataType="pages:ManagePageVM">
+            <StackPanel Spacing="8" IsVisible="{Binding HasSelectedRow}">
+                <Button Theme="{DynamicResource SolidButton}" Classes="Primary" HorizontalAlignment="Stretch"
+                        IsVisible="{Binding SelectedRow.IsLinkable, FallbackValue=False}"
+                        Command="{Binding ConnectRowCommand}" CommandParameter="{Binding SelectedRow}"
+                        Content="{Tr NebulaLink.Details.Connect}" />
+                <Button Theme="{DynamicResource OutlineButton}" Classes="Danger" HorizontalAlignment="Stretch"
+                        IsVisible="{Binding SelectedRow.InvalidPassword, FallbackValue=False}"
+                        Command="{Binding UpdatePasswordCommand}" Content="{Tr NebulaLink.Details.UpdatePassword}" />
+                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary" HorizontalAlignment="Stretch"
+                        IsVisible="{Binding SelectedRow.IsLinked, FallbackValue=False}"
+                        Command="{Binding DisconnectRowCommand}" CommandParameter="{Binding SelectedRow}"
+                        Content="{Tr NebulaLink.Details.Disconnect}" />
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Panel>
+        <TabControl SelectedIndex="{Binding SelectedTab}" Padding="0" Margin="10,4,10,0">
+            <!-- ===== Accounts ===== -->
+            <TabItem Header="{Tr NebulaLink.Manage.AccountsTab}" FontSize="15">
+                <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="8,10,8,10">
+                    <!-- Toolbar -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*" MaxWidth="340" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Classes="clearButton" FontSize="14"
+                                 PlaceholderText="{Tr NebulaLink.Manage.Search}" Text="{Binding SearchText}">
+                            <TextBox.InnerLeftContent>
+                                <mi:MaterialIcon Classes="InputIcon" Kind="Magnify" />
+                            </TextBox.InnerLeftContent>
+                        </TextBox>
+                        <ComboBox Grid.Column="2" Width="196" FontSize="14"
+                                  ItemsSource="{Binding Filters}" SelectedItem="{Binding SelectedFilter}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="pages:FilterOption">
+                                    <TextBlock Text="{Binding Label}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock Grid.Column="4" Classes="Small" VerticalAlignment="Center" TextWrapping="NoWrap"
+                                   IsVisible="{Binding !IsNarrow}" Text="{Binding CountsText}" />
+                    </Grid>
+
+                    <!-- Hints -->
+                    <StackPanel Grid.Row="1" Spacing="6" Margin="0,8,0,0">
+                        <nebulaAuth:HintBox FontSize="13" Severity="Warning" Text="{Binding OfflineHint}"
+                                            IsVisible="{Binding ShowOfflineHint}" />
+                        <nebulaAuth:HintBox FontSize="13" Severity="Info" ShowCloseButton="True" Text="{Binding BulkResult}"
+                                            ToolTip.Tip="{Binding BulkResultHint}"
+                                            IsVisible="{Binding BulkResult, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                        <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding AccountsNotLoaded}">
+                            <ProgressBar IsIndeterminate="True" Width="80" VerticalAlignment="Center" />
+                            <TextBlock Classes="Small" VerticalAlignment="Center" Text="{Tr NebulaLink.Manage.Loading}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Table | details -->
+                    <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" Margin="0,8,0,0">
+                        <Grid Grid.Column="0" RowDefinitions="Auto,*" IsVisible="{Binding ShowListPane}">
+                            <!-- Header -->
+                            <Border Grid.Row="0" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1" Padding="6,0">
+                                <Grid ColumnDefinitions="36,*,Auto,Auto,Auto,Auto" Height="34">
+                                    <CheckBox Grid.Column="0" VerticalAlignment="Center" IsThreeState="False"
+                                              IsChecked="{Binding AllVisibleChecked}"
+                                              IsEnabled="{Binding HasVisibleRows}"
+                                              ToolTip.Tip="{Tr NebulaLink.Manage.SelectAll}"
+                                              AutomationProperties.Name="{Tr NebulaLink.Manage.SelectAll}" />
+                                    <TextBlock Grid.Column="1" Classes="ColHeader" Text="{Tr NebulaLink.Manage.ColAccount}" />
+                                    <TextBlock Grid.Column="2" Classes="ColHeader ColConnection" Text="{Tr NebulaLink.Manage.ColConnection}" />
+                                    <TextBlock Grid.Column="3" Classes="ColHeader ColStatus" Text="{Tr NebulaLink.Manage.ColStatus}" />
+                                    <TextBlock Grid.Column="4" Classes="ColHeader ColPermissions" IsVisible="{Binding !IsNarrow}"
+                                               Text="{Tr NebulaLink.Manage.ColPermissions}" />
+                                    <TextBlock Grid.Column="5" Classes="ColHeader ColLast" IsVisible="{Binding !IsNarrow}"
+                                               Text="{Tr NebulaLink.Manage.ColLast}" />
+                                </Grid>
+                            </Border>
+                            <!-- Rows (virtualized; bounded by the grid row) -->
+                            <ListBox Grid.Row="1" x:Name="AccountsList" Classes="Table Stretch" Background="Transparent"
+                                     SelectionMode="Single"
+                                     ItemsSource="{Binding VisibleRows}" SelectedItem="{Binding SelectedRow}">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel />
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="pages:AccountRowVM">
+                                        <Grid Classes="TableRow" ColumnDefinitions="36,*,Auto,Auto,Auto,Auto" Background="Transparent">
+                                            <CheckBox Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding IsChecked}"
+                                                      AutomationProperties.Name="{Binding Login}" />
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                                <mi:MaterialIcon Kind="FileQuestionOutline" IconSize="14"
+                                                                 Foreground="{DynamicResource MutedForegroundBrush}"
+                                                                 IsVisible="{Binding Local, Converter={x:Static ObjectConverters.IsNull}}" />
+                                                <TextBlock Classes="Cell" Text="{Binding Login}" />
+                                            </StackPanel>
+                                            <Panel Grid.Column="2" Classes="ColConnection">
+                                                <mi:MaterialIcon Kind="CheckCircle" IconSize="17" HorizontalAlignment="Left" Margin="6,0,0,0"
+                                                                 Foreground="{DynamicResource SuccessTextBrush}"
+                                                                 IsVisible="{Binding IsLinked}" />
+                                            </Panel>
+                                            <TextBlock Grid.Column="3" Classes="Cell ColStatus" Text="{Binding StatusText}"
+                                                       ToolTip.Tip="{Binding StatusHint}"
+                                                       Classes.Ok="{Binding StatusOk}" Classes.Warn="{Binding StatusWarn}"
+                                                       Classes.Bad="{Binding StatusBad}" Classes.Muted="{Binding StatusMuted}" />
+                                            <TextBlock Grid.Column="4" Classes="Cell ColPermissions" IsVisible="{Binding !$parent[ListBox].((pages:ManagePageVM)DataContext).IsNarrow}"
+                                                       Text="{Binding PermissionsText}" ToolTip.Tip="{Binding PermissionsHint}"
+                                                       Classes.Muted="{Binding !IsLinked}" />
+                                            <TextBlock Grid.Column="5" Classes="Cell Muted ColLast" IsVisible="{Binding !$parent[ListBox].((pages:ManagePageVM)DataContext).IsNarrow}"
+                                                       Text="{Binding LastRequestText}" ToolTip.Tip="{Binding LastRequestHint}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <TextBlock Grid.Row="1" Classes="Small" Margin="10,14" IsVisible="{Binding !HasVisibleRows}"
+                                       Text="{Tr NebulaLink.Manage.Empty}" />
+                        </Grid>
+
+                        <!-- Narrow: details as an inner page -->
+                        <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled" IsVisible="{Binding ShowNarrowDetails}">
+                            <StackPanel Spacing="10" Margin="4,0,8,8">
+                                <Button Theme="{DynamicResource BorderlessButton}" HorizontalAlignment="Left"
+                                        Command="{Binding BackToListCommand}">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <mi:MaterialIcon Kind="ArrowLeft" IconSize="16" />
+                                        <TextBlock Text="{Tr NebulaLink.Manage.Back}" />
+                                    </StackPanel>
+                                </Button>
+                                <ContentControl Content="{Binding SelectedRow}" ContentTemplate="{StaticResource DetailsTemplate}" />
+                                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource DetailActions}" />
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <Border Grid.Column="1" Classes="Divider Vertical" Margin="12,0" IsVisible="{Binding ShowSidePanel}" />
+                        <ScrollViewer Grid.Column="2" Width="280" HorizontalScrollBarVisibility="Disabled"
+                                      IsVisible="{Binding ShowSidePanel}">
+                            <StackPanel Spacing="12" Margin="0,4,10,8">
+                                <TextBlock Classes="Small" IsVisible="{Binding !HasSelectedRow}" Text="{Tr NebulaLink.Manage.SelectRow}" />
+                                <ContentControl Content="{Binding SelectedRow}" ContentTemplate="{StaticResource DetailsTemplate}" />
+                                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource DetailActions}" />
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+
+                    <!-- Bottom bar: selection and bulk actions in one row -->
+                    <Border Grid.Row="3" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,1,0,0" Padding="0,10,0,0" Margin="0,8,0,0">
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <TextBlock Grid.Column="0" Classes="Small" VerticalAlignment="Center" Margin="4,0,12,0"
+                                       Text="{Binding SelectedText}" />
+                            <WrapPanel Grid.Column="2" ItemSpacing="8" LineSpacing="8" HorizontalAlignment="Right">
+                                <Button Theme="{DynamicResource SolidButton}" Classes="Primary" FontSize="13"
+                                        Command="{Binding ConnectSelectedCommand}" Content="{Binding ConnectSelectedText}" />
+                                <Button Theme="{DynamicResource OutlineButton}" FontSize="13"
+                                        Command="{Binding ChangePermissionsCommand}" Content="{Binding PermissionsText}" />
+                                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary" FontSize="13"
+                                        Command="{Binding DisconnectSelectedCommand}" Content="{Binding DisconnectSelectedText}" />
+                            </WrapPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- ===== Request history ===== -->
+            <TabItem Header="{Tr NebulaLink.Manage.HistoryTab}" FontSize="15">
+                <Grid RowDefinitions="Auto,*" Margin="8,10,8,10">
+                    <Border Grid.Row="0" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1" Padding="6,0">
+                        <Grid ColumnDefinitions="130,*,130,*,150" Height="32">
+                            <TextBlock Grid.Column="0" Classes="ColHeader" Text="{Tr NebulaLink.History.Time}" />
+                            <TextBlock Grid.Column="1" Classes="ColHeader" Text="{Tr NebulaLink.History.Account}" />
+                            <TextBlock Grid.Column="2" Classes="ColHeader" Text="{Tr NebulaLink.History.Module}" />
+                            <TextBlock Grid.Column="3" Classes="ColHeader" Text="{Tr NebulaLink.History.Type}" />
+                            <TextBlock Grid.Column="4" Classes="ColHeader" Text="{Tr NebulaLink.History.Result}" />
+                        </Grid>
+                    </Border>
+                    <ListBox Grid.Row="1" Classes="Table Stretch" Background="Transparent" ItemsSource="{Binding HistoryRows}">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="pages:HistoryRowVM">
+                                <Grid Classes="TableRow" ColumnDefinitions="130,*,130,*,150">
+                                    <TextBlock Grid.Column="0" Classes="Cell Muted" Text="{Binding Time}" />
+                                    <TextBlock Grid.Column="1" Classes="Cell" Text="{Binding Account}" />
+                                    <TextBlock Grid.Column="2" Classes="Cell" Text="{Binding Module}" />
+                                    <TextBlock Grid.Column="3" Classes="Cell" Text="{Binding Type}" ToolTip.Tip="{Binding TypeHint}" />
+                                    <TextBlock Grid.Column="4" Classes="Cell" Text="{Binding Result}" ToolTip.Tip="{Binding ResultHint}"
+                                               Classes.Ok="{Binding ResultOk}" Classes.Bad="{Binding ResultBad}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBlock Grid.Row="1" Classes="Small" Margin="10,14" IsVisible="{Binding !HasHistory}"
+                               Text="{Tr NebulaLink.History.Empty}" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- ===== Overlays (inline confirmations) ===== -->
+        <Border Classes="OverlayBackdrop" IsVisible="{Binding HasOverlay}">
+            <Border Classes="OverlayCard">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Spacing="8">
+                <Panel>
+                    <!-- Connect -->
+                    <StackPanel Spacing="12"
+                                IsVisible="{Binding Overlay, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static pages:ManageOverlay.Connect}}">
+                        <TextBlock Classes="StepTitle" Text="{Binding ConnectOverlayTitle}" />
+                        <TextBlock Classes="FieldLabel" Text="{Tr NebulaLink.Details.Permissions}" />
+                        <ItemsControl ItemsSource="{Binding ConnectGrants}" ItemTemplate="{StaticResource PermissionGroupTemplate}" />
+                        <TextBlock Classes="Small" IsVisible="{Binding NoCatalog}" Text="{Tr NebulaLink.Details.NoCatalog}" />
+                        <StackPanel Classes="OverlayActions">
+                            <u:IconButton Theme="{DynamicResource SolidIconButton}" Classes="Primary" IsLoading="{Binding IsBusy}"
+                                          Command="{Binding ConfirmConnectCommand}" Content="{Tr NebulaLink.Overlay.Connect}" />
+                            <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary" IsEnabled="{Binding !IsBusy}"
+                                    Command="{Binding CloseOverlayCommand}" Content="{Tr NebulaLink.Cancel}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <!-- Disconnect -->
+                    <StackPanel Spacing="12"
+                                IsVisible="{Binding Overlay, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static pages:ManageOverlay.Disconnect}}">
+                        <TextBlock Classes="StepTitle" Text="{Binding DisconnectOverlayTitle}" />
+                        <TextBlock Classes="Body" IsVisible="{Binding DisconnectHasNebula}" Text="{Tr NebulaLink.Overlay.DisconnectWarning}" />
+                        <StackPanel Classes="OverlayActions">
+                            <u:IconButton Theme="{DynamicResource SolidIconButton}" Classes="Primary" IsLoading="{Binding IsBusy}"
+                                          Command="{Binding ConfirmDisconnectCommand}" Content="{Tr NebulaLink.Overlay.Disconnect}" />
+                            <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary" IsEnabled="{Binding !IsBusy}"
+                                    Command="{Binding CloseOverlayCommand}" Content="{Tr NebulaLink.Cancel}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <!-- Permissions -->
+                    <StackPanel Spacing="12"
+                                IsVisible="{Binding Overlay, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static pages:ManageOverlay.Permissions}}">
+                        <TextBlock Classes="StepTitle" Text="{Binding PermissionsOverlayTitle}" />
+                        <ItemsControl ItemsSource="{Binding PermissionGrants}" ItemTemplate="{StaticResource PermissionGroupTemplate}" />
+                        <StackPanel Classes="OverlayActions">
+                            <u:IconButton Theme="{DynamicResource SolidIconButton}" Classes="Primary" IsLoading="{Binding IsBusy}"
+                                          Command="{Binding ApplyPermissionsCommand}" Content="{Tr NebulaLink.Overlay.Save}" />
+                            <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary" IsEnabled="{Binding !IsBusy}"
+                                    Command="{Binding CloseOverlayCommand}" Content="{Tr NebulaLink.Cancel}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <!-- Unlink this computer -->
+                    <StackPanel Spacing="12"
+                                IsVisible="{Binding Overlay, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static pages:ManageOverlay.UnlinkDevice}}">
+                        <TextBlock Classes="StepTitle" Text="{Tr NebulaLink.Overlay.UnlinkTitle}" />
+                        <TextBlock Classes="Body" Text="{Tr NebulaLink.Overlay.UnlinkText}" />
+                        <StackPanel Classes="OverlayActions">
+                            <u:IconButton Theme="{DynamicResource SolidIconButton}" Classes="Danger OnDanger" IsLoading="{Binding IsBusy}"
+                                          Command="{Binding ConfirmUnlinkDeviceCommand}" Content="{Tr NebulaLink.Header.Unlink}" />
+                            <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary" IsEnabled="{Binding !IsBusy}"
+                                    Command="{Binding CloseOverlayCommand}" Content="{Tr NebulaLink.Cancel}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <!-- Update the Steam password (invalid local password) -->
+                    <StackPanel Spacing="12"
+                                IsVisible="{Binding Overlay, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static pages:ManageOverlay.Password}}">
+                        <TextBlock Classes="StepTitle" Text="{Tr NebulaLink.Overlay.PasswordTitle}" />
+                        <TextBlock Classes="Body" Text="{Binding SelectedRow.Login, FallbackValue=''}" FontWeight="SemiBold" />
+                        <TextBox x:Name="PasswordBox" PasswordChar="•" Classes="revealPasswordButton" Text="{Binding Password}"
+                                 PlaceholderText="{Tr NebulaLink.Overlay.Password}" />
+                        <CheckBox FontSize="13" IsVisible="{Binding CanSavePasswords}" IsChecked="{Binding SavePassword}"
+                                  Content="{Tr NebulaLink.Overlay.SavePassword}" />
+                        <StackPanel Classes="OverlayActions">
+                            <u:IconButton Theme="{DynamicResource SolidIconButton}" Classes="Primary" IsLoading="{Binding IsBusy}"
+                                          IsDefault="True"
+                                          Command="{Binding ConfirmPasswordCommand}" Content="{Tr NebulaLink.Overlay.Login}" />
+                            <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary" IsEnabled="{Binding !IsBusy}"
+                                    Command="{Binding CloseOverlayCommand}" Content="{Tr NebulaLink.Cancel}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Panel>
+                <!-- Error of the overlay action -->
+                <TextBlock Classes="FieldError" HorizontalAlignment="Right"
+                           IsVisible="{Binding OverlayError, Converter={x:Static ObjectConverters.IsNotNull}}" Text="{Binding OverlayError}" />
+                </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Border>
+    </Panel>
+</UserControl>

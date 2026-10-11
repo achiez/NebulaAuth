@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using NebulaAuth.Model.LinkHost;
 using NebulaAuth.Model.Mafiles.Protection;
 
 namespace NebulaAuth.Model;
@@ -56,7 +57,11 @@ public static class SteamPasswords
         if (store == null || string.IsNullOrWhiteSpace(login) || string.IsNullOrEmpty(password)) return false;
         try
         {
+            var changed = store.Get(login) != password;
             store.Set(login, password);
+            // A new password: automatic login may try it (a rejected old one was blocked)
+            if (changed) SessionHandler.ClearStoredPasswordRejected(login);
+            NebulaLinkHost.NotifyLocalChange();
             return true;
         }
         catch (Exception ex)
@@ -71,6 +76,7 @@ public static class SteamPasswords
         try
         {
             Store?.Remove(login);
+            NebulaLinkHost.NotifyLocalChange();
         }
         catch (Exception ex)
         {
@@ -87,6 +93,8 @@ public static class SteamPasswords
     /// <exception cref="UnauthorizedAccessException">No access to the store file.</exception>
     public static int ClearAll()
     {
-        return MafileStorageService.Current.ClearSteamPasswords();
+        var count = MafileStorageService.Current.ClearSteamPasswords();
+        NebulaLinkHost.NotifyLocalChange();
+        return count;
     }
 }

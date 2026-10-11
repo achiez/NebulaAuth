@@ -46,7 +46,10 @@ public static partial class StartupStorage
 
             Shell.Logger.Info("Storage mode: {mode}{upgrade}", storage.Mode,
                 storage.NeedsUpgrade ? " (first 2.x start: legacy Steam passwords are removed from mafiles)" : string.Empty);
-            if (storage.RequiresUnlock && !await TryDebugUnlockAsync(storage))
+            Task? debugUnlock = null;
+            if (storage.RequiresUnlock) DebugUnlock(storage, ref debugUnlock);
+            if (debugUnlock != null) await debugUnlock;
+            if (storage.RequiresUnlock && debugUnlock == null)
             {
                 window = ShowWindow(splashScreen);
                 var unlocked = await UnlockAsync(window, storage);
@@ -76,9 +79,9 @@ public static partial class StartupStorage
                     return StorageOpenResult.Cancelled;
                 }
             }
-#if DEBUG
-            await RunDebugActionAsync(storage);
-#endif
+            Task? debugAction = null;
+            DebugStartupAction(storage, ref debugAction);
+            if (debugAction != null) await debugAction;
             return StorageOpenResult.Opened;
         }
         finally
@@ -154,20 +157,8 @@ public static partial class StartupStorage
         }
     }
 
-    private static async Task<bool> TryDebugUnlockAsync(MafileStorageService storage)
-    {
-#if DEBUG
-        // Debug builds only: unlock without the prompt (tests of the startup order / encrypted storage)
-        var debugPassword = Environment.GetEnvironmentVariable("NEBULA_DEBUG_STORAGE_PASSWORD");
-        if (!string.IsNullOrEmpty(debugPassword))
-        {
-            await Task.Run(() => storage.Unlock(debugPassword));
-            return true;
-        }
-#endif
-        return await Task.FromResult(false);
-    }
-
+    static partial void DebugUnlock(MafileStorageService storage, ref Task? unlock);
+    static partial void DebugStartupAction(MafileStorageService storage, ref Task? action);
     static partial void DebugWrapProgress(ref IProgress<StorageProgress>? progress);
 
     /// <summary>

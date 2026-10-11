@@ -10,6 +10,16 @@
         "es": "La sesión se actualizó automáticamente",
         "tr": "Oturum otomatik olarak yenilendi",
         "kk": "Сессия автоматты түрде жаңартылды"
+      },
+      "StoredPasswordRejected": {
+        "ru": "Сохранённый пароль Steam отклонён. Автовход выключен до смены пароля.",
+        "en": "Saved Steam password rejected. Auto-login is off until you set a new one.",
+        "zh": "已保存的 Steam 密码被拒绝。设置新密码前自动登录已关闭。",
+        "uk": "Збережений пароль Steam відхилено. Автовхід вимкнено до зміни пароля.",
+        "fr": "Mot de passe Steam enregistré refusé. Connexion auto désactivée jusqu'au nouveau mot de passe.",
+        "es": "Contraseña de Steam guardada rechazada. Inicio automático desactivado hasta cambiarla.",
+        "tr": "Kayıtlı Steam şifresi reddedildi. Yeni şifre girilene kadar otomatik giriş kapalı.",
+        "kk": "Сақталған Steam құпиясөзі қабылданбады. Жаңа құпиясөз қойылғанша автокіру өшірулі."
       }
     },
     "MAAC": {

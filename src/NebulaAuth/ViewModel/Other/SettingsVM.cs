@@ -116,6 +116,22 @@ public partial class SettingsVM : ObservableObject
         set => Settings.HideToTray = value;
     }
 
+    /// <summary>Fewer animations (Nebula Link pairing / success animations; follows no OS setting).</summary>
+    public bool ReduceMotion
+    {
+        get => Settings.ReduceMotion;
+        set => Settings.ReduceMotion = value;
+    }
+
+    /// <summary>Closes the settings and opens the Nebula Link modal (one dialog at a time).</summary>
+    [RelayCommand]
+    private static void OpenNebulaLink()
+    {
+        DialogService.Close();
+        Avalonia.Threading.DispatcherTimer.RunOnce(() => _ = DialogsController.ShowNebulaLinkDialog(),
+            System.TimeSpan.FromMilliseconds(250));
+    }
+
     public Dictionary<BackgroundMode, string> BackgroundModes => new()
     {
         {BackgroundMode.Default, LocManager.GetOrDefault("Default", "SettingsDialog", "BackgroundMode", "Default")},

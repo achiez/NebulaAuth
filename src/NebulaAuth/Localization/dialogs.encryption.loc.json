@@ -342,16 +342,6 @@
       "tr": "Korunmayan: {0}",
       "kk": "Қорғалмаған: {0}"
     },
-    "BadgeHint": {
-      "en": "Click to show the list",
-      "ru": "Нажмите, чтобы открыть список",
-      "zh": "点击查看列表",
-      "uk": "Натисніть, щоб відкрити список",
-      "fr": "Cliquez pour afficher la liste",
-      "es": "Haz clic para ver la lista",
-      "tr": "Listeyi görmek için tıklayın",
-      "kk": "Тізімді ашу үшін басыңыз"
-    },
     "Groups": {
       "Unprotected": {
         "en": "Not protected",

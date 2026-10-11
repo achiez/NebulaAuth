@@ -165,7 +165,7 @@ public static partial class DataRoot
     }
 
     /// <summary>
-    ///     Debug builds: replaces parts of the environment to simulate another OS / layout (DataRoot.Debug.cs).
+    ///     Debug builds: replaces parts of the environment to simulate another OS / layout.
     /// </summary>
     static partial void ApplyDebugEnvironment(ref DataRootEnvironment environment);
 

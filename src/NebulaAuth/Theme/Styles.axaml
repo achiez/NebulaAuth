@@ -53,6 +53,38 @@
         <Setter Property="TextElement.FontSize" Value="14" />
     </Style>
 
+    <!-- Status chip: <Border Classes="Chip Ok|Warn|Bad|Muted"><TextBlock Text="..." /></Border> (tinted, readable text) -->
+    <Style Selector="Border.Chip">
+        <Setter Property="Background" Value="{DynamicResource SemiColorFill0}" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="9,2" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
+    <Style Selector="Border.Chip TextBlock">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+    </Style>
+    <Style Selector="Border.Chip.Ok">
+        <Setter Property="Background" Value="{DynamicResource SuccessTintBrush}" />
+    </Style>
+    <Style Selector="Border.Chip.Ok TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource SuccessTextBrush}" />
+    </Style>
+    <Style Selector="Border.Chip.Warn">
+        <Setter Property="Background" Value="{DynamicResource WarningTintBrush}" />
+    </Style>
+    <Style Selector="Border.Chip.Warn TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+    </Style>
+    <Style Selector="Border.Chip.Bad">
+        <Setter Property="Background" Value="{DynamicResource ErrorTintBrush}" />
+    </Style>
+    <Style Selector="Border.Chip.Bad TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource ErrorTextBrush}" />
+    </Style>
+
     <!-- ===== Text ===== -->
 
     <!-- Muted secondary text (captions, descriptions) -->

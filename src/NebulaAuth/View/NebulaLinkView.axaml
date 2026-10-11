@@ -1,0 +1,289 @@
+<!--
+    The single Nebula Link modal (Nebula Protocol). Header: title, close; for the connected link also the
+    account line, the state and a menu (pause / resume, open Achiefy, unlink). Body: CurrentPage (page VMs in
+    ViewModel/NebulaLink/Pages, page views in View/NebulaLink). Compact vertical card (about 440 wide, height of the
+    content) for pairing and state pages; about 1040x620 for the accounts table (code-behind). No nested dialogs:
+    confirmations are overlays inside the pages.
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:core="using:NebulaAuth.Core"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:link="using:NebulaAuth.ViewModel.NebulaLink"
+             xmlns:pages="using:NebulaAuth.ViewModel.NebulaLink.Pages"
+             xmlns:view="using:NebulaAuth.View.NebulaLink"
+             mc:Ignorable="d" d:DesignWidth="440" d:DesignHeight="560"
+             x:Class="NebulaAuth.View.NebulaLinkView"
+             x:DataType="link:NebulaLinkVM"
+             FontSize="15">
+    <UserControl.Styles>
+        <!-- Header (same surface and height as DialogHeader) -->
+        <Style Selector="Border.LinkHeader">
+            <Setter Property="Background" Value="{DynamicResource DialogHeaderBackgroundBrush}" />
+            <Setter Property="CornerRadius" Value="12,12,0,0" />
+            <Setter Property="Margin" Value="-1,-1,-1,0" />
+            <Setter Property="Padding" Value="18,8,8,8" />
+            <Setter Property="MinHeight" Value="52" />
+        </Style>
+        <Style Selector="Border.LinkHeader TextBlock.HeaderTitle">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource DialogHeaderForegroundBrush}" />
+        </Style>
+        <Style Selector="Border.LinkHeader TextBlock.HeaderSubtitle">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource DialogHeaderForegroundBrush}" />
+            <Setter Property="Opacity" Value="0.7" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+        <Style Selector="Border.LinkHeader TextBlock.HeaderState">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource DialogHeaderForegroundBrush}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <!-- State dot: green (connected), amber (connecting, offline, paused), red (suspended and worse) -->
+        <Style Selector="Ellipse.StateDot">
+            <Setter Property="Width" Value="8" />
+            <Setter Property="Height" Value="8" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Fill" Value="{DynamicResource ErrorBrush}" />
+        </Style>
+        <Style Selector="Ellipse.StateDot.Ok">
+            <Setter Property="Fill" Value="{DynamicResource SuccessBrush}" />
+        </Style>
+        <Style Selector="Ellipse.StateDot.Warn">
+            <Setter Property="Fill" Value="{DynamicResource AttentionBrush}" />
+        </Style>
+
+        <!-- ===== Shared by the pages ===== -->
+        <Style Selector="TextBlock.StepTitle">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style Selector="TextBlock.Lead">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="LineHeight" Value="21" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorText1}" />
+        </Style>
+        <Style Selector="TextBlock.Body">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="LineHeight" Value="21" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style Selector="TextBlock.Small">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="LineHeight" Value="17" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+        </Style>
+        <!-- Page body of the compact card -->
+        <Style Selector="StackPanel.Page">
+            <Setter Property="Margin" Value="24,22,24,22" />
+            <Setter Property="Spacing" Value="18" />
+        </Style>
+        <!-- Round icon at the top of a page -->
+        <Style Selector="Border.PageIcon">
+            <Setter Property="Width" Value="52" />
+            <Setter Property="Height" Value="52" />
+            <Setter Property="CornerRadius" Value="26" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Background" Value="{DynamicResource PrimaryTintBrush}" />
+        </Style>
+        <Style Selector="Border.PageIcon > mi|MaterialIcon">
+            <Setter Property="IconSize" Value="26" />
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorPrimary}" />
+        </Style>
+        <Style Selector="Border.PageIcon.Warn">
+            <Setter Property="Background" Value="{DynamicResource WarningTintBrush}" />
+        </Style>
+        <Style Selector="Border.PageIcon.Warn > mi|MaterialIcon">
+            <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+        </Style>
+        <Style Selector="Border.PageIcon.Bad">
+            <Setter Property="Background" Value="{DynamicResource ErrorTintBrush}" />
+        </Style>
+        <Style Selector="Border.PageIcon.Bad > mi|MaterialIcon">
+            <Setter Property="Foreground" Value="{DynamicResource ErrorTextBrush}" />
+        </Style>
+        <!-- NebulaAuth ⇄ Achiefy tiles (connect / waiting pages) -->
+        <Style Selector="Border.Tile">
+            <Setter Property="Width" Value="52" />
+            <Setter Property="Height" Value="52" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="Background" Value="{DynamicResource PrimaryTintBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="Border.Tile > TextBlock">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorPrimary}" />
+        </Style>
+        <!-- Info box (address / account / workspace) -->
+        <Style Selector="Border.InfoBox">
+            <Setter Property="Background" Value="{DynamicResource SemiColorFill0}" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="14,12" />
+        </Style>
+        <Style Selector="Border.InfoBox TextBlock.InfoLabel">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Border.InfoBox TextBlock.InfoValue">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <!-- Table: header and cells -->
+        <Style Selector="TextBlock.ColHeader">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+        <Style Selector="TextBlock.Cell">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+        <Style Selector="TextBlock.Cell.Ok">
+            <Setter Property="Foreground" Value="{DynamicResource SuccessTextBrush}" />
+        </Style>
+        <Style Selector="TextBlock.Cell.Warn">
+            <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+        </Style>
+        <Style Selector="TextBlock.Cell.Bad">
+            <Setter Property="Foreground" Value="{DynamicResource ErrorTextBrush}" />
+        </Style>
+        <Style Selector="TextBlock.Cell.Muted">
+            <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+        </Style>
+        <Style Selector="ListBox.Table > ListBoxItem">
+            <Setter Property="Padding" Value="6,0" />
+            <Setter Property="MinHeight" Value="38" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+        <!-- Overlay of the accounts page (inline confirmation instead of a nested dialog) -->
+        <Style Selector="Border.OverlayBackdrop">
+            <Setter Property="Background">
+                <SolidColorBrush Color="{DynamicResource Base200Color}" Opacity="0.82" />
+            </Setter>
+            <Setter Property="CornerRadius" Value="0,0,12,12" />
+        </Style>
+        <Style Selector="Border.OverlayCard">
+            <Setter Property="Background" Value="{DynamicResource DialogBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DialogBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="22,18" />
+            <Setter Property="BoxShadow" Value="0 12 40 0 #55000000" />
+            <Setter Property="MaxWidth" Value="420" />
+            <Setter Property="Margin" Value="12" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Styles>
+
+    <UserControl.DataTemplates>
+        <DataTemplate DataType="pages:ConnectPageVM">
+            <view:ConnectPage />
+        </DataTemplate>
+        <DataTemplate DataType="pages:VerifyPageVM">
+            <view:VerifyPage />
+        </DataTemplate>
+        <DataTemplate DataType="pages:WaitingPageVM">
+            <view:WaitingPage />
+        </DataTemplate>
+        <DataTemplate DataType="pages:SuccessPageVM">
+            <view:SuccessPage />
+        </DataTemplate>
+        <DataTemplate DataType="pages:ManagePageVM">
+            <view:ManagePage />
+        </DataTemplate>
+        <DataTemplate DataType="pages:StatePageVM">
+            <view:StatePage />
+        </DataTemplate>
+    </UserControl.DataTemplates>
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- ===== Header: identity on the left, state and actions on the right ===== -->
+        <Border Grid.Row="0" Classes="LinkHeader">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <StackPanel Grid.Column="0" Spacing="1" VerticalAlignment="Center">
+                    <TextBlock Classes="HeaderTitle" Text="Nebula Link" VerticalAlignment="Center" />
+                    <TextBlock Classes="HeaderSubtitle" Text="{Binding AccountLine}" IsVisible="{Binding IsManage}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center"
+                            Margin="12,0,4,0" IsVisible="{Binding IsManage}">
+                    <StackPanel Orientation="Horizontal" Spacing="7" Margin="0,0,6,0">
+                        <Ellipse Classes="StateDot" Classes.Ok="{Binding StateOk}" Classes.Warn="{Binding StateWarn}" />
+                        <TextBlock Classes="HeaderState" Text="{Binding StateText}" />
+                    </StackPanel>
+                    <!-- The accounts table is narrow in the default (tall) window: widen the window for all columns -->
+                    <Button x:Name="ExpandButton" Theme="{StaticResource DialogHeaderButton}" IsVisible="False"
+                            ToolTip.Tip="{Tr NebulaLink.Header.Expand}" AutomationProperties.Name="{Tr NebulaLink.Header.Expand}"
+                            Click="ExpandOnClick">
+                        <mi:MaterialIcon Kind="ArrowExpandHorizontal" />
+                    </Button>
+                    <Button x:Name="CollapseButton" Theme="{StaticResource DialogHeaderButton}" IsVisible="False"
+                            ToolTip.Tip="{Tr NebulaLink.Header.Collapse}" AutomationProperties.Name="{Tr NebulaLink.Header.Collapse}"
+                            Click="CollapseOnClick">
+                        <mi:MaterialIcon Kind="ArrowCollapseHorizontal" />
+                    </Button>
+                    <Button x:Name="MenuButton" Theme="{StaticResource DialogHeaderButton}" Classes="Menu"
+                            ToolTip.Tip="{Tr NebulaLink.Header.Menu}"
+                            AutomationProperties.Name="{Tr NebulaLink.Header.Menu}">
+                        <mi:MaterialIcon Kind="DotsVertical" />
+                        <Button.Flyout>
+                            <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                <MenuItem Header="{Tr NebulaLink.Header.Pause}" IsVisible="{Binding CanPause}"
+                                          IsEnabled="{Binding !IsBusy}" Command="{Binding PauseCommand}">
+                                    <MenuItem.Icon>
+                                        <mi:MaterialIcon Kind="PauseCircleOutline" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{Tr NebulaLink.Header.Resume}" IsVisible="{Binding CanResume}"
+                                          IsEnabled="{Binding !IsBusy}" Command="{Binding ResumeCommand}">
+                                    <MenuItem.Icon>
+                                        <mi:MaterialIcon Kind="PlayCircleOutline" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{Tr NebulaLink.OpenAchiefy}" Command="{Binding OpenCabinetCommand}">
+                                    <MenuItem.Icon>
+                                        <mi:MaterialIcon Kind="OpenInNew" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator />
+                                <MenuItem Header="{Tr NebulaLink.Header.Unlink}" Classes="Danger"
+                                          Command="{Binding RequestUnlinkCommand}">
+                                    <MenuItem.Icon>
+                                        <mi:MaterialIcon Kind="LinkVariantOff" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+                </StackPanel>
+
+                <Button Grid.Column="2" Theme="{StaticResource DialogCloseButton}" VerticalAlignment="Center"
+                        AutomationProperties.Name="{Tr NebulaLink.Close}"
+                        Command="{x:Static core:DialogService.CloseDialogCommand}" CommandParameter="{x:Null}">
+                    <mi:MaterialIcon Kind="Close" />
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- ===== Body ===== -->
+        <ContentControl Grid.Row="1" Content="{Binding CurrentPage}" />
+    </Grid>
+</UserControl>

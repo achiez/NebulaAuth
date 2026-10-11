@@ -204,6 +204,13 @@ public static class ThemeResources
         // Warning / error text on cards and dialogs (the palette orange is too light on white surfaces)
         yield return ("WarningTextBrush", AccentOn(p.Base100, p.Warning));
         yield return ("ErrorTextBrush", AccentOn(p.Base100, p.Error));
+        yield return ("SuccessTextBrush", AccentOn(p.Base100, p.Success));
+        // Orange between warning and error: a problem of the Nebula Link connection itself (status bar dot) and accounts
+        // that need the user (account list glyph); the plain warning color marks account problems
+        var attention = ColorMath.Mix(p.Warning, p.Error, 0.45);
+        yield return ("AttentionBrush", attention);
+        yield return ("AttentionTextBrush", AccentOn(p.Base100, attention));
+        yield return ("OnWarningBrush", ColorMath.Readable(p.Warning, Colors.White, Color.FromRgb(0x1F, 0x1A, 0x12), 3.0));
 
         // Semi control tokens that Semi hardcodes or points to white/black: overridden app-wide
         yield return ("ButtonSolidForeground", onPrimary);

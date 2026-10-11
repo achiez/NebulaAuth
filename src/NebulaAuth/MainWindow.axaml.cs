@@ -49,13 +49,12 @@ public partial class MainWindow : Window
         InitializeInput();
         ViewModel!.PropertyChanged += ViewModel_OnPropertyChanged;
         Closing += MainWindow_OnClosing;
-#if DEBUG
-        ShowStyleGalleryIfRequested();
-        ShowMainDemoIfRequested();
-#endif
+        DebugOnCreated();
     }
 
     private MainVM? ViewModel => DataContext as MainVM;
+
+    partial void DebugOnCreated();
 
     private static void MainWindow_OnClosing(object? sender, WindowClosingEventArgs e)
     {

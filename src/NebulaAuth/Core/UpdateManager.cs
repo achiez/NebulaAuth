@@ -124,8 +124,8 @@ public static partial class UpdateManager
         StartDebugHooks();
         Status.InstalledVersion = InstalledVersionText;
         Status.CanInstall = IsInstalled;
-        Status.ReleasePageUrl = UpdateTrust.RELEASES_PAGE_URL;
-        Status.ManualUrl = UpdateTrust.RELEASES_PAGE_URL;
+        Status.ReleasePageUrl = LinksManager.ReleasesUrl;
+        Status.ManualUrl = LinksManager.ReleasesUrl;
         if (Locator is { } locator)
         {
             locator.AddLogger(new NLogVelopackLogger());
@@ -148,7 +148,7 @@ public static partial class UpdateManager
     }
 
     /// <summary>
-    ///     Test hooks of debug builds (UpdateManager.Debug.cs); removed from release builds.
+    ///     Hooks of Debug builds; removed from Release builds.
     /// </summary>
     static partial void StartDebugHooks();
 
@@ -322,7 +322,7 @@ public static partial class UpdateManager
         Status.Progress = 0;
         Status.AvailableVersion = result.Version;
         Status.DownloadSize = result.Size;
-        Status.ReleasePageUrl = result.Metadata?.ReleaseUrl ?? UpdateTrust.RELEASES_PAGE_URL;
+        Status.ReleasePageUrl = result.Metadata?.ReleaseUrl ?? LinksManager.ReleasesUrl;
         Status.ManualUrl = result.Metadata?.ManualUrl ?? Status.ReleasePageUrl;
         if (result.Version != null)
         {
@@ -579,7 +579,7 @@ public static partial class UpdateManager
         Status.FailureDetail = detail;
         if (manualUrl != null) Status.ManualUrl = manualUrl;
         if (releasePageUrl != null) Status.ReleasePageUrl = releasePageUrl;
-        Status.ManualUrl ??= UpdateTrust.RELEASES_PAGE_URL;
+        Status.ManualUrl ??= LinksManager.ReleasesUrl;
         Status.State = UpdateState.Failed;
     }
 
@@ -615,14 +615,14 @@ public static partial class UpdateManager
         return code is 0x27 or 0x70 || (!OperatingSystem.IsWindows() && code == 28);
     }
 
+    static partial void ApplyDebugFeedOverrides(ref string baseUrl, ref string key, ref bool allowHttp);
+
     private static SignedFeedSource CreateSource()
     {
         var baseUrl = UpdateTrust.FEED_BASE_URL;
         var key = UpdateTrust.FEED_PUBLIC_KEY_PEM;
         var allowHttp = false;
-#if DEBUG
         ApplyDebugFeedOverrides(ref baseUrl, ref key, ref allowHttp);
-#endif
         if (!SignedFeedSource.IsKeyConfigured(key))
         {
             throw new UpdateException(UpdateFailureKind.Signature,

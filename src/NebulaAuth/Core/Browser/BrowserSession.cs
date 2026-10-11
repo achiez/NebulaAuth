@@ -547,13 +547,13 @@ internal sealed partial class BrowserSession
         }
     }
 
-    /// <summary>Debug builds: simulated engine start failure (BrowserSession.Debug.cs).</summary>
+    /// <summary>Debug builds: simulated engine start failure.</summary>
     partial void DebugSimulateStartFailure(int attempt);
 
-    /// <summary>Debug builds: another expected account, as if Steam showed a different one (BrowserSession.Debug.cs).</summary>
+    /// <summary>Debug builds: another expected account, as if Steam showed a different one.</summary>
     static partial void DebugAdjustExpectedSteamId(ref ulong steamId);
 
-    /// <summary>Debug builds: shorter engine start timeout (BrowserSession.Debug.cs).</summary>
+    /// <summary>Debug builds: shorter engine start timeout.</summary>
     static partial void DebugAdjustStartTimeout(ref TimeSpan timeout);
 
     // Diagnostics of the last cleanup (log / debug harness)

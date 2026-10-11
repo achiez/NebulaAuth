@@ -1,0 +1,2264 @@
+{
+  "NebulaLink": {
+    "Cancel": {
+      "en": "Cancel",
+      "ru": "Отмена",
+      "uk": "Скасувати",
+      "zh": "取消",
+      "fr": "Annuler",
+      "es": "Cancelar",
+      "tr": "İptal",
+      "kk": "Бас тарту"
+    },
+    "RowLinked": {
+      "en": "Connected to Nebula Link",
+      "ru": "Подключён к Nebula Link",
+      "uk": "Підключено до Nebula Link",
+      "zh": "已连接到 Nebula Link",
+      "fr": "Connecté à Nebula Link",
+      "es": "Conectada a Nebula Link",
+      "tr": "Nebula Link'e bağlı",
+      "kk": "Nebula Link-ке қосылған"
+    },
+    "ContextMenu": {
+      "Connect": {
+        "en": "Connect to Nebula Link",
+        "ru": "Подключить к Nebula Link",
+        "uk": "Підключити до Nebula Link",
+        "zh": "连接到 Nebula Link",
+        "fr": "Connecter à Nebula Link",
+        "es": "Conectar a Nebula Link",
+        "tr": "Nebula Link'e bağla",
+        "kk": "Nebula Link-ке қосу"
+      },
+      "Disconnect": {
+        "en": "Disconnect from Nebula Link",
+        "ru": "Отключить от Nebula Link",
+        "uk": "Відключити від Nebula Link",
+        "zh": "从 Nebula Link 断开",
+        "fr": "Déconnecter de Nebula Link",
+        "es": "Desconectar de Nebula Link",
+        "tr": "Nebula Link'ten ayır",
+        "kk": "Nebula Link-тен ажырату"
+      }
+    },
+    "Header": {
+      "Pause": {
+        "en": "Pause",
+        "ru": "Приостановить",
+        "uk": "Призупинити",
+        "zh": "暂停",
+        "fr": "Suspendre",
+        "es": "Pausar",
+        "tr": "Duraklat",
+        "kk": "Тоқтата тұру"
+      },
+      "Resume": {
+        "en": "Resume",
+        "ru": "Возобновить",
+        "uk": "Відновити",
+        "zh": "恢复",
+        "fr": "Reprendre",
+        "es": "Reanudar",
+        "tr": "Devam et",
+        "kk": "Жалғастыру"
+      },
+      "Unlink": {
+        "en": "Unlink this computer",
+        "ru": "Отвязать этот компьютер",
+        "uk": "Відв'язати цей комп'ютер",
+        "zh": "解绑此电脑",
+        "fr": "Délier cet ordinateur",
+        "es": "Desvincular este equipo",
+        "tr": "Bu bilgisayarın bağlantısını kaldır",
+        "kk": "Бұл компьютерді ажырату"
+      },
+      "Menu": {
+        "en": "More actions",
+        "ru": "Ещё действия",
+        "uk": "Інші дії",
+        "zh": "更多操作",
+        "fr": "Plus d'actions",
+        "es": "Más acciones",
+        "tr": "Diğer işlemler",
+        "kk": "Басқа әрекеттер"
+      },
+      "Expand": {
+        "en": "Expand",
+        "ru": "Развернуть",
+        "uk": "Розгорнути",
+        "zh": "展开",
+        "fr": "Agrandir",
+        "es": "Ampliar",
+        "tr": "Genişlet",
+        "kk": "Кеңейту"
+      },
+      "Collapse": {
+        "en": "Collapse",
+        "ru": "Свернуть",
+        "uk": "Згорнути",
+        "zh": "收起",
+        "fr": "Réduire",
+        "es": "Reducir",
+        "tr": "Daralt",
+        "kk": "Жию"
+      }
+    },
+    "Verify": {
+      "Title": {
+        "en": "Check the account",
+        "ru": "Проверьте аккаунт",
+        "uk": "Перевірте акаунт",
+        "zh": "核对账户",
+        "fr": "Vérifiez le compte",
+        "es": "Comprueba la cuenta",
+        "tr": "Hesabı kontrol edin",
+        "kk": "Аккаунтты тексеріңіз"
+      },
+      "Text": {
+        "en": "Continue only if this is your Achiefy account.",
+        "ru": "Продолжайте, только если это ваш аккаунт Achiefy.",
+        "uk": "Продовжуйте, лише якщо це ваш акаунт Achiefy.",
+        "zh": "仅当这是你的 Achiefy 账户时才继续。",
+        "fr": "Continuez uniquement s'il s'agit de votre compte Achiefy.",
+        "es": "Continúa solo si es tu cuenta de Achiefy.",
+        "tr": "Yalnızca bu sizin Achiefy hesabınızsa devam edin.",
+        "kk": "Бұл сіздің Achiefy аккаунтыңыз болса ғана жалғастырыңыз."
+      },
+      "Account": {
+        "en": "Account",
+        "ru": "Аккаунт",
+        "uk": "Акаунт",
+        "zh": "账户",
+        "fr": "Compte",
+        "es": "Cuenta",
+        "tr": "Hesap",
+        "kk": "Аккаунт"
+      },
+      "Workspace": {
+        "en": "Workspace",
+        "ru": "Рабочее пространство",
+        "uk": "Робочий простір",
+        "zh": "工作区",
+        "fr": "Espace de travail",
+        "es": "Espacio de trabajo",
+        "tr": "Çalışma alanı",
+        "kk": "Жұмыс кеңістігі"
+      },
+      "Continue": {
+        "en": "Continue",
+        "ru": "Продолжить",
+        "uk": "Продовжити",
+        "zh": "继续",
+        "fr": "Continuer",
+        "es": "Continuar",
+        "tr": "Devam",
+        "kk": "Жалғастыру"
+      },
+      "Server": {
+        "en": "Server",
+        "ru": "Сервер",
+        "uk": "Сервер",
+        "zh": "服务器",
+        "fr": "Serveur",
+        "es": "Servidor",
+        "tr": "Sunucu",
+        "kk": "Сервер"
+      }
+    },
+    "Waiting": {
+      "Title": {
+        "en": "Approve in Achiefy",
+        "ru": "Подтвердите в Achiefy",
+        "uk": "Підтвердіть в Achiefy",
+        "zh": "在 Achiefy 中确认",
+        "fr": "Approuvez dans Achiefy",
+        "es": "Aprueba en Achiefy",
+        "tr": "Achiefy'de onaylayın",
+        "kk": "Achiefy-де растаңыз"
+      },
+      "Text": {
+        "en": "Confirm on the Achiefy page where you created the link.",
+        "ru": "Подтвердите на странице Achiefy, где создали ссылку.",
+        "uk": "Підтвердьте на сторінці Achiefy, де створили посилання.",
+        "zh": "请在创建链接的 Achiefy 页面上确认。",
+        "fr": "Confirmez sur la page Achiefy où vous avez créé le lien.",
+        "es": "Confirma en la página de Achiefy donde creaste el enlace.",
+        "tr": "Bağlantıyı oluşturduğunuz Achiefy sayfasında onaylayın.",
+        "kk": "Сілтемені жасаған Achiefy бетінде растаңыз."
+      }
+    },
+    "Success": {
+      "Title": {
+        "en": "Nebula Link is connected",
+        "ru": "Nebula Link подключён",
+        "uk": "Nebula Link підключено",
+        "zh": "Nebula Link 已连接",
+        "fr": "Nebula Link est connecté",
+        "es": "Nebula Link está conectado",
+        "tr": "Nebula Link bağlandı",
+        "kk": "Nebula Link қосылды"
+      },
+      "Text": {
+        "en": "Now choose the accounts.",
+        "ru": "Теперь выберите аккаунты.",
+        "uk": "Тепер виберіть акаунти.",
+        "zh": "现在选择账户。",
+        "fr": "Choisissez maintenant les comptes.",
+        "es": "Ahora elige las cuentas.",
+        "tr": "Şimdi hesapları seçin.",
+        "kk": "Енді аккаунттарды таңдаңыз."
+      }
+    },
+    "PairingError": {
+      "CodeInvalid": {
+        "en": "The link is invalid or used. Create a new one.",
+        "ru": "Ссылка недействительна. Создайте новую.",
+        "uk": "Посилання недійсне. Створіть нове.",
+        "zh": "链接无效或已使用。请创建新链接。",
+        "fr": "Lien invalide ou déjà utilisé. Créez-en un nouveau.",
+        "es": "El enlace no es válido o ya se usó. Crea uno nuevo.",
+        "tr": "Bağlantı geçersiz veya kullanılmış. Yenisini oluşturun.",
+        "kk": "Сілтеме жарамсыз. Жаңасын жасаңыз."
+      },
+      "RateLimited": {
+        "en": "Too many attempts. Try again in a few minutes.",
+        "ru": "Слишком много попыток. Повторите через несколько минут.",
+        "uk": "Забагато спроб. Повторіть за кілька хвилин.",
+        "zh": "尝试次数过多。请几分钟后重试。",
+        "fr": "Trop de tentatives. Réessayez dans quelques minutes.",
+        "es": "Demasiados intentos. Vuelve a intentarlo en unos minutos.",
+        "tr": "Çok fazla deneme. Birkaç dakika sonra tekrar deneyin.",
+        "kk": "Тым көп әрекет. Бірнеше минуттан кейін қайталаңыз."
+      },
+      "Redirect": {
+        "en": "Unexpected server response. Pairing stopped.",
+        "ru": "Неожиданный ответ сервера. Подключение остановлено.",
+        "uk": "Неочікувана відповідь сервера. Підключення зупинено.",
+        "zh": "服务器响应异常。连接已停止。",
+        "fr": "Réponse inattendue du serveur. Connexion arrêtée.",
+        "es": "Respuesta inesperada del servidor. Conexión detenida.",
+        "tr": "Beklenmeyen sunucu yanıtı. Eşleştirme durduruldu.",
+        "kk": "Сервердің күтпеген жауабы. Қосылу тоқтатылды."
+      },
+      "OriginMismatch": {
+        "en": "The server reported another address. Pairing stopped.",
+        "ru": "Сервер сообщил другой адрес. Подключение остановлено.",
+        "uk": "Сервер повідомив іншу адресу. Підключення зупинено.",
+        "zh": "服务器报告了其他地址。连接已停止。",
+        "fr": "Le serveur a indiqué une autre adresse. Connexion arrêtée.",
+        "es": "El servidor indicó otra dirección. Conexión detenida.",
+        "tr": "Sunucu başka bir adres bildirdi. Eşleştirme durduruldu.",
+        "kk": "Сервер басқа мекенжай хабарлады. Қосылу тоқтатылды."
+      },
+      "Incompatible": {
+        "en": "Update NebulaAuth.",
+        "ru": "Обновите NebulaAuth.",
+        "uk": "Оновіть NebulaAuth.",
+        "zh": "请更新 NebulaAuth。",
+        "fr": "Mettez à jour NebulaAuth.",
+        "es": "Actualiza NebulaAuth.",
+        "tr": "NebulaAuth'u güncelleyin.",
+        "kk": "NebulaAuth-ты жаңартыңыз."
+      },
+      "Network": {
+        "en": "Achiefy is not reachable. Check the internet.",
+        "ru": "Achiefy недоступен. Проверьте интернет.",
+        "uk": "Achiefy недоступний. Перевірте інтернет.",
+        "zh": "无法访问 Achiefy。请检查网络。",
+        "fr": "Achiefy est injoignable. Vérifiez Internet.",
+        "es": "Achiefy no está disponible. Revisa internet.",
+        "tr": "Achiefy'ye ulaşılamıyor. İnterneti kontrol edin.",
+        "kk": "Achiefy қолжетімсіз. Интернетті тексеріңіз."
+      },
+      "Unknown": {
+        "en": "Couldn't connect. Try again later.",
+        "ru": "Не удалось подключиться. Попробуйте позже.",
+        "uk": "Не вдалося підключитися. Спробуйте пізніше.",
+        "zh": "连接失败。请稍后重试。",
+        "fr": "Connexion impossible. Réessayez plus tard.",
+        "es": "No se pudo conectar. Inténtalo más tarde.",
+        "tr": "Bağlanılamadı. Daha sonra tekrar deneyin.",
+        "kk": "Қосылу мүмкін болмады. Кейінірек қайталаңыз."
+      },
+      "Rejected": {
+        "en": "The connection was rejected in Achiefy.",
+        "ru": "Подключение отклонено в Achiefy.",
+        "uk": "Підключення відхилено в Achiefy.",
+        "zh": "连接已在 Achiefy 中被拒绝。",
+        "fr": "La connexion a été refusée dans Achiefy.",
+        "es": "La conexión fue rechazada en Achiefy.",
+        "tr": "Bağlantı Achiefy'de reddedildi.",
+        "kk": "Қосылу Achiefy-де қабылданбады."
+      },
+      "Expired": {
+        "en": "Time is up. Create a new link.",
+        "ru": "Время вышло. Создайте новую ссылку.",
+        "uk": "Час вийшов. Створіть нове посилання.",
+        "zh": "已超时。请创建新链接。",
+        "fr": "Délai dépassé. Créez un nouveau lien.",
+        "es": "Se acabó el tiempo. Crea un nuevo enlace.",
+        "tr": "Süre doldu. Yeni bir bağlantı oluşturun.",
+        "kk": "Уақыт бітті. Жаңа сілтеме жасаңыз."
+      },
+      "Cancelled": {
+        "en": "Cancelled in Achiefy.",
+        "ru": "Отменено в Achiefy.",
+        "uk": "Скасовано в Achiefy.",
+        "zh": "已在 Achiefy 中取消。",
+        "fr": "Annulé dans Achiefy.",
+        "es": "Cancelado en Achiefy.",
+        "tr": "Achiefy'de iptal edildi.",
+        "kk": "Achiefy-де бас тартылды."
+      },
+      "StoreFailed": {
+        "en": "Couldn't save the key. Turn on encryption or check the keyring.",
+        "ru": "Не удалось сохранить ключ. Включите шифрование или проверьте связку ключей.",
+        "uk": "Не вдалося зберегти ключ. Увімкніть шифрування або перевірте сховище ключів.",
+        "zh": "无法保存密钥。请启用加密或检查密钥环。",
+        "fr": "Impossible d'enregistrer la clé. Activez le chiffrement ou vérifiez le trousseau.",
+        "es": "No se pudo guardar la clave. Activa el cifrado o revisa el llavero.",
+        "tr": "Anahtar kaydedilemedi. Şifrelemeyi açın veya anahtarlığı kontrol edin.",
+        "kk": "Кілт сақталмады. Шифрлауды қосыңыз немесе кілттер қоймасын тексеріңіз."
+      },
+      "LinkInvalid": {
+        "en": "Not a Nebula Link link. Copy the whole link from Achiefy.",
+        "ru": "Это не ссылка Nebula Link. Скопируйте её из Achiefy целиком.",
+        "uk": "Це не посилання Nebula Link. Скопіюйте його з Achiefy повністю.",
+        "zh": "这不是 Nebula Link 链接。请从 Achiefy 复制完整链接。",
+        "fr": "Ce n'est pas un lien Nebula Link. Copiez le lien complet depuis Achiefy.",
+        "es": "No es un enlace de Nebula Link. Copia el enlace completo desde Achiefy.",
+        "tr": "Bu bir Nebula Link bağlantısı değil. Bağlantının tamamını Achiefy'den kopyalayın.",
+        "kk": "Бұл Nebula Link сілтемесі емес. Оны Achiefy-ден толық көшіріңіз."
+      },
+      "OriginNotAllowed": {
+        "en": "Unknown server. Only official Achiefy addresses are allowed.",
+        "ru": "Неизвестный сервер. Разрешены только официальные адреса Achiefy.",
+        "uk": "Невідомий сервер. Дозволені лише офіційні адреси Achiefy.",
+        "zh": "未知服务器。仅允许官方 Achiefy 地址。",
+        "fr": "Serveur inconnu. Seules les adresses officielles d'Achiefy sont autorisées.",
+        "es": "Servidor desconocido. Solo se permiten direcciones oficiales de Achiefy.",
+        "tr": "Bilinmeyen sunucu. Yalnızca resmi Achiefy adreslerine izin verilir.",
+        "kk": "Белгісіз сервер. Тек ресми Achiefy мекенжайларына рұқсат етіледі."
+      },
+      "NoDefaultOrigin": {
+        "en": "Paste the whole pairing link, not only the code.",
+        "ru": "Вставьте ссылку целиком, а не только код.",
+        "uk": "Вставте посилання повністю, а не лише код.",
+        "zh": "请粘贴完整的配对链接，而不仅是代码。",
+        "fr": "Collez le lien complet, pas seulement le code.",
+        "es": "Pega el enlace completo, no solo el código.",
+        "tr": "Yalnızca kodu değil, bağlantının tamamını yapıştırın.",
+        "kk": "Тек кодты емес, сілтемені толық қойыңыз."
+      }
+    },
+    "StatePage": {
+      "RevokedTitle": {
+        "en": "The link was revoked",
+        "ru": "Связь отозвана",
+        "uk": "Зв'язок відкликано",
+        "zh": "绑定已被撤销",
+        "fr": "Le lien a été révoqué",
+        "es": "El vínculo fue revocado",
+        "tr": "Bağlantı iptal edildi",
+        "kk": "Байланыс қайтарып алынды"
+      },
+      "RevokedText": {
+        "en": "The access key was deleted from this computer.",
+        "ru": "Ключ доступа удалён с этого компьютера.",
+        "uk": "Ключ доступу видалено з цього комп'ютера.",
+        "zh": "访问密钥已从本机删除。",
+        "fr": "La clé d'accès a été supprimée de cet ordinateur.",
+        "es": "La clave de acceso se eliminó de este equipo.",
+        "tr": "Erişim anahtarı bu bilgisayardan silindi.",
+        "kk": "Кіру кілті осы компьютерден жойылды."
+      },
+      "ReplacedTitle": {
+        "en": "Used by another copy",
+        "ru": "Используется другой копией",
+        "uk": "Використовується іншою копією",
+        "zh": "正被另一个副本使用",
+        "fr": "Utilisé par une autre copie",
+        "es": "En uso por otra copia",
+        "tr": "Başka bir kopya kullanıyor",
+        "kk": "Басқа көшірме қолдануда"
+      },
+      "ReplacedText": {
+        "en": "Only one copy can be connected.",
+        "ru": "Подключена может быть только одна копия.",
+        "uk": "Підключена може бути лише одна копія.",
+        "zh": "只能连接一个副本。",
+        "fr": "Une seule copie peut être connectée.",
+        "es": "Solo se puede conectar una copia.",
+        "tr": "Yalnızca bir kopya bağlanabilir.",
+        "kk": "Тек бір көшірме қосыла алады."
+      },
+      "IncompatibleTitle": {
+        "en": "Update needed",
+        "ru": "Нужно обновление",
+        "uk": "Потрібне оновлення",
+        "zh": "需要更新",
+        "fr": "Mise à jour nécessaire",
+        "es": "Se necesita una actualización",
+        "tr": "Güncelleme gerekli",
+        "kk": "Жаңарту қажет"
+      },
+      "IncompatibleNewer": {
+        "en": "Update NebulaAuth.",
+        "ru": "Обновите NebulaAuth.",
+        "uk": "Оновіть NebulaAuth.",
+        "zh": "请更新 NebulaAuth。",
+        "fr": "Mettez à jour NebulaAuth.",
+        "es": "Actualiza NebulaAuth.",
+        "tr": "NebulaAuth'u güncelleyin.",
+        "kk": "NebulaAuth-ты жаңартыңыз."
+      },
+      "IncompatibleOlder": {
+        "en": "Achiefy doesn't support this version yet. Retrying every 6 hours.",
+        "ru": "Achiefy пока не поддерживает эту версию. Повтор каждые 6 часов.",
+        "uk": "Achiefy поки не підтримує цю версію. Повтор кожні 6 годин.",
+        "zh": "Achiefy 尚不支持此版本。每 6 小时重试一次。",
+        "fr": "Achiefy ne prend pas encore en charge cette version. Nouvel essai toutes les 6 heures.",
+        "es": "Achiefy aún no admite esta versión. Se reintenta cada 6 horas.",
+        "tr": "Achiefy bu sürümü henüz desteklemiyor. 6 saatte bir yeniden denenir.",
+        "kk": "Achiefy бұл нұсқаны әзірге қолдамайды. Әр 6 сағат сайын қайталанады."
+      },
+      "CredentialUnavailableTitle": {
+        "en": "Access key unavailable",
+        "ru": "Ключ доступа недоступен",
+        "uk": "Ключ доступу недоступний",
+        "zh": "访问密钥不可用",
+        "fr": "Clé d'accès indisponible",
+        "es": "Clave de acceso no disponible",
+        "tr": "Erişim anahtarı kullanılamıyor",
+        "kk": "Кіру кілті қолжетімсіз"
+      },
+      "CredentialUnavailableText": {
+        "en": "Secure storage is unavailable. Turn encryption back on or unlink.",
+        "ru": "Защищённое хранилище недоступно. Включите шифрование или отвяжите компьютер.",
+        "uk": "Захищене сховище недоступне. Увімкніть шифрування або відв'яжіть комп'ютер.",
+        "zh": "安全存储不可用。请重新启用加密或解除绑定。",
+        "fr": "Stockage sécurisé indisponible. Réactivez le chiffrement ou dissociez.",
+        "es": "El almacenamiento seguro no está disponible. Reactiva el cifrado o desvincula.",
+        "tr": "Güvenli depolama kullanılamıyor. Şifrelemeyi tekrar açın veya bağlantıyı kaldırın.",
+        "kk": "Қорғалған қойма қолжетімсіз. Шифрлауды қайта қосыңыз немесе байланысты ажыратыңыз."
+      },
+      "CredentialRejectedTitle": {
+        "en": "Access key refused",
+        "ru": "Ключ доступа не принят",
+        "uk": "Ключ доступу не прийнято",
+        "zh": "访问密钥被拒绝",
+        "fr": "Clé d'accès refusée",
+        "es": "Clave de acceso rechazada",
+        "tr": "Erişim anahtarı reddedildi",
+        "kk": "Кіру кілті қабылданбады"
+      },
+      "CredentialRejectedText": {
+        "en": "The link was probably revoked while NebulaAuth was offline.",
+        "ru": "Вероятно, связь отозвали, пока NebulaAuth был не в сети.",
+        "uk": "Ймовірно, зв'язок відкликали, поки NebulaAuth був не в мережі.",
+        "zh": "链接可能在 NebulaAuth 离线时被撤销。",
+        "fr": "Le lien a sans doute été révoqué pendant que NebulaAuth était hors ligne.",
+        "es": "Probablemente el vínculo se revocó mientras NebulaAuth estaba sin conexión.",
+        "tr": "Bağlantı büyük olasılıkla NebulaAuth çevrimdışıyken iptal edildi.",
+        "kk": "Байланыс NebulaAuth желіден тыс кезде қайтарылған болуы мүмкін."
+      },
+      "ReconnectHere": {
+        "en": "Use here",
+        "ru": "Использовать здесь",
+        "uk": "Використовувати тут",
+        "zh": "在此使用",
+        "fr": "Utiliser ici",
+        "es": "Usar aquí",
+        "tr": "Burada kullan",
+        "kk": "Осында пайдалану"
+      },
+      "TryAgain": {
+        "en": "Try again",
+        "ru": "Повторить",
+        "uk": "Повторити",
+        "zh": "重试",
+        "fr": "Réessayer",
+        "es": "Reintentar",
+        "tr": "Tekrar dene",
+        "kk": "Қайталау"
+      },
+      "PairAgain": {
+        "en": "Connect again",
+        "ru": "Подключить заново",
+        "uk": "Підключити знову",
+        "zh": "重新连接",
+        "fr": "Reconnecter",
+        "es": "Volver a conectar",
+        "tr": "Yeniden bağla",
+        "kk": "Қайта қосу"
+      }
+    },
+    "Reason": {
+      "revoked_by_user": {
+        "en": "Revoked in Achiefy.",
+        "ru": "Отозвана в Achiefy.",
+        "uk": "Відкликано в Achiefy.",
+        "zh": "已在 Achiefy 中撤销。",
+        "fr": "Révoqué dans Achiefy.",
+        "es": "Revocado en Achiefy.",
+        "tr": "Achiefy'de iptal edildi.",
+        "kk": "Achiefy-де қайтарылды."
+      },
+      "replaced_by_new_pairing": {
+        "en": "Replaced by a new pairing.",
+        "ru": "Заменена новым подключением.",
+        "uk": "Замінено новим підключенням.",
+        "zh": "已被新的连接取代。",
+        "fr": "Remplacé par une nouvelle connexion.",
+        "es": "Reemplazado por una nueva conexión.",
+        "tr": "Yeni bir eşleştirmeyle değiştirildi.",
+        "kk": "Жаңа қосылыммен ауыстырылды."
+      },
+      "unlinked_by_device": {
+        "en": "Unlinked on this computer.",
+        "ru": "Отвязана на этом компьютере.",
+        "uk": "Відв'язано на цьому комп'ютері.",
+        "zh": "已在本机解除绑定。",
+        "fr": "Dissocié sur cet ordinateur.",
+        "es": "Desvinculado en este equipo.",
+        "tr": "Bu bilgisayarda bağlantı kaldırıldı.",
+        "kk": "Осы компьютерде ажыратылды."
+      },
+      "access_lost": {
+        "en": "Access to Achiefy was lost.",
+        "ru": "Доступ к Achiefy потерян.",
+        "uk": "Доступ до Achiefy втрачено.",
+        "zh": "已失去对 Achiefy 的访问权限。",
+        "fr": "Accès à Achiefy perdu.",
+        "es": "Se perdió el acceso a Achiefy.",
+        "tr": "Achiefy erişimi kaybedildi.",
+        "kk": "Achiefy-ге қолжетімділік жоғалды."
+      },
+      "subscription_inactive": {
+        "en": "The subscription is not active.",
+        "ru": "Подписка не активна.",
+        "uk": "Підписка не активна.",
+        "zh": "订阅未激活。",
+        "fr": "L'abonnement n'est pas actif.",
+        "es": "La suscripción no está activa.",
+        "tr": "Abonelik etkin değil.",
+        "kk": "Жазылым белсенді емес."
+      },
+      "inactive": {
+        "en": "NebulaAuth was not connected for 90 days.",
+        "ru": "NebulaAuth не подключался 90 дней.",
+        "uk": "NebulaAuth не підключався 90 днів.",
+        "zh": "NebulaAuth 已 90 天未连接。",
+        "fr": "NebulaAuth ne s'est pas connecté depuis 90 jours.",
+        "es": "NebulaAuth no se conectó en 90 días.",
+        "tr": "NebulaAuth 90 gündür bağlanmadı.",
+        "kk": "NebulaAuth 90 күн қосылмады."
+      }
+    },
+    "State": {
+      "Disabled": {
+        "en": "Off",
+        "ru": "Выключено",
+        "uk": "Вимкнено",
+        "zh": "已关闭",
+        "fr": "Désactivé",
+        "es": "Desactivado",
+        "tr": "Kapalı",
+        "kk": "Өшірулі"
+      },
+      "Connecting": {
+        "en": "Connecting",
+        "ru": "Подключение",
+        "uk": "Підключення",
+        "zh": "正在连接",
+        "fr": "Connexion",
+        "es": "Conectando",
+        "tr": "Bağlanıyor",
+        "kk": "Қосылуда"
+      },
+      "Connected": {
+        "en": "Online",
+        "ru": "На связи",
+        "uk": "На зв'язку",
+        "zh": "在线",
+        "fr": "En ligne",
+        "es": "En línea",
+        "tr": "Çevrimiçi",
+        "kk": "Байланыста"
+      },
+      "Offline": {
+        "en": "No connection",
+        "ru": "Нет связи",
+        "uk": "Немає зв'язку",
+        "zh": "无连接",
+        "fr": "Pas de connexion",
+        "es": "Sin conexión",
+        "tr": "Bağlantı yok",
+        "kk": "Байланыс жоқ"
+      },
+      "Paused": {
+        "en": "Paused",
+        "ru": "Приостановлено",
+        "uk": "Призупинено",
+        "zh": "已暂停",
+        "fr": "En pause",
+        "es": "En pausa",
+        "tr": "Duraklatıldı",
+        "kk": "Тоқтатылған"
+      },
+      "Suspended": {
+        "en": "Access suspended",
+        "ru": "Доступ приостановлен",
+        "uk": "Доступ призупинено",
+        "zh": "访问已暂停",
+        "fr": "Accès suspendu",
+        "es": "Acceso suspendido",
+        "tr": "Erişim askıya alındı",
+        "kk": "Қолжетімділік тоқтатылған"
+      },
+      "Revoked": {
+        "en": "Revoked",
+        "ru": "Отозвано",
+        "uk": "Відкликано",
+        "zh": "已撤销",
+        "fr": "Révoqué",
+        "es": "Revocado",
+        "tr": "İptal edildi",
+        "kk": "Қайтарылды"
+      },
+      "Replaced": {
+        "en": "Used by another copy",
+        "ru": "Используется другой копией",
+        "uk": "Використовується іншою копією",
+        "zh": "正被另一个副本使用",
+        "fr": "Utilisé par une autre copie",
+        "es": "En uso por otra copia",
+        "tr": "Başka kopya kullanıyor",
+        "kk": "Басқа көшірме қолдануда"
+      },
+      "Incompatible": {
+        "en": "Update needed",
+        "ru": "Нужно обновление",
+        "uk": "Потрібне оновлення",
+        "zh": "需要更新",
+        "fr": "Mise à jour nécessaire",
+        "es": "Se necesita actualizar",
+        "tr": "Güncelleme gerekli",
+        "kk": "Жаңарту қажет"
+      },
+      "CredentialUnavailable": {
+        "en": "Access key unavailable",
+        "ru": "Ключ доступа недоступен",
+        "uk": "Ключ доступу недоступний",
+        "zh": "访问密钥不可用",
+        "fr": "Clé d'accès indisponible",
+        "es": "Clave no disponible",
+        "tr": "Anahtar kullanılamıyor",
+        "kk": "Кіру кілті қолжетімсіз"
+      },
+      "CredentialRejected": {
+        "en": "Access key refused",
+        "ru": "Ключ доступа не принят",
+        "uk": "Ключ доступу не прийнято",
+        "zh": "访问密钥被拒绝",
+        "fr": "Clé d'accès refusée",
+        "es": "Clave rechazada",
+        "tr": "Anahtar reddedildi",
+        "kk": "Кіру кілті қабылданбады"
+      }
+    },
+    "Footer": {
+      "Problems": {
+        "en": "{0} account needs attention|{0} accounts need attention",
+        "ru": "{0} аккаунт требует внимания|{0} аккаунта требуют внимания|{0} аккаунтов требуют внимания",
+        "uk": "{0} акаунт потребує уваги|{0} акаунти потребують уваги|{0} акаунтів потребують уваги",
+        "zh": "{0} 个账户需要处理",
+        "fr": "{0} compte demande votre attention|{0} comptes demandent votre attention",
+        "es": "{0} cuenta necesita atención|{0} cuentas necesitan atención",
+        "tr": "{0} hesap ilgi bekliyor",
+        "kk": "{0} аккаунт назар аударуды қажет етеді"
+      }
+    },
+    "Manage": {
+      "AccountsTab": {
+        "en": "Accounts",
+        "ru": "Аккаунты",
+        "uk": "Акаунти",
+        "zh": "账户",
+        "fr": "Comptes",
+        "es": "Cuentas",
+        "tr": "Hesaplar",
+        "kk": "Аккаунттар"
+      },
+      "HistoryTab": {
+        "en": "Request history",
+        "ru": "История запросов",
+        "uk": "Історія запитів",
+        "zh": "请求历史",
+        "fr": "Historique des demandes",
+        "es": "Historial de solicitudes",
+        "tr": "İstek geçmişi",
+        "kk": "Сұраулар тарихы"
+      },
+      "Search": {
+        "en": "Search by login or SteamID",
+        "ru": "Поиск по логину или SteamID",
+        "uk": "Пошук за логіном або SteamID",
+        "zh": "按登录名或 SteamID 搜索",
+        "fr": "Rechercher par identifiant ou SteamID",
+        "es": "Buscar por usuario o SteamID",
+        "tr": "Kullanıcı adı veya SteamID ile ara",
+        "kk": "Логин немесе SteamID бойынша іздеу"
+      },
+      "Counts": {
+        "en": "{0} of {1} connected",
+        "ru": "Подключено {0} из {1}",
+        "uk": "Підключено {0} з {1}",
+        "zh": "已连接 {0}/{1}",
+        "fr": "{0} sur {1} connectés",
+        "es": "{0} de {1} conectadas",
+        "tr": "{1} hesaptan {0} bağlı",
+        "kk": "{1} ішінен {0} қосылған"
+      },
+      "Selected": {
+        "en": "Selected: {0}",
+        "ru": "Выбрано: {0}",
+        "uk": "Вибрано: {0}",
+        "zh": "已选：{0}",
+        "fr": "Sélectionnés : {0}",
+        "es": "Seleccionadas: {0}",
+        "tr": "Seçili: {0}",
+        "kk": "Таңдалды: {0}"
+      },
+      "ConnectSelected": {
+        "en": "Connect ({0})",
+        "ru": "Подключить ({0})",
+        "uk": "Підключити ({0})",
+        "zh": "连接 ({0})",
+        "fr": "Connecter ({0})",
+        "es": "Conectar ({0})",
+        "tr": "Bağla ({0})",
+        "kk": "Қосу ({0})"
+      },
+      "DisconnectSelected": {
+        "en": "Disconnect ({0})",
+        "ru": "Отключить ({0})",
+        "uk": "Відключити ({0})",
+        "zh": "断开 ({0})",
+        "fr": "Déconnecter ({0})",
+        "es": "Desconectar ({0})",
+        "tr": "Ayır ({0})",
+        "kk": "Ажырату ({0})"
+      },
+      "ChangePermissions": {
+        "en": "Permissions ({0})",
+        "ru": "Разрешения ({0})",
+        "uk": "Дозволи ({0})",
+        "zh": "权限 ({0})",
+        "fr": "Autorisations ({0})",
+        "es": "Permisos ({0})",
+        "tr": "İzinler ({0})",
+        "kk": "Рұқсаттар ({0})"
+      },
+      "ConnectTitle": {
+        "en": "Connect {0} account|Connect {0} accounts",
+        "ru": "Подключить {0} аккаунт|Подключить {0} аккаунта|Подключить {0} аккаунтов",
+        "uk": "Підключити {0} акаунт|Підключити {0} акаунти|Підключити {0} акаунтів",
+        "zh": "连接 {0} 个账户",
+        "fr": "Connecter {0} compte|Connecter {0} comptes",
+        "es": "Conectar {0} cuenta|Conectar {0} cuentas",
+        "tr": "{0} hesabı bağla",
+        "kk": "{0} аккаунтты қосу"
+      },
+      "DisconnectTitle": {
+        "en": "Disconnect {0} account|Disconnect {0} accounts",
+        "ru": "Отключить {0} аккаунт|Отключить {0} аккаунта|Отключить {0} аккаунтов",
+        "uk": "Відключити {0} акаунт|Відключити {0} акаунти|Відключити {0} акаунтів",
+        "zh": "断开 {0} 个账户",
+        "fr": "Déconnecter {0} compte|Déconnecter {0} comptes",
+        "es": "Desconectar {0} cuenta|Desconectar {0} cuentas",
+        "tr": "{0} hesabın bağlantısını kes",
+        "kk": "{0} аккаунтты ажырату"
+      },
+      "PermissionsTitle": {
+        "en": "Permissions of {0} account|Permissions of {0} accounts",
+        "ru": "Разрешения {0} аккаунта|Разрешения {0} аккаунтов|Разрешения {0} аккаунтов",
+        "uk": "Дозволи {0} акаунта|Дозволи {0} акаунтів|Дозволи {0} акаунтів",
+        "zh": "{0} 个账户的权限",
+        "fr": "Autorisations de {0} compte|Autorisations de {0} comptes",
+        "es": "Permisos de {0} cuenta|Permisos de {0} cuentas",
+        "tr": "{0} hesabın izinleri",
+        "kk": "{0} аккаунттың рұқсаттары"
+      },
+      "PausedHint": {
+        "en": "Achiefy requests are refused.",
+        "ru": "Запросы Achiefy отклоняются.",
+        "uk": "Запити Achiefy відхиляються.",
+        "zh": "Achiefy 的请求会被拒绝。",
+        "fr": "Les demandes d'Achiefy sont refusées.",
+        "es": "Las solicitudes de Achiefy se rechazan.",
+        "tr": "Achiefy istekleri reddediliyor.",
+        "kk": "Achiefy сұраулары қабылданбайды."
+      },
+      "OfflineHint": {
+        "en": "No connection: accounts can't be changed.",
+        "ru": "Нет связи: аккаунты не изменить.",
+        "uk": "Немає зв'язку: акаунти не змінити.",
+        "zh": "无连接：无法更改账户。",
+        "fr": "Pas de connexion : impossible de modifier les comptes.",
+        "es": "Sin conexión: no se pueden cambiar las cuentas.",
+        "tr": "Bağlantı yok: hesaplar değiştirilemez.",
+        "kk": "Байланыс жоқ: аккаунттарды өзгерту мүмкін емес."
+      },
+      "Loading": {
+        "en": "Loading…",
+        "ru": "Загрузка…",
+        "uk": "Завантаження…",
+        "zh": "正在加载…",
+        "fr": "Chargement…",
+        "es": "Cargando…",
+        "tr": "Yükleniyor…",
+        "kk": "Жүктелуде…"
+      },
+      "ColStatus": {
+        "en": "Status",
+        "ru": "Состояние",
+        "uk": "Стан",
+        "zh": "状态",
+        "fr": "État",
+        "es": "Estado",
+        "tr": "Durum",
+        "kk": "Күйі"
+      },
+      "ColLast": {
+        "en": "Activity",
+        "ru": "Активность",
+        "uk": "Активність",
+        "zh": "最近活动",
+        "fr": "Activité",
+        "es": "Actividad",
+        "tr": "Etkinlik",
+        "kk": "Белсенділік"
+      },
+      "Empty": {
+        "en": "Nothing found.",
+        "ru": "Ничего не найдено.",
+        "uk": "Нічого не знайдено.",
+        "zh": "未找到。",
+        "fr": "Aucun résultat.",
+        "es": "No se encontró nada.",
+        "tr": "Hiçbir şey bulunamadı.",
+        "kk": "Ештеңе табылмады."
+      },
+      "Back": {
+        "en": "Back to the list",
+        "ru": "Назад к списку",
+        "uk": "Назад до списку",
+        "zh": "返回列表",
+        "fr": "Retour à la liste",
+        "es": "Volver a la lista",
+        "tr": "Listeye dön",
+        "kk": "Тізімге оралу"
+      },
+      "SelectRow": {
+        "en": "Select an account.",
+        "ru": "Выберите аккаунт.",
+        "uk": "Виберіть акаунт.",
+        "zh": "请选择账户。",
+        "fr": "Sélectionnez un compte.",
+        "es": "Selecciona una cuenta.",
+        "tr": "Bir hesap seçin.",
+        "kk": "Аккаунтты таңдаңыз."
+      },
+      "PermissionsSaved": {
+        "en": "Permissions saved: {0}",
+        "ru": "Разрешения сохранены: {0}",
+        "uk": "Дозволи збережено: {0}",
+        "zh": "已保存权限：{0}",
+        "fr": "Autorisations enregistrées : {0}",
+        "es": "Permisos guardados: {0}",
+        "tr": "İzinler kaydedildi: {0}",
+        "kk": "Рұқсаттар сақталды: {0}"
+      },
+      "Unlinked": {
+        "en": "This computer was unlinked.",
+        "ru": "Компьютер отвязан.",
+        "uk": "Комп'ютер відв'язано.",
+        "zh": "已解绑此电脑。",
+        "fr": "Cet ordinateur a été délié.",
+        "es": "Este equipo se desvinculó.",
+        "tr": "Bu bilgisayarın bağlantısı kaldırıldı.",
+        "kk": "Компьютер ажыратылды."
+      },
+      "UnlinkedOffline": {
+        "en": "Unlinked here only: Achiefy was offline. Unlink it there too.",
+        "ru": "Отвязано только здесь: Achiefy недоступен. Отвяжите и там.",
+        "uk": "Відв'язано лише тут: Achiefy недоступний. Відв'яжіть і там.",
+        "zh": "仅在本机解除绑定：Achiefy 离线。请在那里也解除绑定。",
+        "fr": "Dissocié ici seulement : Achiefy était hors ligne. Dissociez-le aussi là-bas.",
+        "es": "Desvinculado solo aquí: Achiefy no estaba disponible. Desvincúlalo también allí.",
+        "tr": "Yalnızca burada kaldırıldı: Achiefy çevrimdışıydı. Orada da kaldırın.",
+        "kk": "Тек осында ажыратылды: Achiefy қолжетімсіз еді. Онда да ажыратыңыз."
+      },
+      "ColAccount": {
+        "en": "Account",
+        "ru": "Аккаунт",
+        "uk": "Акаунт",
+        "zh": "账户",
+        "fr": "Compte",
+        "es": "Cuenta",
+        "tr": "Hesap",
+        "kk": "Аккаунт"
+      },
+      "ColConnection": {
+        "en": "Connection",
+        "ru": "Соединение",
+        "uk": "З'єднання",
+        "zh": "连接",
+        "fr": "Connexion",
+        "es": "Conexión",
+        "tr": "Bağlantı",
+        "kk": "Қосылым"
+      },
+      "ColPermissions": {
+        "en": "Permissions",
+        "ru": "Разрешения",
+        "uk": "Дозволи",
+        "zh": "权限",
+        "fr": "Autorisations",
+        "es": "Permisos",
+        "tr": "İzinler",
+        "kk": "Рұқсаттар"
+      },
+      "SelectAll": {
+        "en": "Select all",
+        "ru": "Выбрать все",
+        "uk": "Вибрати всі",
+        "zh": "全选",
+        "fr": "Tout sélectionner",
+        "es": "Seleccionar todo",
+        "tr": "Tümünü seç",
+        "kk": "Барлығын таңдау"
+      },
+      "ConnectedCount": {
+        "en": "Connected: {0}",
+        "ru": "Подключено: {0}",
+        "uk": "Підключено: {0}",
+        "zh": "已连接：{0}",
+        "fr": "Connectés : {0}",
+        "es": "Conectadas: {0}",
+        "tr": "Bağlandı: {0}",
+        "kk": "Қосылды: {0}"
+      },
+      "DisconnectedCount": {
+        "en": "Disconnected: {0}",
+        "ru": "Отключено: {0}",
+        "uk": "Відключено: {0}",
+        "zh": "已断开：{0}",
+        "fr": "Déconnectés : {0}",
+        "es": "Desconectadas: {0}",
+        "tr": "Bağlantısı kesildi: {0}",
+        "kk": "Ажыратылды: {0}"
+      },
+      "SkippedCount": {
+        "en": "Skipped: {0}",
+        "ru": "Пропущено: {0}",
+        "uk": "Пропущено: {0}",
+        "zh": "已跳过：{0}",
+        "fr": "Ignorés : {0}",
+        "es": "Omitidas: {0}",
+        "tr": "Atlandı: {0}",
+        "kk": "Өткізілді: {0}"
+      }
+    },
+    "Filter": {
+      "All": {
+        "en": "All",
+        "ru": "Все",
+        "uk": "Усі",
+        "zh": "全部",
+        "fr": "Tous",
+        "es": "Todas",
+        "tr": "Tümü",
+        "kk": "Барлығы"
+      },
+      "InAchiefy": {
+        "en": "In Achiefy",
+        "ru": "Есть в Achiefy",
+        "uk": "Є в Achiefy",
+        "zh": "在 Achiefy 中",
+        "fr": "Dans Achiefy",
+        "es": "En Achiefy",
+        "tr": "Achiefy'de olan",
+        "kk": "Achiefy-де бар"
+      },
+      "Connected": {
+        "en": "Connected",
+        "ru": "Подключены",
+        "uk": "Підключені",
+        "zh": "已连接",
+        "fr": "Connectés",
+        "es": "Conectadas",
+        "tr": "Bağlı",
+        "kk": "Қосылғандар"
+      },
+      "NeedsLogin": {
+        "en": "Login required",
+        "ru": "Требуется вход",
+        "uk": "Потрібен вхід",
+        "zh": "需要登录",
+        "fr": "Connexion requise",
+        "es": "Requiere inicio de sesión",
+        "tr": "Giriş gerekli",
+        "kk": "Кіру қажет"
+      },
+      "Error": {
+        "en": "Errors",
+        "ru": "Ошибки",
+        "uk": "Помилки",
+        "zh": "错误",
+        "fr": "Erreurs",
+        "es": "Errores",
+        "tr": "Hatalar",
+        "kk": "Қателер"
+      },
+      "OnlyLocal": {
+        "en": "Only in NebulaAuth",
+        "ru": "Только в NebulaAuth",
+        "uk": "Лише в NebulaAuth",
+        "zh": "仅在 NebulaAuth 中",
+        "fr": "Seulement dans NebulaAuth",
+        "es": "Solo en NebulaAuth",
+        "tr": "Yalnızca NebulaAuth'ta",
+        "kk": "Тек NebulaAuth-та"
+      },
+      "OnlyAchiefy": {
+        "en": "Only in Achiefy",
+        "ru": "Только в Achiefy",
+        "uk": "Лише в Achiefy",
+        "zh": "仅在 Achiefy 中",
+        "fr": "Seulement dans Achiefy",
+        "es": "Solo en Achiefy",
+        "tr": "Yalnızca Achiefy'de",
+        "kk": "Тек Achiefy-де"
+      },
+      "Linkable": {
+        "en": "Can be connected",
+        "ru": "Можно подключить",
+        "uk": "Можна підключити",
+        "zh": "可连接",
+        "fr": "Connectables",
+        "es": "Se pueden conectar",
+        "tr": "Bağlanabilir",
+        "kk": "Қосуға болады"
+      }
+    },
+    "Status": {
+      "NotLinked": {
+        "en": "Not connected",
+        "ru": "Не подключён",
+        "uk": "Не підключено",
+        "zh": "未连接",
+        "fr": "Non connecté",
+        "es": "No conectada",
+        "tr": "Bağlı değil",
+        "kk": "Қосылмаған"
+      },
+      "Ready": {
+        "en": "Ready",
+        "ru": "Готов",
+        "uk": "Готовий",
+        "zh": "就绪",
+        "fr": "Prêt",
+        "es": "Lista",
+        "tr": "Hazır",
+        "kk": "Дайын"
+      },
+      "OnlyLocal": {
+        "en": "Not in Achiefy",
+        "ru": "Нет в Achiefy",
+        "uk": "Немає в Achiefy",
+        "zh": "不在 Achiefy 中",
+        "fr": "Absent d'Achiefy",
+        "es": "No está en Achiefy",
+        "tr": "Achiefy'de yok",
+        "kk": "Achiefy-де жоқ"
+      },
+      "OnlyAchiefy": {
+        "en": "No mafile here",
+        "ru": "Нет mafile здесь",
+        "uk": "Немає mafile тут",
+        "zh": "本机无 mafile",
+        "fr": "Pas de mafile ici",
+        "es": "Sin mafile aquí",
+        "tr": "Burada mafile yok",
+        "kk": "Мұнда mafile жоқ"
+      },
+      "Duplicate": {
+        "en": "Duplicate mafile",
+        "ru": "Дубликат mafile",
+        "uk": "Дублікат mafile",
+        "zh": "重复的 mafile",
+        "fr": "mafile en double",
+        "es": "mafile duplicado",
+        "tr": "Yinelenen mafile",
+        "kk": "mafile көшірмесі"
+      }
+    },
+    "Details": {
+      "Permissions": {
+        "en": "Permissions",
+        "ru": "Разрешения",
+        "uk": "Дозволи",
+        "zh": "权限",
+        "fr": "Autorisations",
+        "es": "Permisos",
+        "tr": "İzinler",
+        "kk": "Рұқсаттар"
+      },
+      "GrantsAfterConnect": {
+        "en": "Available after connecting.",
+        "ru": "Доступны после подключения.",
+        "uk": "Доступні після підключення.",
+        "zh": "连接后可用。",
+        "fr": "Disponibles après la connexion.",
+        "es": "Disponibles tras conectar.",
+        "tr": "Bağlandıktan sonra kullanılabilir.",
+        "kk": "Қосылғаннан кейін қолжетімді."
+      },
+      "Connect": {
+        "en": "Connect this account",
+        "ru": "Подключить этот аккаунт",
+        "uk": "Підключити цей акаунт",
+        "zh": "连接此账户",
+        "fr": "Connecter ce compte",
+        "es": "Conectar esta cuenta",
+        "tr": "Bu hesabı bağla",
+        "kk": "Осы аккаунтты қосу"
+      },
+      "Disconnect": {
+        "en": "Disconnect this account",
+        "ru": "Отключить этот аккаунт",
+        "uk": "Відключити цей акаунт",
+        "zh": "断开此账户",
+        "fr": "Déconnecter ce compte",
+        "es": "Desconectar esta cuenta",
+        "tr": "Bu hesabın bağlantısını kes",
+        "kk": "Осы аккаунтты ажырату"
+      },
+      "UpdatePassword": {
+        "en": "Update password",
+        "ru": "Обновить пароль",
+        "uk": "Оновити пароль",
+        "zh": "更新密码",
+        "fr": "Mettre à jour le mot de passe",
+        "es": "Actualizar la contraseña",
+        "tr": "Şifreyi güncelle",
+        "kk": "Құпиясөзді жаңарту"
+      },
+      "NoCatalog": {
+        "en": "Appear after connecting to Achiefy.",
+        "ru": "Появятся после связи с Achiefy.",
+        "uk": "З'являться після зв'язку з Achiefy.",
+        "zh": "连接 Achiefy 后显示。",
+        "fr": "Apparaissent après la connexion à Achiefy.",
+        "es": "Aparecen tras conectar con Achiefy.",
+        "tr": "Achiefy'ye bağlandıktan sonra görünür.",
+        "kk": "Achiefy-мен байланыстан кейін пайда болады."
+      }
+    },
+    "AccountStateHint": {
+      "steam_session_required": {
+        "en": "Log in to the account in NebulaAuth.",
+        "ru": "Войдите в аккаунт в NebulaAuth.",
+        "uk": "Увійдіть в акаунт у NebulaAuth.",
+        "zh": "请在 NebulaAuth 中登录该账户。",
+        "fr": "Connectez-vous au compte dans NebulaAuth.",
+        "es": "Inicia sesión en la cuenta en NebulaAuth.",
+        "tr": "NebulaAuth'ta hesaba giriş yapın.",
+        "kk": "NebulaAuth-та аккаунтқа кіріңіз."
+      }
+    },
+    "Overlay": {
+      "Connect": {
+        "en": "Connect",
+        "ru": "Подключить",
+        "uk": "Підключити",
+        "zh": "连接",
+        "fr": "Connecter",
+        "es": "Conectar",
+        "tr": "Bağla",
+        "kk": "Қосу"
+      },
+      "DisconnectWarning": {
+        "en": "These accounts stop working through Nebula Link in Achiefy.",
+        "ru": "В Achiefy эти аккаунты перестанут работать через Nebula Link.",
+        "uk": "В Achiefy ці акаунти перестануть працювати через Nebula Link.",
+        "zh": "这些账户在 Achiefy 中将不再通过 Nebula Link 工作。",
+        "fr": "Dans Achiefy, ces comptes ne fonctionneront plus via Nebula Link.",
+        "es": "En Achiefy, estas cuentas dejarán de funcionar mediante Nebula Link.",
+        "tr": "Bu hesaplar Achiefy'de artık Nebula Link üzerinden çalışmaz.",
+        "kk": "Achiefy-де бұл аккаунттар Nebula Link арқылы жұмыс істемейді."
+      },
+      "Disconnect": {
+        "en": "Disconnect",
+        "ru": "Отключить",
+        "uk": "Відключити",
+        "zh": "断开",
+        "fr": "Déconnecter",
+        "es": "Desconectar",
+        "tr": "Bağlantıyı kes",
+        "kk": "Ажырату"
+      },
+      "Save": {
+        "en": "Save",
+        "ru": "Сохранить",
+        "uk": "Зберегти",
+        "zh": "保存",
+        "fr": "Enregistrer",
+        "es": "Guardar",
+        "tr": "Kaydet",
+        "kk": "Сақтау"
+      },
+      "UnlinkTitle": {
+        "en": "Unlink this computer?",
+        "ru": "Отвязать этот компьютер?",
+        "uk": "Відв'язати цей комп'ютер?",
+        "zh": "要解除本机的绑定吗？",
+        "fr": "Dissocier cet ordinateur ?",
+        "es": "¿Desvincular este equipo?",
+        "tr": "Bu bilgisayarın bağlantısı kaldırılsın mı?",
+        "kk": "Осы компьютерді ажырату керек пе?"
+      },
+      "UnlinkText": {
+        "en": "Accounts connected here stop working through Nebula Link in Achiefy.",
+        "ru": "Подключённые здесь аккаунты перестанут работать в Achiefy через Nebula Link.",
+        "uk": "Підключені тут акаунти перестануть працювати в Achiefy через Nebula Link.",
+        "zh": "此处连接的账户在 Achiefy 中将不再通过 Nebula Link 工作。",
+        "fr": "Les comptes connectés ici ne fonctionneront plus via Nebula Link dans Achiefy.",
+        "es": "Las cuentas conectadas aquí dejarán de funcionar mediante Nebula Link en Achiefy.",
+        "tr": "Burada bağlı hesaplar Achiefy'de artık Nebula Link üzerinden çalışmaz.",
+        "kk": "Осында қосылған аккаунттар Achiefy-де Nebula Link арқылы жұмыс істемейді."
+      },
+      "PasswordTitle": {
+        "en": "Update the Steam password",
+        "ru": "Обновить пароль Steam",
+        "uk": "Оновити пароль Steam",
+        "zh": "更新 Steam 密码",
+        "fr": "Mettre à jour le mot de passe Steam",
+        "es": "Actualizar la contraseña de Steam",
+        "tr": "Steam şifresini güncelle",
+        "kk": "Steam құпиясөзін жаңарту"
+      },
+      "SavePassword": {
+        "en": "Save the password",
+        "ru": "Сохранить пароль",
+        "uk": "Зберегти пароль",
+        "zh": "保存密码",
+        "fr": "Enregistrer le mot de passe",
+        "es": "Guardar la contraseña",
+        "tr": "Parolayı kaydet",
+        "kk": "Құпиясөзді сақтау"
+      },
+      "Login": {
+        "en": "Log in",
+        "ru": "Войти",
+        "uk": "Увійти",
+        "zh": "登录",
+        "fr": "Se connecter",
+        "es": "Iniciar sesión",
+        "tr": "Giriş yap",
+        "kk": "Кіру"
+      },
+      "Password": {
+        "en": "Steam password",
+        "ru": "Пароль Steam",
+        "uk": "Пароль Steam",
+        "zh": "Steam 密码",
+        "fr": "Mot de passe Steam",
+        "es": "Contraseña de Steam",
+        "tr": "Steam şifresi",
+        "kk": "Steam құпиясөзі"
+      }
+    },
+    "History": {
+      "Time": {
+        "en": "Time",
+        "ru": "Время",
+        "uk": "Час",
+        "zh": "时间",
+        "fr": "Heure",
+        "es": "Hora",
+        "tr": "Zaman",
+        "kk": "Уақыт"
+      },
+      "Account": {
+        "en": "Account",
+        "ru": "Аккаунт",
+        "uk": "Акаунт",
+        "zh": "账户",
+        "fr": "Compte",
+        "es": "Cuenta",
+        "tr": "Hesap",
+        "kk": "Аккаунт"
+      },
+      "Module": {
+        "en": "Module",
+        "ru": "Модуль",
+        "uk": "Модуль",
+        "zh": "模块",
+        "fr": "Module",
+        "es": "Módulo",
+        "tr": "Modül",
+        "kk": "Модуль"
+      },
+      "Type": {
+        "en": "Request",
+        "ru": "Запрос",
+        "uk": "Запит",
+        "zh": "请求",
+        "fr": "Demande",
+        "es": "Solicitud",
+        "tr": "İstek",
+        "kk": "Сұрау"
+      },
+      "Result": {
+        "en": "Result",
+        "ru": "Результат",
+        "uk": "Результат",
+        "zh": "结果",
+        "fr": "Résultat",
+        "es": "Resultado",
+        "tr": "Sonuç",
+        "kk": "Нәтиже"
+      },
+      "Empty": {
+        "en": "No requests yet.",
+        "ru": "Запросов пока нет.",
+        "uk": "Запитів поки немає.",
+        "zh": "暂无请求。",
+        "fr": "Aucune demande pour l'instant.",
+        "es": "Aún no hay solicitudes.",
+        "tr": "Henüz istek yok.",
+        "kk": "Әзірге сұраулар жоқ."
+      },
+      "ConfirmedByYou": {
+        "en": "Confirmed by you",
+        "ru": "Подтверждено вами",
+        "uk": "Підтверджено вами",
+        "zh": "已由你确认",
+        "fr": "Confirmé par vous",
+        "es": "Confirmado por ti",
+        "tr": "Sizin tarafınızdan onaylandı",
+        "kk": "Сіз растадыңыз"
+      },
+      "DeclinedByYou": {
+        "en": "Declined by you",
+        "ru": "Отклонено вами",
+        "uk": "Відхилено вами",
+        "zh": "已由你拒绝",
+        "fr": "Refusé par vous",
+        "es": "Rechazado por ti",
+        "tr": "Sizin tarafınızdan reddedildi",
+        "kk": "Сіз қабылдамадыңыз"
+      }
+    },
+    "Scope": {
+      "login": {
+        "en": "Login",
+        "ru": "Вход",
+        "uk": "Вхід",
+        "zh": "登录",
+        "fr": "Connexion",
+        "es": "Inicio de sesión",
+        "tr": "Giriş",
+        "kk": "Кіру"
+      },
+      "confirmation_check": {
+        "en": "Checking confirmations",
+        "ru": "Проверка подтверждений",
+        "uk": "Перевірка підтверджень",
+        "zh": "检查确认",
+        "fr": "Vérification des confirmations",
+        "es": "Comprobación de confirmaciones",
+        "tr": "Onay kontrolü",
+        "kk": "Растауларды тексеру"
+      }
+    },
+    "Module": {
+      "account_runtime": {
+        "en": "Account login",
+        "ru": "Вход аккаунта",
+        "uk": "Вхід акаунта",
+        "zh": "账户登录",
+        "fr": "Connexion du compte",
+        "es": "Inicio de sesión de la cuenta",
+        "tr": "Hesap girişi",
+        "kk": "Аккаунтқа кіру"
+      },
+      "harvester": {
+        "en": "Harvester",
+        "ru": "Harvester",
+        "uk": "Harvester",
+        "zh": "Harvester",
+        "fr": "Harvester",
+        "es": "Harvester",
+        "tr": "Harvester",
+        "kk": "Harvester"
+      },
+      "p2p_seller": {
+        "en": "P2P Seller",
+        "ru": "P2P Seller",
+        "uk": "P2P Seller",
+        "zh": "P2P Seller",
+        "fr": "P2P Seller",
+        "es": "P2P Seller",
+        "tr": "P2P Seller",
+        "kk": "P2P Seller"
+      },
+      "trader": {
+        "en": "Trader",
+        "ru": "Trader",
+        "uk": "Trader",
+        "zh": "Trader",
+        "fr": "Trader",
+        "es": "Trader",
+        "tr": "Trader",
+        "kk": "Trader"
+      },
+      "steam_seller": {
+        "en": "Steam Seller",
+        "ru": "Steam Seller",
+        "uk": "Steam Seller",
+        "zh": "Steam Seller",
+        "fr": "Steam Seller",
+        "es": "Steam Seller",
+        "tr": "Steam Seller",
+        "kk": "Steam Seller"
+      },
+      "steam_buyer": {
+        "en": "Steam Buyer",
+        "ru": "Steam Buyer",
+        "uk": "Steam Buyer",
+        "zh": "Steam Buyer",
+        "fr": "Steam Buyer",
+        "es": "Steam Buyer",
+        "tr": "Steam Buyer",
+        "kk": "Steam Buyer"
+      },
+      "task_manager": {
+        "en": "Task Manager",
+        "ru": "Task Manager",
+        "uk": "Task Manager",
+        "zh": "Task Manager",
+        "fr": "Task Manager",
+        "es": "Task Manager",
+        "tr": "Task Manager",
+        "kk": "Task Manager"
+      }
+    },
+    "Command": {
+      "login_code": {
+        "en": "Login code",
+        "ru": "Код входа",
+        "uk": "Код входу",
+        "zh": "登录码",
+        "fr": "Code de connexion",
+        "es": "Código de acceso",
+        "tr": "Giriş kodu",
+        "kk": "Кіру коды"
+      },
+      "check_confirmation": {
+        "en": "Check",
+        "ru": "Проверка",
+        "uk": "Перевірка",
+        "zh": "检查",
+        "fr": "Vérification",
+        "es": "Comprobación",
+        "tr": "Kontrol",
+        "kk": "Тексеру"
+      },
+      "confirm": {
+        "en": "Confirmation",
+        "ru": "Подтверждение",
+        "uk": "Підтвердження",
+        "zh": "确认",
+        "fr": "Confirmation",
+        "es": "Confirmación",
+        "tr": "Onay",
+        "kk": "Растау"
+      },
+      "check_ready": {
+        "en": "Readiness",
+        "ru": "Готовность",
+        "uk": "Готовність",
+        "zh": "就绪检查",
+        "fr": "Disponibilité",
+        "es": "Disponibilidad",
+        "tr": "Hazırlık",
+        "kk": "Дайындық"
+      }
+    },
+    "Operation": {
+      "trade": {
+        "en": "Trade",
+        "ru": "Трейд",
+        "uk": "Трейд",
+        "zh": "交易",
+        "fr": "Échange",
+        "es": "Intercambio",
+        "tr": "Takas",
+        "kk": "Трейд"
+      },
+      "market_listing": {
+        "en": "Listing",
+        "ru": "Лот",
+        "uk": "Лот",
+        "zh": "挂单",
+        "fr": "Annonce",
+        "es": "Anuncio",
+        "tr": "İlan",
+        "kk": "Лот"
+      },
+      "market_purchase": {
+        "en": "Purchase",
+        "ru": "Покупка",
+        "uk": "Покупка",
+        "zh": "购买",
+        "fr": "Achat",
+        "es": "Compra",
+        "tr": "Satın alma",
+        "kk": "Сатып алу"
+      }
+    },
+    "Decision": {
+      "accept": {
+        "en": "accept",
+        "ru": "принять",
+        "uk": "прийняти",
+        "zh": "接受",
+        "fr": "accepter",
+        "es": "aceptar",
+        "tr": "kabul",
+        "kk": "қабылдау"
+      },
+      "decline": {
+        "en": "decline",
+        "ru": "отклонить",
+        "uk": "відхилити",
+        "zh": "拒绝",
+        "fr": "refuser",
+        "es": "rechazar",
+        "tr": "reddet",
+        "kk": "бас тарту"
+      }
+    },
+    "AccountState": {
+      "ready": {
+        "en": "Ready",
+        "ru": "Готов",
+        "uk": "Готовий",
+        "zh": "就绪",
+        "fr": "Prêt",
+        "es": "Lista",
+        "tr": "Hazır",
+        "kk": "Дайын"
+      },
+      "steam_session_required": {
+        "en": "Login required",
+        "ru": "Требуется вход",
+        "uk": "Потрібен вхід",
+        "zh": "需要登录",
+        "fr": "Connexion requise",
+        "es": "Requiere inicio de sesión",
+        "tr": "Giriş gerekli",
+        "kk": "Кіру қажет"
+      },
+      "invalid_local_password": {
+        "en": "Wrong password",
+        "ru": "Неверный пароль",
+        "uk": "Невірний пароль",
+        "zh": "密码错误",
+        "fr": "Mot de passe incorrect",
+        "es": "Contraseña incorrecta",
+        "tr": "Yanlış şifre",
+        "kk": "Құпиясөз қате"
+      },
+      "mafile_missing": {
+        "en": "No mafile",
+        "ru": "Нет mafile",
+        "uk": "Немає mafile",
+        "zh": "缺少 mafile",
+        "fr": "Mafile manquant",
+        "es": "Falta el mafile",
+        "tr": "mafile yok",
+        "kk": "mafile жоқ"
+      },
+      "match_conflict": {
+        "en": "Login conflict",
+        "ru": "Конфликт логина",
+        "uk": "Конфлікт логіна",
+        "zh": "登录名冲突",
+        "fr": "Conflit d'identifiant",
+        "es": "Conflicto de usuario",
+        "tr": "Kullanıcı adı çakışması",
+        "kk": "Логин қайшылығы"
+      }
+    },
+    "LinkResult": {
+      "linked": {
+        "en": "connected",
+        "ru": "подключён",
+        "uk": "підключено",
+        "zh": "已连接",
+        "fr": "connecté",
+        "es": "conectada",
+        "tr": "bağlandı",
+        "kk": "қосылды"
+      },
+      "unlinked": {
+        "en": "disconnected",
+        "ru": "отключён",
+        "uk": "відключено",
+        "zh": "已断开",
+        "fr": "déconnecté",
+        "es": "desconectada",
+        "tr": "bağlantı kesildi",
+        "kk": "ажыратылды"
+      },
+      "already_linked": {
+        "en": "already connected",
+        "ru": "уже подключён",
+        "uk": "уже підключено",
+        "zh": "已连接过",
+        "fr": "déjà connecté",
+        "es": "ya conectada",
+        "tr": "zaten bağlı",
+        "kk": "бұрыннан қосылған"
+      },
+      "not_linked": {
+        "en": "not connected",
+        "ru": "не подключён",
+        "uk": "не підключено",
+        "zh": "未连接",
+        "fr": "non connecté",
+        "es": "no conectada",
+        "tr": "bağlı değil",
+        "kk": "қосылмаған"
+      },
+      "not_found": {
+        "en": "not found in Achiefy",
+        "ru": "не найден в Achiefy",
+        "uk": "не знайдено в Achiefy",
+        "zh": "在 Achiefy 中未找到",
+        "fr": "introuvable dans Achiefy",
+        "es": "no se encontró en Achiefy",
+        "tr": "Achiefy'de bulunamadı",
+        "kk": "Achiefy-де табылмады"
+      },
+      "login_mismatch": {
+        "en": "login differs",
+        "ru": "логин отличается",
+        "uk": "логін відрізняється",
+        "zh": "登录名不同",
+        "fr": "identifiant différent",
+        "es": "el usuario no coincide",
+        "tr": "kullanıcı adı farklı",
+        "kk": "логин өзгеше"
+      },
+      "failed": {
+        "en": "failed",
+        "ru": "не удалось",
+        "uk": "не вдалося",
+        "zh": "失败",
+        "fr": "échec",
+        "es": "falló",
+        "tr": "başarısız",
+        "kk": "сәтсіз"
+      }
+    },
+    "Result": {
+      "ok": {
+        "en": "Done",
+        "ru": "Выполнено",
+        "uk": "Виконано",
+        "zh": "完成",
+        "fr": "Fait",
+        "es": "Hecho",
+        "tr": "Tamam",
+        "kk": "Орындалды"
+      },
+      "pending": {
+        "en": "Waiting in Steam",
+        "ru": "Ожидает в Steam",
+        "uk": "Очікує в Steam",
+        "zh": "在 Steam 中等待",
+        "fr": "En attente dans Steam",
+        "es": "Pendiente en Steam",
+        "tr": "Steam'de bekliyor",
+        "kk": "Steam-де күтуде"
+      },
+      "not_found": {
+        "en": "Not found",
+        "ru": "Не найдено",
+        "uk": "Не знайдено",
+        "zh": "未找到",
+        "fr": "Introuvable",
+        "es": "No encontrada",
+        "tr": "Bulunamadı",
+        "kk": "Табылмады"
+      },
+      "confirmed": {
+        "en": "Confirmed",
+        "ru": "Подтверждено",
+        "uk": "Підтверджено",
+        "zh": "已确认",
+        "fr": "Confirmé",
+        "es": "Confirmada",
+        "tr": "Onaylandı",
+        "kk": "Расталды"
+      },
+      "declined": {
+        "en": "Declined",
+        "ru": "Отклонено",
+        "uk": "Відхилено",
+        "zh": "已拒绝",
+        "fr": "Refusé",
+        "es": "Rechazada",
+        "tr": "Reddedildi",
+        "kk": "Бас тартылды"
+      },
+      "steam_rejected": {
+        "en": "Rejected by Steam",
+        "ru": "Отклонено Steam",
+        "uk": "Відхилено Steam",
+        "zh": "被 Steam 拒绝",
+        "fr": "Refusé par Steam",
+        "es": "Rechazada por Steam",
+        "tr": "Steam reddetti",
+        "kk": "Steam қабылдамады"
+      },
+      "result_unknown": {
+        "en": "Result unknown",
+        "ru": "Результат неизвестен",
+        "uk": "Результат невідомий",
+        "zh": "结果未知",
+        "fr": "Résultat inconnu",
+        "es": "Resultado desconocido",
+        "tr": "Sonuç bilinmiyor",
+        "kk": "Нәтиже белгісіз"
+      },
+      "device_offline": {
+        "en": "Device offline",
+        "ru": "Устройство не в сети",
+        "uk": "Пристрій поза мережею",
+        "zh": "设备离线",
+        "fr": "Appareil hors ligne",
+        "es": "Dispositivo sin conexión",
+        "tr": "Cihaz çevrimdışı",
+        "kk": "Құрылғы желіден тыс"
+      },
+      "rate_limited": {
+        "en": "Too many requests",
+        "ru": "Слишком много запросов",
+        "uk": "Забагато запитів",
+        "zh": "请求过多",
+        "fr": "Trop de demandes",
+        "es": "Demasiadas solicitudes",
+        "tr": "Çok fazla istek",
+        "kk": "Сұраулар тым көп"
+      },
+      "proxy_failed": {
+        "en": "Proxy failed",
+        "ru": "Ошибка прокси",
+        "uk": "Помилка проксі",
+        "zh": "代理失败",
+        "fr": "Échec du proxy",
+        "es": "Error del proxy",
+        "tr": "Proxy hatası",
+        "kk": "Прокси қатесі"
+      },
+      "steam_unavailable": {
+        "en": "Steam unavailable",
+        "ru": "Steam недоступен",
+        "uk": "Steam недоступний",
+        "zh": "Steam 不可用",
+        "fr": "Steam indisponible",
+        "es": "Steam no disponible",
+        "tr": "Steam kullanılamıyor",
+        "kk": "Steam қолжетімсіз"
+      },
+      "internal_error": {
+        "en": "Internal error",
+        "ru": "Внутренняя ошибка",
+        "uk": "Внутрішня помилка",
+        "zh": "内部错误",
+        "fr": "Erreur interne",
+        "es": "Error interno",
+        "tr": "İç hata",
+        "kk": "Ішкі қате"
+      },
+      "expired": {
+        "en": "Expired",
+        "ru": "Истёк срок",
+        "uk": "Минув термін",
+        "zh": "已过期",
+        "fr": "Expiré",
+        "es": "Caducada",
+        "tr": "Süresi doldu",
+        "kk": "Мерзімі өтті"
+      },
+      "cancelled": {
+        "en": "Cancelled",
+        "ru": "Отменено",
+        "uk": "Скасовано",
+        "zh": "已取消",
+        "fr": "Annulé",
+        "es": "Cancelada",
+        "tr": "İptal edildi",
+        "kk": "Тоқтатылды"
+      },
+      "device_paused": {
+        "en": "Paused",
+        "ru": "Приостановлено",
+        "uk": "Призупинено",
+        "zh": "已暂停",
+        "fr": "En pause",
+        "es": "En pausa",
+        "tr": "Duraklatıldı",
+        "kk": "Тоқтатылған"
+      },
+      "steam_session_required": {
+        "en": "Login required",
+        "ru": "Требуется вход",
+        "uk": "Потрібен вхід",
+        "zh": "需要登录",
+        "fr": "Connexion requise",
+        "es": "Requiere inicio de sesión",
+        "tr": "Giriş gerekli",
+        "kk": "Кіру қажет"
+      },
+      "invalid_local_password": {
+        "en": "Wrong password",
+        "ru": "Неверный пароль",
+        "uk": "Невірний пароль",
+        "zh": "密码错误",
+        "fr": "Mot de passe incorrect",
+        "es": "Contraseña incorrecta",
+        "tr": "Yanlış şifre",
+        "kk": "Құпиясөз қате"
+      },
+      "incompatible_version": {
+        "en": "Incompatible version",
+        "ru": "Несовместимая версия",
+        "uk": "Несумісна версія",
+        "zh": "版本不兼容",
+        "fr": "Version incompatible",
+        "es": "Versión incompatible",
+        "tr": "Uyumsuz sürüm",
+        "kk": "Үйлеспейтін нұсқа"
+      },
+      "not_paired": {
+        "en": "Not paired",
+        "ru": "Не сопряжено",
+        "uk": "Не сполучено",
+        "zh": "未配对",
+        "fr": "Non associé",
+        "es": "Sin emparejar",
+        "tr": "Eşleştirilmedi",
+        "kk": "Жұпталмаған"
+      },
+      "account_unlinked": {
+        "en": "Account not connected",
+        "ru": "Аккаунт не подключён",
+        "uk": "Акаунт не підключено",
+        "zh": "账户未连接",
+        "fr": "Compte non connecté",
+        "es": "Cuenta no conectada",
+        "tr": "Hesap bağlı değil",
+        "kk": "Аккаунт қосылмаған"
+      },
+      "mafile_missing": {
+        "en": "No mafile",
+        "ru": "Нет mafile",
+        "uk": "Немає mafile",
+        "zh": "缺少 mafile",
+        "fr": "Mafile manquant",
+        "es": "Falta el mafile",
+        "tr": "mafile yok",
+        "kk": "mafile жоқ"
+      },
+      "match_conflict": {
+        "en": "Login conflict",
+        "ru": "Конфликт логина",
+        "uk": "Конфлікт логіна",
+        "zh": "登录名冲突",
+        "fr": "Conflit d'identifiant",
+        "es": "Conflicto de usuario",
+        "tr": "Kullanıcı adı çakışması",
+        "kk": "Логин қайшылығы"
+      },
+      "scope_denied": {
+        "en": "Not allowed",
+        "ru": "Нет разрешения",
+        "uk": "Немає дозволу",
+        "zh": "未授权",
+        "fr": "Non autorisé",
+        "es": "Sin permiso",
+        "tr": "İzin yok",
+        "kk": "Рұқсат жоқ"
+      },
+      "unsupported": {
+        "en": "Not supported",
+        "ru": "Не поддерживается",
+        "uk": "Не підтримується",
+        "zh": "不支持",
+        "fr": "Non pris en charge",
+        "es": "No compatible",
+        "tr": "Desteklenmiyor",
+        "kk": "Қолдау көрсетілмейді"
+      },
+      "invalid_request": {
+        "en": "Invalid request",
+        "ru": "Некорректный запрос",
+        "uk": "Некоректний запит",
+        "zh": "无效请求",
+        "fr": "Demande invalide",
+        "es": "Solicitud no válida",
+        "tr": "Geçersiz istek",
+        "kk": "Қате сұрау"
+      },
+      "hello_required": {
+        "en": "Not connected yet",
+        "ru": "Соединение ещё не готово",
+        "uk": "З'єднання ще не готове",
+        "zh": "连接尚未就绪",
+        "fr": "Connexion pas encore prête",
+        "es": "La conexión aún no está lista",
+        "tr": "Bağlantı henüz hazır değil",
+        "kk": "Байланыс әлі дайын емес"
+      },
+      "stale_connection": {
+        "en": "Connection replaced",
+        "ru": "Соединение заменено",
+        "uk": "З'єднання замінено",
+        "zh": "连接已被替换",
+        "fr": "Connexion remplacée",
+        "es": "Conexión reemplazada",
+        "tr": "Bağlantı değiştirildi",
+        "kk": "Байланыс ауыстырылды"
+      },
+      "busy": {
+        "en": "Busy, try again",
+        "ru": "Занято, повторите",
+        "uk": "Зайнято, повторіть",
+        "zh": "繁忙，请重试",
+        "fr": "Occupé, réessayez",
+        "es": "Ocupado, reintente",
+        "tr": "Meşgul, tekrar deneyin",
+        "kk": "Бос емес, қайталаңыз"
+      }
+    },
+    "Close": {
+      "en": "Close",
+      "ru": "Закрыть",
+      "uk": "Закрити",
+      "zh": "关闭",
+      "fr": "Fermer",
+      "es": "Cerrar",
+      "tr": "Kapat",
+      "kk": "Жабу"
+    },
+    "OpenAchiefy": {
+      "en": "Open Achiefy",
+      "ru": "Открыть Achiefy",
+      "uk": "Відкрити Achiefy",
+      "zh": "打开 Achiefy",
+      "fr": "Ouvrir Achiefy",
+      "es": "Abrir Achiefy",
+      "tr": "Achiefy'yi aç",
+      "kk": "Achiefy ашу"
+    },
+    "WhatIsSent": {
+      "en": "What is sent",
+      "ru": "Что передаётся",
+      "uk": "Що передається",
+      "zh": "会发送哪些数据",
+      "fr": "Données envoyées",
+      "es": "Qué se envía",
+      "tr": "Neler gönderilir",
+      "kk": "Не жіберіледі"
+    },
+    "Settings": {
+      "Text": {
+        "en": "Optional: lets Achiefy work with your accounts.",
+        "ru": "Необязательно: даёт Achiefy работать с вашими аккаунтами.",
+        "uk": "Необов'язково: дає Achiefy працювати з вашими акаунтами.",
+        "zh": "可选：允许 Achiefy 使用你的账户。",
+        "fr": "Facultatif : permet à Achiefy d'utiliser vos comptes.",
+        "es": "Opcional: permite que Achiefy use tus cuentas.",
+        "tr": "İsteğe bağlı: Achiefy'nin hesaplarınızla çalışmasını sağlar.",
+        "kk": "Міндетті емес: Achiefy-ге аккаунттарыңызбен жұмыс істеуге мүмкіндік береді."
+      }
+    },
+    "Connect": {
+      "Title": {
+        "en": "Connect to Achiefy",
+        "ru": "Подключение к Achiefy",
+        "uk": "Підключення до Achiefy",
+        "zh": "连接到 Achiefy",
+        "fr": "Connexion à Achiefy",
+        "es": "Conectar con Achiefy",
+        "tr": "Achiefy'ye bağlanın",
+        "kk": "Achiefy-ге қосылу"
+      },
+      "Text": {
+        "en": "Achiefy works with your accounts; mafiles stay on this computer.",
+        "ru": "Achiefy работает с вашими аккаунтами, mafile остаются на этом компьютере.",
+        "uk": "Achiefy працює з вашими акаунтами, mafile залишаються на цьому комп'ютері.",
+        "zh": "Achiefy 使用你的账户，mafile 保留在本机。",
+        "fr": "Achiefy utilise vos comptes ; les mafiles restent sur cet ordinateur.",
+        "es": "Achiefy usa tus cuentas; los mafiles se quedan en este equipo.",
+        "tr": "Achiefy hesaplarınızla çalışır; mafile'lar bu bilgisayarda kalır.",
+        "kk": "Achiefy аккаунттарыңызбен жұмыс істейді, mafile осы компьютерде қалады."
+      },
+      "Label": {
+        "en": "Pairing link",
+        "ru": "Ссылка для подключения",
+        "uk": "Посилання для підключення",
+        "zh": "配对链接",
+        "fr": "Lien d'appairage",
+        "es": "Enlace de vinculación",
+        "tr": "Eşleştirme bağlantısı",
+        "kk": "Қосылу сілтемесі"
+      },
+      "Placeholder": {
+        "en": "Paste the link or code",
+        "ru": "Вставьте ссылку или код",
+        "uk": "Вставте посилання або код",
+        "zh": "粘贴链接或代码",
+        "fr": "Collez le lien ou le code",
+        "es": "Pega el enlace o el código",
+        "tr": "Bağlantıyı veya kodu yapıştırın",
+        "kk": "Сілтемені немесе кодты қойыңыз"
+      },
+      "Paste": {
+        "en": "Paste",
+        "ru": "Вставить",
+        "uk": "Вставити",
+        "zh": "粘贴",
+        "fr": "Coller",
+        "es": "Pegar",
+        "tr": "Yapıştır",
+        "kk": "Қою"
+      },
+      "Where": {
+        "en": "Create it in Achiefy: Profile → Nebula Link.",
+        "ru": "Создайте её в Achiefy: Профиль → Nebula Link.",
+        "uk": "Створіть його в Achiefy: Профіль → Nebula Link.",
+        "zh": "在 Achiefy 中创建：个人资料 → Nebula Link。",
+        "fr": "Créez-le dans Achiefy : Profil → Nebula Link.",
+        "es": "Créalo en Achiefy: Perfil → Nebula Link.",
+        "tr": "Achiefy'de oluşturun: Profil → Nebula Link.",
+        "kk": "Оны Achiefy-де жасаңыз: Профиль → Nebula Link."
+      },
+      "Server": {
+        "en": "Server:",
+        "ru": "Сервер:",
+        "uk": "Сервер:",
+        "zh": "服务器：",
+        "fr": "Serveur :",
+        "es": "Servidor:",
+        "tr": "Sunucu:",
+        "kk": "Сервер:"
+      },
+      "Consent": {
+        "en": "Allow Achiefy to request codes and confirmations for the accounts I choose",
+        "ru": "Разрешаю Achiefy запрашивать коды и подтверждения выбранных аккаунтов",
+        "uk": "Дозволяю Achiefy запитувати коди та підтвердження вибраних акаунтів",
+        "zh": "允许 Achiefy 为我选择的账户请求验证码和确认",
+        "fr": "J'autorise Achiefy à demander les codes et confirmations des comptes choisis",
+        "es": "Permito que Achiefy solicite códigos y confirmaciones de las cuentas elegidas",
+        "tr": "Achiefy'nin seçtiğim hesaplar için kod ve onay istemesine izin veriyorum",
+        "kk": "Achiefy-ге таңдалған аккаунттардың кодтары мен растауларын сұрауға рұқсат етемін"
+      },
+      "Connect": {
+        "en": "Connect",
+        "ru": "Подключить",
+        "uk": "Підключити",
+        "zh": "连接",
+        "fr": "Connecter",
+        "es": "Conectar",
+        "tr": "Bağla",
+        "kk": "Қосу"
+      },
+      "Unavailable": {
+        "en": "Couldn't load the Achiefy addresses. Check the internet.",
+        "ru": "Не удалось загрузить адреса Achiefy. Проверьте интернет.",
+        "uk": "Не вдалося завантажити адреси Achiefy. Перевірте інтернет.",
+        "zh": "无法加载 Achiefy 地址。请检查网络。",
+        "fr": "Impossible de charger les adresses Achiefy. Vérifiez Internet.",
+        "es": "No se pudieron cargar las direcciones de Achiefy. Revisa internet.",
+        "tr": "Achiefy adresleri yüklenemedi. İnterneti kontrol edin.",
+        "kk": "Achiefy мекенжайлары жүктелмеді. Интернетті тексеріңіз."
+      },
+      "Retry": {
+        "en": "Try again",
+        "ru": "Повторить",
+        "uk": "Повторити",
+        "zh": "重试",
+        "fr": "Réessayer",
+        "es": "Reintentar",
+        "tr": "Tekrar dene",
+        "kk": "Қайталау"
+      },
+      "NoStore": {
+        "en": "No secure storage for the key. Turn on encryption in Settings.",
+        "ru": "Нет защищённого хранилища для ключа. Включите шифрование в настройках.",
+        "uk": "Немає захищеного сховища для ключа. Увімкніть шифрування в налаштуваннях.",
+        "zh": "没有用于密钥的安全存储。请在设置中启用加密。",
+        "fr": "Aucun stockage sécurisé pour la clé. Activez le chiffrement dans les paramètres.",
+        "es": "No hay almacenamiento seguro para la clave. Activa el cifrado en Ajustes.",
+        "tr": "Anahtar için güvenli depolama yok. Ayarlar'dan şifrelemeyi açın.",
+        "kk": "Кілтке қорғалған қойма жоқ. Баптауларда шифрлауды қосыңыз."
+      }
+    },
+    "Category": {
+      "mandatory": {
+        "en": "Always on",
+        "ru": "Всегда включено",
+        "uk": "Завжди увімкнено",
+        "zh": "始终开启",
+        "fr": "Toujours actif",
+        "es": "Siempre activo",
+        "tr": "Her zaman açık",
+        "kk": "Әрқашан қосулы"
+      },
+      "trade": {
+        "en": "Trades",
+        "ru": "Трейды",
+        "uk": "Трейди",
+        "zh": "交易",
+        "fr": "Échanges",
+        "es": "Intercambios",
+        "tr": "Takaslar",
+        "kk": "Трейдтер"
+      },
+      "market_sell": {
+        "en": "Market sales",
+        "ru": "Продажи на маркете",
+        "uk": "Продажі на маркеті",
+        "zh": "市场出售",
+        "fr": "Ventes sur le marché",
+        "es": "Ventas en el mercado",
+        "tr": "Pazar satışları",
+        "kk": "Маркеттегі сатылымдар"
+      },
+      "market_buy": {
+        "en": "Market purchases",
+        "ru": "Покупки на маркете",
+        "uk": "Покупки на маркеті",
+        "zh": "市场购买",
+        "fr": "Achats sur le marché",
+        "es": "Compras en el mercado",
+        "tr": "Pazar alımları",
+        "kk": "Маркеттегі сатып алулар"
+      }
+    },
+    "Duplicate": {
+      "Title": {
+        "en": "Choose the mafile to use",
+        "ru": "Выберите mafile",
+        "uk": "Виберіть mafile",
+        "zh": "选择要使用的 mafile",
+        "fr": "Choisissez le mafile à utiliser",
+        "es": "Elige el mafile que usar",
+        "tr": "Kullanılacak mafile'ı seçin",
+        "kk": "Қолданылатын mafile-ды таңдаңыз"
+      },
+      "Use": {
+        "en": "Use this one",
+        "ru": "Использовать этот",
+        "uk": "Використати цей",
+        "zh": "使用此文件",
+        "fr": "Utiliser celui-ci",
+        "es": "Usar este",
+        "tr": "Bunu kullan",
+        "kk": "Осыны қолдану"
+      },
+      "Modified": {
+        "en": "Changed {0}",
+        "ru": "Изменён {0}",
+        "uk": "Змінено {0}",
+        "zh": "修改于 {0}",
+        "fr": "Modifié le {0}",
+        "es": "Modificado {0}",
+        "tr": "Değiştirildi: {0}",
+        "kk": "Өзгертілген: {0}"
+      },
+      "SessionActive": {
+        "en": "Session active",
+        "ru": "Сессия активна",
+        "uk": "Сесія активна",
+        "zh": "会话有效",
+        "fr": "Session active",
+        "es": "Sesión activa",
+        "tr": "Oturum etkin",
+        "kk": "Сессия белсенді"
+      },
+      "NoSession": {
+        "en": "No session",
+        "ru": "Нет сессии",
+        "uk": "Немає сесії",
+        "zh": "无会话",
+        "fr": "Pas de session",
+        "es": "Sin sesión",
+        "tr": "Oturum yok",
+        "kk": "Сессия жоқ"
+      }
+    },
+    "Ago": {
+      "Now": {
+        "en": "now",
+        "ru": "сейчас",
+        "uk": "зараз",
+        "zh": "刚刚",
+        "fr": "maintenant",
+        "es": "ahora",
+        "tr": "şimdi",
+        "kk": "қазір"
+      },
+      "Minutes": {
+        "en": "{0} min",
+        "ru": "{0} мин",
+        "uk": "{0} хв",
+        "zh": "{0} 分钟",
+        "fr": "{0} min",
+        "es": "{0} min",
+        "tr": "{0} dk",
+        "kk": "{0} мин"
+      },
+      "Hours": {
+        "en": "{0} h",
+        "ru": "{0} ч",
+        "uk": "{0} год",
+        "zh": "{0} 小时",
+        "fr": "{0} h",
+        "es": "{0} h",
+        "tr": "{0} sa",
+        "kk": "{0} сағ"
+      },
+      "Yesterday": {
+        "en": "yesterday",
+        "ru": "вчера",
+        "uk": "учора",
+        "zh": "昨天",
+        "fr": "hier",
+        "es": "ayer",
+        "tr": "dün",
+        "kk": "кеше"
+      }
+    }
+  }
+}

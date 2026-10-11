@@ -2,10 +2,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using NebulaAuth.Model;
 using NebulaAuth.Model.Entities;
+using NebulaAuth.Model.LinkHost;
 using NebulaAuth.Model.Mafiles.Protection;
 using NebulaAuth.Model.Update;
 using NebulaAuth.View;
 using NebulaAuth.View.Dialogs;
+using NebulaAuth.ViewModel.NebulaLink;
 using NebulaAuth.ViewModel.Linker;
 using NebulaAuth.ViewModel.MafileMover;
 using NebulaAuth.ViewModel.Other;
@@ -210,6 +212,18 @@ public static class DialogsController
         if (DialogService.IsDialogOpen) return;
         files ??= MafileStorageService.Current.SkippedFiles;
         await DialogService.Show(new SkippedFilesDialog {DataContext = new SkippedFilesVM(files)});
+    }
+
+    /// <summary>
+    ///     The Nebula Link (Nebula Protocol) modal: pairing before the link exists, the accounts table after it.
+    ///     <paramref name="focus" /> selects that account's row (account context menu); <paramref name="linkIntent" />
+    ///     pre-checks it for connecting (true) or disconnecting (false). Nothing changes until the user confirms.
+    /// </summary>
+    public static async Task ShowNebulaLinkDialog(Mafile? focus = null, bool? linkIntent = null)
+    {
+        if (DialogService.IsDialogOpen || NebulaLinkHost.Integration is not { } integration) return;
+        using var vm = new NebulaLinkVM(integration, focus, linkIntent);
+        await DialogService.Show(new NebulaLinkView {DataContext = vm});
     }
 
     /// <summary>QR login confirmation. True = approve; false = cancel (also the X and Esc).</summary>

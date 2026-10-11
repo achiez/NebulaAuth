@@ -103,6 +103,20 @@ public class ClipboardHelper
         }
     }
 
+    /// <summary>Text currently on the clipboard (null when there is none). Errors are logged (no snackbar).</summary>
+    public static async Task<string?> GetTextAsync()
+    {
+        try
+        {
+            return await Dispatcher.UIThread.InvokeAsync(() => GetClipboard().TryGetTextAsync());
+        }
+        catch (Exception ex)
+        {
+            Shell.Logger.Error(ex);
+            return null;
+        }
+    }
+
     /// <summary>
     ///     Returns local paths of the files currently on the clipboard (empty when there are none).
     ///     Errors are logged (no snackbar).

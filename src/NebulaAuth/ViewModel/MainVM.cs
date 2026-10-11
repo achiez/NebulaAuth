@@ -42,6 +42,7 @@ public partial class MainVM : ObservableObject
         Storage.MaFiles.CollectionChanged += MaFilesOnCollectionChanged;
         QueryGroups();
         InitSkippedFiles();
+        InitNebulaLink();
         _importGate.PhaseChanged += OnImportPhaseChanged;
         UpdateManager.CheckForUpdates();
     }
@@ -71,6 +72,9 @@ public partial class MainVM : ObservableObject
             ConfirmLoginCommand.NotifyCanExecuteChanged();
             QrLoginCommand.NotifyCanExecuteChanged();
             RemoveProxyCommand.NotifyCanExecuteChanged();
+            NotifyMaacAvailability();
+            OnPropertyChanged(nameof(CanConnectSelectedToLink));
+            OnPropertyChanged(nameof(CanDisconnectSelectedFromLink));
         }
     }
 

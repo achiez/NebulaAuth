@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!--
+		Nebula Link: the Nebula Protocol client of NebulaAuth (pairing, the device link and its connection, account links
+		and grants, request execution, confirmations service, request history). No UI: the app supplies the accounts, the
+		Steam session backend and the storage hooks (NebulaLinkOptions, NebulaLinkFiles, NebulaLinkLog).
+	-->
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<RootNamespace>NebulaAuth.NebulaLink</RootNamespace>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+
+	<!-- DevTools (preview factory, scripted steps, local-stand addresses; see DevTools/README.md): Debug builds only -->
+	<ItemGroup Condition="'$(Configuration)' != 'Debug'">
+		<Compile Remove="DevTools\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.9" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="10.0.9" />
+		<PackageReference Include="NLog" Version="5.5.0" />
+		<PackageReference Include="NLog.Extensions.Logging" Version="5.5.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\SteamLibForked\SteamLibForked.csproj" />
+	</ItemGroup>
+
+</Project>
