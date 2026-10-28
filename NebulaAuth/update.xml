@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-  <version>1.8.4</version>
-  <url>https://github.com/achiez/NebulaAuth-Steam-Desktop-Authenticator-by-Achies/releases/download/1.8.4/NebulaAuth.1.8.4.zip</url>
-  <changelog>https://achiez.github.io/NebulaAuth-Steam-Desktop-Authenticator-by-Achies/changelog/1.8.4.html</changelog>
+  <version>1.8.5</version>
+  <url>https://github.com/achiez/NebulaAuth-Steam-Desktop-Authenticator-by-Achies/releases/download/1.8.5/NebulaAuth.1.8.5.zip</url>
+  <changelog>https://achiez.github.io/NebulaAuth-Steam-Desktop-Authenticator-by-Achies/changelog/1.8.5.html</changelog>
   <mandatory>false</mandatory>
-  <checksum algorithm="SHA256">5ecad7a711bab7e98f5f3bfa92b7a00e21efc18aa92251bb30bd3e50a2f7d2f2</checksum>
+  <checksum algorithm="SHA256">7b2d7768ff5497664c0223a535e35006022d7aed62ebf5400fbf9be3d2893bd5</checksum>
 </item>
