@@ -1,16 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 using AchiesUtilities.Web.Proxy;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NebulaAuth.Core;
 using NebulaAuth.Model;
+using NebulaAuth.Model.DeviceModels;
 using NebulaAuth.Model.Entities;
 using NebulaAuth.Model.Mafiles;
 using NebulaAuth.Utility;
@@ -52,6 +52,9 @@ public partial class MafileMoverVM : ObservableObject, IAuthProvider, IDisposabl
     [ObservableProperty] private string? _error;
 
     private KeyValuePair<int, ProxyData>? _lastProxy;
+
+    // Device name of the new authenticator: chosen once before the first request, kept for retries, saved in the mafile
+    private string? _deviceName;
 
     [ObservableProperty] private string? _tip;
 
@@ -124,9 +127,10 @@ public partial class MafileMoverVM : ObservableObject, IAuthProvider, IDisposabl
         var (login, pass, proxy) = authStep.GetState(_cts.Token);
         _lastProxy = proxy;
         _proxy.SetData(proxy?.Value);
+        _deviceName ??= DeviceNames.PickRandom();
         var log = new LoginV2ExecutorOptions(StaticLoginConsumer.Instance, _client)
         {
-            DeviceDetails = DeviceDetailsDefaultBuilder.GetMobileDefaultDevice(),
+            DeviceDetails = DeviceDetailsDefaultBuilder.GetMobileDevice(_deviceName),
             WebsiteId = "Mobile",
             AuthProviders = [this],
             Logger = Logger2
@@ -241,12 +245,13 @@ public partial class MafileMoverVM : ObservableObject, IAuthProvider, IDisposabl
 
 
         var mafile = Mafile.FromMobileDataExtended(mobileData);
+        mafile.DeviceName = _deviceName;
         try
         {
             if (proxy.HasValue)
                 mafile.Proxy = new MaProxy(proxy.Value.Key, proxy.Value.Value);
-            if (Settings.Instance.IsPasswordSet)
-                mafile.Password = PHandler.Encrypt(pass);
+            // Kept only in an encrypted storage with saving allowed (the login step tells the user); otherwise nothing is saved
+            SteamPasswords.TrySet(mafile.AccountName, pass);
         }
         catch (Exception ex)
         {
@@ -259,24 +264,19 @@ public partial class MafileMoverVM : ObservableObject, IAuthProvider, IDisposabl
 
     private void SetCurrentStep(MafileMoverStepVM step)
     {
-        Dispatcher.CurrentDispatcher.Invoke(() =>
+        Dispatcher.UIThread.Invoke(() =>
         {
             CurrentStep = step;
             Tip = CurrentStep.Tip;
         });
     }
 
-    [RelayCommand]
+    private static bool CanOpenTroubleshooting() => LinksManager.LinkingTroubleshootingUrl != null;
+
+    [RelayCommand(CanExecute = nameof(CanOpenTroubleshooting))]
     private void OpenTroubleshooting()
     {
-        const string troubleshootingURI =
-            "https://achiez.github.io/NebulaAuth-Steam-Desktop-Authenticator-by-Achies/docs/{0}/LinkingTroubleshooting";
-
-        var localized = string.Format(troubleshootingURI, LocManager.GetCurrentLanguageCode());
-        Process.Start(new ProcessStartInfo(new Uri(localized).ToString())
-        {
-            UseShellExecute = true
-        });
+        if (LinksManager.LinkingTroubleshootingUrl is { } url) PlatformUtils.OpenUrl(url);
     }
 
     private static string GetLocalizationOrDefault(string key)

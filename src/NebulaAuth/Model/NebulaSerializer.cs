@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NebulaAuth.Model.Entities;
 using NebulaAuth.Model.Exceptions;
+using NebulaAuth.Model.Mafiles.Protection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SteamLib;
@@ -12,6 +14,12 @@ namespace NebulaAuth.Model;
 
 public static class NebulaSerializer
 {
+    /// <summary>
+    ///     Mafile property of <see cref="Mafile.DeviceName" />. Never "Device": the legacy parser reads "device"
+    ///     (case-insensitive) as the DeviceId.
+    /// </summary>
+    public const string DEVICE_NAME_PROPERTY = "DeviceName";
+
     public static MafileSerializer Serializer { get; }
 
     static NebulaSerializer()
@@ -35,6 +43,18 @@ public static class NebulaSerializer
 
     public static Mafile Deserialize(string cont, string path)
     {
+        return Deserialize(cont, path, out _);
+    }
+
+    /// <summary>
+    ///     Reads a mafile. The legacy "Password" field (Steam password of 1.x versions, third-party mafiles) is never
+    ///     read: Steam passwords live only in the encrypted password store.
+    /// </summary>
+    /// <param name="cont">JSON.</param>
+    /// <param name="path">Path or name of the file (sets <see cref="Mafile.Filename" />).</param>
+    /// <param name="hasLegacyPassword">The JSON contains the legacy "Password" field (to be removed from the file).</param>
+    public static Mafile Deserialize(string cont, string path, out bool hasLegacyPassword)
+    {
         var data = Serializer.Deserialize(cont);
         var mobileData = data.Data;
         var info = data.Info;
@@ -43,10 +63,12 @@ public static class NebulaSerializer
 
 
         var props = info.UnusedProperties ?? [];
+        hasLegacyPassword = props.Keys.Any(k =>
+            string.Equals(k, StorageContent.LEGACY_PASSWORD_PROPERTY, StringComparison.OrdinalIgnoreCase));
         var proxy = GetPropertyValue<MaProxy>("Proxy", props);
         var group = GetPropertyValue<string>("Group", props);
-        var password = GetPropertyValue<string>("Password", props);
-        var mafile = Mafile.FromMobileDataExtended((MobileDataExtended) mobileData, proxy, group, password);
+        var mafile = Mafile.FromMobileDataExtended((MobileDataExtended) mobileData, proxy, group);
+        mafile.DeviceName = ReadDeviceName(props);
 
         mafile.Filename = Path.GetFileName(path);
 
@@ -54,6 +76,23 @@ public static class NebulaSerializer
             throw new MafileNeedReloginException(mafile);
 
         return mafile;
+    }
+
+    /// <summary>
+    ///     "DeviceName" (any case; the DeviceId aliases "device", "device_id", "deviceid" never match it): a non-blank
+    ///     string, otherwise null (a new name is assigned).
+    /// </summary>
+    private static string? ReadDeviceName(Dictionary<string, JProperty> props)
+    {
+        if (!props.TryGetValue(DEVICE_NAME_PROPERTY, out var prop))
+        {
+            prop = props.Values.FirstOrDefault(p =>
+                string.Equals(p.Name, DEVICE_NAME_PROPERTY, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (prop?.Value is not {Type: JTokenType.String} token) return null;
+        var value = token.Value<string>();
+        return string.IsNullOrWhiteSpace(value) ? null : value;
     }
 
     private static T? GetPropertyValue<T>(string name, Dictionary<string, JProperty> dictionary)
@@ -76,9 +115,10 @@ public static class NebulaSerializer
         var props = new Dictionary<string, object?>
         {
             {nameof(Mafile.Proxy), data.Proxy},
-            {nameof(Mafile.Group), data.Group},
-            {nameof(Mafile.Password), data.Password}
+            {nameof(Mafile.Group), data.Group}
         };
+        // Written only when set: an export without the device name has no such property at all
+        if (!string.IsNullOrWhiteSpace(data.DeviceName)) props[DEVICE_NAME_PROPERTY] = data.DeviceName;
         return SerializeMafile(data, props);
     }
 

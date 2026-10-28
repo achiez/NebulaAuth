@@ -154,6 +154,36 @@
       "tr": "Hesaba giriş",
       "kk": "Аккаунтқа кіру"
     },
+    "PasswordSavedEncrypted": {
+      "en": "The password is saved for automatic login only in the encrypted password store.",
+      "ru": "Пароль сохраняется для автовхода только в зашифрованном хранилище паролей.",
+      "zh": "密码仅保存在加密的密码存储中，用于自动登录。",
+      "uk": "Пароль зберігається для автовходу лише в зашифрованому сховищі паролів.",
+      "fr": "Le mot de passe est enregistré pour la connexion automatique uniquement dans le coffre de mots de passe chiffré.",
+      "es": "La contraseña se guarda para el inicio automático solo en el almacén de contraseñas cifrado.",
+      "tr": "Parola, otomatik giriş için yalnızca şifreli parola deposuna kaydedilir.",
+      "kk": "Құпиясөз автоматты кіру үшін тек шифрланған құпиясөз қоймасында сақталады."
+    },
+    "PasswordNotSaved": {
+      "en": "The password isn't saved. Enable encryption to save it.",
+      "ru": "Пароль не сохраняется. Для сохранения включите шифрование.",
+      "zh": "密码不会被保存。如需保存，请启用加密。",
+      "uk": "Пароль не зберігається. Для збереження увімкніть шифрування.",
+      "fr": "Le mot de passe n'est pas enregistré. Activez le chiffrement pour l'enregistrer.",
+      "es": "La contraseña no se guarda. Activa el cifrado para guardarla.",
+      "tr": "Parola kaydedilmez. Kaydetmek için şifrelemeyi açın.",
+      "kk": "Құпиясөз сақталмайды. Сақтау үшін шифрлауды қосыңыз."
+    },
+    "PasswordNotSavedTurnedOff": {
+      "en": "The password isn't saved: saving is turned off in encryption settings.",
+      "ru": "Пароль не сохраняется: сохранение выключено в настройках шифрования.",
+      "zh": "密码不会被保存：已在加密设置中关闭保存。",
+      "uk": "Пароль не зберігається: збереження вимкнено в налаштуваннях шифрування.",
+      "fr": "Le mot de passe n'est pas enregistré : l'enregistrement est désactivé dans les paramètres de chiffrement.",
+      "es": "La contraseña no se guarda: el guardado está desactivado en los ajustes de cifrado.",
+      "tr": "Parola kaydedilmez: kaydetme, şifreleme ayarlarında kapalı.",
+      "kk": "Құпиясөз сақталмайды: сақтау шифрлау баптауларында өшірулі."
+    },
     "EmailCode": {
       "en": "Email code",
       "ru": "Код из письма",

@@ -1,0 +1,297 @@
+<!--
+    App-level style classes. Included after the Semi/Ursa themes in App.axaml.
+    Colors come from the palette brushes built by ThemeResources, so every class follows runtime theme switches.
+-->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mi="using:Material.Icons.Avalonia"
+        xmlns:theme="using:NebulaAuth.Theme"
+        xmlns:dialogHost="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia">
+
+    <!-- ===== Surfaces ===== -->
+
+    <!-- md:Card replacement: <Border Classes="Card"> ... </Border> -->
+    <Style Selector="Border.Card">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="12" />
+        <Setter Property="BoxShadow" Value="0 1 3 0 #14000000" />
+    </Style>
+    <!-- Flat variant without shadow (nested cards, list containers) -->
+    <Style Selector="Border.Card.Flat">
+        <Setter Property="BoxShadow" Value="none" />
+    </Style>
+
+    <!-- Thin separator line: <Border Classes="Divider" /> (horizontal) or Classes="Divider Vertical" -->
+    <Style Selector="Border.Divider">
+        <Setter Property="Height" Value="1" />
+        <Setter Property="Background" Value="{DynamicResource DividerBrush}" />
+        <Setter Property="Margin" Value="0,8" />
+    </Style>
+    <Style Selector="Border.Divider.Vertical">
+        <Setter Property="Height" Value="NaN" />
+        <Setter Property="Width" Value="1" />
+        <Setter Property="Margin" Value="8,4" />
+    </Style>
+
+    <!-- MainWindow app bar and footer (status bar) -->
+    <Style Selector="Border.AppBar">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource DividerBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <!-- Left 14: the first menu (and its drop-down, aligned with it) keeps a gap to the window edge -->
+        <Setter Property="Padding" Value="14,6,10,6" />
+        <Setter Property="MinHeight" Value="52" />
+    </Style>
+    <Style Selector="Border.Footer">
+        <Setter Property="Background" Value="{DynamicResource FooterBackgroundBrush}" />
+        <Setter Property="Padding" Value="10,4" />
+        <Setter Property="MinHeight" Value="30" />
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource FooterForegroundBrush}" />
+        <Setter Property="TextElement.FontSize" Value="14" />
+    </Style>
+
+    <!-- Status chip: <Border Classes="Chip Ok|Warn|Bad|Muted"><TextBlock Text="..." /></Border> (tinted, readable text) -->
+    <Style Selector="Border.Chip">
+        <Setter Property="Background" Value="{DynamicResource SemiColorFill0}" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="9,2" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
+    <Style Selector="Border.Chip TextBlock">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+    </Style>
+    <Style Selector="Border.Chip.Ok">
+        <Setter Property="Background" Value="{DynamicResource SuccessTintBrush}" />
+    </Style>
+    <Style Selector="Border.Chip.Ok TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource SuccessTextBrush}" />
+    </Style>
+    <Style Selector="Border.Chip.Warn">
+        <Setter Property="Background" Value="{DynamicResource WarningTintBrush}" />
+    </Style>
+    <Style Selector="Border.Chip.Warn TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource WarningTextBrush}" />
+    </Style>
+    <Style Selector="Border.Chip.Bad">
+        <Setter Property="Background" Value="{DynamicResource ErrorTintBrush}" />
+    </Style>
+    <Style Selector="Border.Chip.Bad TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource ErrorTextBrush}" />
+    </Style>
+
+    <!-- ===== Text ===== -->
+
+    <!-- Muted secondary text (captions, descriptions) -->
+    <Style Selector="TextBlock.Muted">
+        <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+    </Style>
+    <Style Selector="TextBlock.Caption">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+    </Style>
+    <!-- Section heading inside dialogs/cards -->
+    <Style Selector="TextBlock.Heading">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <!-- Monospace (codes, proxy strings) -->
+    <Style Selector="TextBlock.Mono">
+        <Setter Property="FontFamily" Value="Cascadia Mono, Consolas, Menlo, DejaVu Sans Mono, monospace" />
+    </Style>
+    <Style Selector="TextBox.Mono">
+        <Setter Property="FontFamily" Value="Cascadia Mono, Consolas, Menlo, DejaVu Sans Mono, monospace" />
+    </Style>
+
+    <!-- ===== Form field pattern (label above input, helper below) =====
+         <StackPanel Classes="Field">
+             <TextBlock Classes="FieldLabel" Text="{Tr ...}" />
+             <TextBox Text="{Binding ...}" />
+             <TextBlock Classes="FieldHelper" Text="{Tr ...}" />
+         </StackPanel>
+         Stack several fields in <StackPanel Classes="Form"> (vertical spacing 14). -->
+    <Style Selector="StackPanel.Form">
+        <Setter Property="Spacing" Value="14" />
+    </Style>
+    <Style Selector="StackPanel.Field">
+        <Setter Property="Spacing" Value="6" />
+    </Style>
+    <!-- Dialog text hierarchy (see CONVENTIONS "Dialog typography"):
+         DialogText (15, full text color, line height 22) > FieldLabel (13 SemiBold, 82%) > FieldHelper (12, muted) -->
+    <Style Selector="TextBlock.DialogText">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="LineHeight" Value="22" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="MaxWidth" Value="460" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+    </Style>
+    <Style Selector="TextBlock.FieldLabel">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource SemiColorText1}" />
+    </Style>
+    <Style Selector="TextBlock.FieldHelper">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="LineHeight" Value="17" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Foreground" Value="{DynamicResource MutedForegroundBrush}" />
+    </Style>
+    <Style Selector="TextBlock.FieldError">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+    </Style>
+
+    <!-- Leading icon inside a TextBox: <TextBox.InnerLeftContent><mi:MaterialIcon Classes="InputIcon" Kind="Magnify" /></TextBox.InnerLeftContent> -->
+    <Style Selector="mi|MaterialIcon.InputIcon">
+        <Setter Property="IconSize" Value="18" />
+        <Setter Property="Margin" Value="10,0,-4,0" />
+        <Setter Property="Foreground" Value="{DynamicResource SemiColorText2}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- ===== Dialog layout ===== -->
+
+    <!-- Body under DialogHeader: <StackPanel Classes="DialogBody"> -->
+    <Style Selector=":is(Control).DialogBody">
+        <Setter Property="Margin" Value="20,16,20,20" />
+    </Style>
+    <Style Selector="StackPanel.DialogBody">
+        <Setter Property="Spacing" Value="14" />
+    </Style>
+    <!-- Destructive confirm button: <Button Theme="{DynamicResource SolidButton}" Classes="Danger OnDanger" />.
+         Semi draws every solid button text with one color (readable on the primary color, dark on Luxury's gold):
+         OnDanger uses a text color readable on the error color instead. -->
+    <Style Selector="Button.Danger.OnDanger /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Foreground" Value="{DynamicResource OnErrorBrush}" />
+    </Style>
+
+    <!-- Button row at the bottom of a dialog: primary action first, right-aligned -->
+    <Style Selector="StackPanel.DialogActions">
+        <Setter Property="Orientation" Value="Horizontal" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="Spacing" Value="8" />
+        <Setter Property="Margin" Value="0,6,0,0" />
+    </Style>
+    <Style Selector="StackPanel.DialogActions > Button">
+        <Setter Property="MinWidth" Value="110" />
+    </Style>
+
+    <!-- ===== Layout defaults: Stretch (Semi aligns these Left/Top) ===== -->
+    <Style Selector="ComboBox">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="ListBox">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+    </Style>
+
+    <!-- ===== Inputs ===== -->
+
+    <!-- Multi-line text boxes: the first line (and the caret) keeps a comfortable distance from the top edge -->
+    <Style Selector="TextBox[AcceptsReturn=True]">
+        <Setter Property="Padding" Value="12,9,12,9" />
+        <Setter Property="VerticalContentAlignment" Value="Top" />
+    </Style>
+
+    <!-- Subtle input (app bar, search): no fill, thin outline; hover = light fill, focus = primary outline.
+         <TextBox Classes="Subtle" /> or <ComboBox Classes="Subtle" />. Dialog forms keep the filled default look. -->
+    <Style Selector="TextBox.Subtle">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource InputSubtleBorderBrush}" />
+    </Style>
+    <Style Selector="TextBox.Subtle:pointerover /template/ Border#PART_ContentPresenterBorder">
+        <Setter Property="Background" Value="{DynamicResource HoverFillBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource InputSubtleHoverBorderBrush}" />
+    </Style>
+    <Style Selector="TextBox.Subtle:focus /template/ Border#PART_ContentPresenterBorder">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SemiColorPrimary}" />
+    </Style>
+    <Style Selector="TextBox.Subtle:error /template/ Border#PART_ContentPresenterBorder">
+        <Setter Property="BorderBrush" Value="{DynamicResource SemiColorDanger}" />
+    </Style>
+    <Style Selector="ComboBox.Subtle">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource InputSubtleBorderBrush}" />
+    </Style>
+    <Style Selector="ComboBox.Subtle:pointerover">
+        <Setter Property="Background" Value="{DynamicResource HoverFillBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource InputSubtleHoverBorderBrush}" />
+    </Style>
+    <Style Selector="ComboBox.Subtle:focus-within, ComboBox.Subtle:dropdownopen">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SemiColorPrimary}" />
+    </Style>
+    <Style Selector="ComboBox.Subtle:disabled">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SemiColorDisabledBorder}" />
+    </Style>
+
+    <!-- ===== Motion (see Theme/Motion.cs: popups fade/scale in on open) ===== -->
+
+    <!-- Expander content fades in and slides down a little when it expands -->
+    <Style Selector="Expander">
+        <Setter Property="ContentTransition">
+            <theme:ExpandTransition />
+        </Setter>
+    </Style>
+
+    <!-- ===== Controls ===== -->
+
+    <!-- MaterialDesignUniformTabControl: tabs share the width equally -->
+    <Style Selector="TabControl.Uniform">
+        <Setter Property="ItemsPanel">
+            <ItemsPanelTemplate>
+                <UniformGrid Rows="1" />
+            </ItemsPanelTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="TabControl.Uniform > TabItem">
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+    </Style>
+
+    <!-- SliderAssist.HideActiveTrack: both parts of the track use the (palette-derived) track background.
+         The class in the selector matters: Semi sets these Backgrounds in the template, which only a class-activated
+         style overrides. -->
+    <Style Selector="Slider.HideActiveTrack /template/ RepeatButton#PART_DecreaseButton, Slider.HideActiveTrack /template/ RepeatButton#PART_IncreaseButton">
+        <Setter Property="Background" Value="{DynamicResource SliderTrackBackground}" />
+    </Style>
+
+    <!-- md:ComboBoxAssist.ShowSelectedItem="False": <ComboBox Classes="HideSelectedItem"> does not repeat the selected
+         item in its drop-down list -->
+    <Style Selector="ComboBox.HideSelectedItem ComboBoxItem:selected">
+        <Setter Property="IsVisible" Value="False" />
+    </Style>
+
+    <!-- ListBox.Stretch: items stretch to the list width -->
+    <Style Selector="ListBox.Stretch > ListBoxItem">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
+    <!-- Tooltips: slightly smaller text than the 18px window base -->
+    <Style Selector="ToolTip">
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <!-- Root dialog host: dialog card look (radius 12) -->
+    <Style Selector="dialogHost|DialogHost.Root">
+        <Setter Property="Background" Value="{DynamicResource DialogBackgroundBrush}" />
+        <Setter Property="OverlayBackground" Value="{DynamicResource DialogOverlayBrush}" />
+        <Setter Property="dialogHost:DialogHostStyle.CornerRadius" Value="12" />
+        <Setter Property="dialogHost:DialogHostStyle.ClipToBounds" Value="False" />
+        <Setter Property="dialogHost:DialogHostStyle.BorderThickness" Value="1" />
+        <Setter Property="dialogHost:DialogHostStyle.BorderBrush" Value="{DynamicResource DialogBorderBrush}" />
+        <Setter Property="dialogHost:DialogHostStyle.BoxShadow" Value="0 12 40 0 #66000000" />
+        <!-- DialogMargin = padding INSIDE the card: 0, so DialogHeader (top corners 11) meets the card edges; every dialog
+             sets its own body margins (DialogBody) -->
+        <Setter Property="DialogMargin" Value="0" />
+    </Style>
+</Styles>

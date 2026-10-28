@@ -1,0 +1,364 @@
+<!--
+    Update dialog over UpdateManager.Status (UpdateDialogVM.Status); the content follows the state:
+    - Available: JSON changelog (or its HTML fallback) + "Download and install" (Velopack-managed copy) or
+      "Open download page" (copy that can't update itself), "Remind later" (remind-after options), "Skip version";
+    - Downloading: progress bar + Cancel (closing the dialog keeps the download running);
+    - ReadyToRestart: what happens on restart + "Restart and update" / "Later";
+    - Failed: the reason (HintBox), the technical detail, "Try again" (when it can help), "Download manually" (package
+      for this OS / architecture) and Close.
+    Button texts describe the real action; nothing is installed without pressing "Restart and update".
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:other="using:NebulaAuth.ViewModel.Other"
+             xmlns:update="using:NebulaAuth.Model.Update"
+             xmlns:dialogs="using:NebulaAuth.View.Dialogs"
+             mc:Ignorable="d"
+             x:Class="NebulaAuth.View.Dialogs.UpdateDialog"
+             x:DataType="other:UpdateDialogVM"
+             MinWidth="420" MaxWidth="600">
+
+    <UserControl.Resources>
+        <!-- Badge text: white; the code-behind swaps in a dark palette color where white is unreadable -->
+        <SolidColorBrush x:Key="UpdateBadgeOnPrimaryBrush" Color="White" />
+        <SolidColorBrush x:Key="UpdateBadgeOnSuccessBrush" Color="White" />
+        <SolidColorBrush x:Key="UpdateBadgeOnWarningBrush" Color="White" />
+        <SolidColorBrush x:Key="UpdateBadgeOnAccentBrush" Color="White" />
+        <SolidColorBrush x:Key="UpdateBadgeOnErrorBrush" Color="White" />
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <!-- Change type badge: Primary by default, NEW / FIX / IMPROVEMENT / SECURITY -->
+        <Style Selector="Border.ChangeBadge">
+            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource UpdateBadgeOnPrimaryBrush}" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="6,2" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+        <Style Selector="Border.ChangeBadge.New">
+            <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource UpdateBadgeOnSuccessBrush}" />
+        </Style>
+        <Style Selector="Border.ChangeBadge.Fix">
+            <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource UpdateBadgeOnWarningBrush}" />
+        </Style>
+        <Style Selector="Border.ChangeBadge.Improvement">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource UpdateBadgeOnAccentBrush}" />
+        </Style>
+        <Style Selector="Border.ChangeBadge.Security">
+            <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource UpdateBadgeOnErrorBrush}" />
+        </Style>
+        <!-- Separator under every item except the last one (it would touch the card edge) -->
+        <Style Selector="ContentPresenter:nth-last-child(1) Border.ChangeDivider">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <!-- Icon + caption line under a button (size, URL) -->
+        <Style Selector="StackPanel.ActionCaption">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="Spacing" Value="6" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,-2,0,2" />
+        </Style>
+        <Style Selector="StackPanel.ActionCaption > mi|MaterialIcon">
+            <Setter Property="IconSize" Value="14" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource SubtleForegroundBrush}" />
+        </Style>
+    </UserControl.Styles>
+
+    <!--
+        Auto,* rows (and Auto,*,Auto in the body): on a short main window the changelog list shrinks and scrolls
+        instead of pushing the action buttons out of the dialog. With enough room the dialog still sizes to its content.
+    -->
+    <Grid RowDefinitions="Auto,*">
+        <!-- Header: "New version available: 2.0.1" / "Update ready: 2.0.1" / "Update failed 2.0.1" -->
+        <nebulaAuth:DialogHeader Grid.Row="0"
+                                 IconKind="Update"
+                                 Title="{Binding HeaderTitle}"
+                                 TitleAccent="{Binding Version}" />
+
+        <!-- Margins instead of RowSpacing, so no gap is left while the changelog card is hidden -->
+        <Grid Grid.Row="1" Classes="DialogBody" RowDefinitions="Auto,*,Auto">
+
+            <!-- Changelog title (or its HTML fallback) + installed -> new version and release date -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="12" Margin="0,0,0,18"
+                  IsVisible="{Binding Status.ShowChangelog}">
+                <TextBlock Grid.Column="0"
+                           Text="{Tr UpdateDialog.Changelog}"
+                           FontSize="13" FontWeight="SemiBold"
+                           VerticalAlignment="Center"
+                           IsVisible="{Binding HasJsonChangelog}" />
+                <Panel Grid.Column="0" IsVisible="{Binding ShowHtmlChangelog}">
+                    <!-- Changelog page (JSON changelog could not be loaded); composite content -> explicit accessible name -->
+                    <Button Theme="{StaticResource LinkButton}"
+                            AutomationProperties.Name="{Tr UpdateDialog.Changelog}"
+                            Command="{Binding OpenLinkCommand}"
+                            CommandParameter="{Binding HtmlFallbackUrl}"
+                            ToolTip.Tip="{Binding HtmlFallbackUrl}"
+                            IsVisible="{Binding HtmlFallbackUrl, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="{Tr UpdateDialog.Changelog}" FontSize="13" FontWeight="SemiBold"
+                                       VerticalAlignment="Center" />
+                            <mi:MaterialIcon Kind="OpenInNew" IconSize="14" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <!-- No changelog fallback -->
+                    <TextBlock Classes="Caption"
+                               Text="{Tr UpdateDialog.NoChangelog}"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding HtmlFallbackUrl, Converter={x:Static StringConverters.IsNullOrEmpty}}" />
+                </Panel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                    <TextBlock Classes="Caption" VerticalAlignment="Center">
+                        <Run Text="{Binding Status.InstalledVersion}" />
+                        <Run Text=" → " />
+                        <Run Text="{Binding Version, Mode=OneWay}" FontWeight="SemiBold" />
+                    </TextBlock>
+                    <TextBlock Classes="Caption"
+                               VerticalAlignment="Center"
+                               Text="{Binding Changelog.Date, StringFormat='· {0}', FallbackValue=''}"
+                               IsVisible="{Binding Changelog.Date, Converter={x:Static StringConverters.IsNotNullOrEmpty}, FallbackValue={x:False}}" />
+                </StackPanel>
+            </Grid>
+
+            <!-- JSON changelog items -->
+            <Border Grid.Row="1" Classes="Card Flat" Padding="14,4,6,4" Margin="0,0,0,18"
+                    IsVisible="{Binding HasJsonChangelog}">
+                <ScrollViewer MaxHeight="350" VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl ItemsSource="{Binding Changelog.Changes, FallbackValue={x:Null}}"
+                                  Grid.IsSharedSizeScope="True"
+                                  Margin="0,0,8,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="update:ChangeItem">
+                                <StackPanel>
+                                    <Grid Margin="0,9">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="ChangeType" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0"
+                                                Classes="ChangeBadge"
+                                                Classes.New="{Binding Type, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=NEW}"
+                                                Classes.Fix="{Binding Type, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=FIX}"
+                                                Classes.Improvement="{Binding Type, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=IMPROVEMENT}"
+                                                Classes.Security="{Binding Type, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=SECURITY}">
+                                            <TextBlock Text="{Binding Type}" FontSize="11" FontWeight="Bold" />
+                                        </Border>
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding Text}"
+                                                   TextWrapping="Wrap"
+                                                   FontSize="13"
+                                                   VerticalAlignment="Top" />
+                                        <Button Grid.Column="2"
+                                                Theme="{StaticResource GhostIconButton}"
+                                                Classes="Primary"
+                                                Width="24" Height="24" FontSize="13"
+                                                Margin="8,-3,0,-3"
+                                                VerticalAlignment="Top"
+                                                Command="{Binding $parent[ItemsControl].((other:UpdateDialogVM)DataContext).OpenLinkCommand, FallbackValue={x:Null}}"
+                                                CommandParameter="{Binding Link}"
+                                                ToolTip.Tip="{Binding Link}"
+                                                IsVisible="{Binding Link, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                                            <mi:MaterialIcon Kind="OpenInNew" />
+                                        </Button>
+                                    </Grid>
+                                    <Border Classes="Divider ChangeDivider" Margin="0" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Actions (one panel per state) -->
+            <Panel Grid.Row="2">
+
+                <!-- Available -->
+                <StackPanel Spacing="8" IsVisible="{Binding Status.IsAvailable}">
+                    <StackPanel Spacing="8" IsVisible="{Binding !ShowRemindOptions}">
+                        <!-- Velopack-managed copy: downloads here, installs on "Restart and update" -->
+                        <StackPanel Spacing="8" IsVisible="{Binding Status.ShowInstallAction}">
+                            <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                                    AutomationProperties.Name="{Tr UpdateDialog.DownloadAndInstall}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
+                                    Command="{Binding InstallCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <mi:MaterialIcon Kind="Download" IconSize="16" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Tr UpdateDialog.DownloadAndInstall}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                            <StackPanel Classes="ActionCaption">
+                                <mi:MaterialIcon Kind="InformationOutline" />
+                                <TextBlock Classes="Caption" FontSize="12" VerticalAlignment="Center"
+                                           TextWrapping="Wrap" MaxWidth="480">
+                                    <Run Text="{Binding DownloadSizeText}" />
+                                    <Run Text="·" />
+                                    <Run Text="{Tr UpdateDialog.InstallHint}" />
+                                </TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Copy that can't update itself: open the release page. Composite content -> accessible name -->
+                        <StackPanel Spacing="8" IsVisible="{Binding Status.ShowOpenPageAction}">
+                            <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                                    AutomationProperties.Name="{Tr UpdateDialog.OpenDownloadPage}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
+                                    Command="{Binding OpenDownloadPageCommand}"
+                                    ToolTip.Tip="{Binding Status.ReleasePageUrl}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="{Tr UpdateDialog.OpenDownloadPage}" VerticalAlignment="Center" />
+                                    <mi:MaterialIcon Kind="OpenInNew" IconSize="16" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                            <StackPanel Classes="ActionCaption"
+                                        IsVisible="{Binding Status.ReleasePageUrl, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                                <mi:MaterialIcon Kind="Web" />
+                                <TextBlock Classes="Caption" FontSize="12"
+                                           VerticalAlignment="Center"
+                                           MaxWidth="480"
+                                           TextTrimming="PathSegmentEllipsis"
+                                           Text="{Binding Status.ReleasePageUrl, Converter={x:Static dialogs:UpdateDialog.UrlTextConverter}}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                            <Button Grid.Column="0"
+                                    Theme="{DynamicResource OutlineButton}"
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding ToggleRemindOptionsCommand}"
+                                    Content="{Tr UpdateDialog.RemindLater}" />
+                            <Button Grid.Column="1"
+                                    Theme="{DynamicResource BorderlessButton}"
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding SkipVersionCommand}"
+                                    Content="{Tr UpdateDialog.SkipVersion}" />
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Remind later options -->
+                    <StackPanel Spacing="8" IsVisible="{Binding ShowRemindOptions}">
+                        <TextBlock Text="{Tr UpdateDialog.RemindAfter}" FontSize="13" />
+                        <!-- Star Grid, not UniformGrid: Grid spreads the layout-rounding remainder across the columns,
+                             UniformGrid rounds every cell up and overshoots the content column at fractional scaling -->
+                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                            <Button Grid.Column="0"
+                                    Theme="{DynamicResource OutlineButton}" HorizontalAlignment="Stretch"
+                                    Command="{Binding SelectRemindOptionCommand}"
+                                    CommandParameter="1H"
+                                    Content="{Tr UpdateDialog.RemindOptions.1Hour}" />
+                            <Button Grid.Column="1"
+                                    Theme="{DynamicResource OutlineButton}" HorizontalAlignment="Stretch"
+                                    Command="{Binding SelectRemindOptionCommand}"
+                                    CommandParameter="1D"
+                                    Content="{Tr UpdateDialog.RemindOptions.1Day}" />
+                            <Button Grid.Column="2"
+                                    Theme="{DynamicResource OutlineButton}" HorizontalAlignment="Stretch"
+                                    Command="{Binding SelectRemindOptionCommand}"
+                                    CommandParameter="3D"
+                                    Content="{Tr UpdateDialog.RemindOptions.3Days}" />
+                            <Button Grid.Column="3"
+                                    Theme="{DynamicResource OutlineButton}" HorizontalAlignment="Stretch"
+                                    Command="{Binding SelectRemindOptionCommand}"
+                                    CommandParameter="7D"
+                                    Content="{Tr UpdateDialog.RemindOptions.7Days}" />
+                        </Grid>
+                        <Button Theme="{DynamicResource BorderlessButton}" Classes="Tertiary"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ToggleRemindOptionsCommand}"
+                                Content="{Tr Common.Cancel}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Downloading -->
+                <StackPanel Spacing="8" IsVisible="{Binding Status.IsDownloading}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Grid.Column="0" Text="{Tr UpdateDialog.Downloading}" FontSize="13"
+                                   FontWeight="SemiBold" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="Caption" VerticalAlignment="Center"
+                                   Text="{Binding Status.Progress, StringFormat='{}{0}%'}" />
+                    </Grid>
+                    <ProgressBar Minimum="0" Maximum="100" Value="{Binding Status.Progress}" Height="6" />
+                    <TextBlock Classes="FieldHelper" Text="{Tr UpdateDialog.DownloadContinues}" TextWrapping="Wrap" />
+                    <StackPanel Classes="DialogActions">
+                        <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                                Content="{Tr Common.Cancel}"
+                                Command="{Binding CancelDownloadCommand}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Ready to restart -->
+                <StackPanel Spacing="14" IsVisible="{Binding Status.IsReadyToRestart}">
+                    <nebulaAuth:HintBox FontSize="14" Text="{Tr UpdateDialog.ReadyText}" />
+                    <StackPanel Classes="DialogActions">
+                        <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                                AutomationProperties.Name="{Tr UpdateDialog.RestartAndUpdate}"
+                                IsDefault="True"
+                                Command="{Binding RestartAndUpdateCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <mi:MaterialIcon Kind="Restart" IconSize="16" VerticalAlignment="Center" />
+                                <TextBlock Text="{Tr UpdateDialog.RestartAndUpdate}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                                Content="{Tr UpdateDialog.Later}"
+                                Command="{Binding CloseCommand}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Failed -->
+                <StackPanel Spacing="14" IsVisible="{Binding Status.IsFailed}">
+                    <StackPanel Spacing="6">
+                        <nebulaAuth:HintBox FontSize="14" Severity="Error" Text="{Binding FailureText}" />
+                        <TextBlock Classes="FieldHelper" Text="{Tr UpdateDialog.CurrentVersionKept}" TextWrapping="Wrap" />
+                        <SelectableTextBlock Classes="Caption Mono" FontSize="11" TextWrapping="Wrap"
+                                             Text="{Binding Status.FailureDetail}"
+                                             IsVisible="{Binding Status.FailureDetail, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                    </StackPanel>
+                    <StackPanel Spacing="6"
+                                IsVisible="{Binding Status.ManualUrl, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                        <TextBlock Classes="FieldLabel" Text="{Tr UpdateDialog.ManualHint}" TextWrapping="Wrap" />
+                        <Button Theme="{StaticResource LinkButton}"
+                                HorizontalAlignment="Left"
+                                AutomationProperties.Name="{Tr UpdateDialog.DownloadManually}"
+                                Command="{Binding DownloadManuallyCommand}"
+                                ToolTip.Tip="{Binding Status.ManualUrl}">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <mi:MaterialIcon Kind="OpenInNew" IconSize="14" VerticalAlignment="Center" />
+                                <TextBlock FontSize="13" VerticalAlignment="Center" MaxWidth="500"
+                                           TextTrimming="PathSegmentEllipsis"
+                                           Text="{Binding Status.ManualUrl, Converter={x:Static dialogs:UpdateDialog.UrlTextConverter}}" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                    <StackPanel Classes="DialogActions">
+                        <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                                Content="{Tr UpdateDialog.TryAgain}"
+                                IsVisible="{Binding Status.ShowRetryAction}"
+                                Command="{Binding RetryCommand}" />
+                        <Button Theme="{DynamicResource OutlineButton}"
+                                Content="{Tr UpdateDialog.DownloadManually}"
+                                Command="{Binding DownloadManuallyCommand}" />
+                        <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                                Content="{Tr UpdateDialog.Close}"
+                                IsCancel="True"
+                                Command="{Binding CloseCommand}" />
+                    </StackPanel>
+                </StackPanel>
+            </Panel>
+        </Grid>
+    </Grid>
+</UserControl>

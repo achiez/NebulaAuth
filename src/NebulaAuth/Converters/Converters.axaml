@@ -1,0 +1,20 @@
+<!-- App-level converters, merged into Application.Resources (App.axaml). Use them with {StaticResource Key}. -->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="using:NebulaAuth.Converters"
+                    xmlns:background="using:NebulaAuth.Converters.Background">
+    <converters:CoefficientConverter x:Key="CoefficientConverter" />
+    <converters:ReverseBooleanConverter x:Key="ReverseBooleanConverter" />
+    <converters:ProxyTextConverter x:Key="ProxyTextConverter" />
+    <converters:ProxyPairTextConverter x:Key="ProxyPairTextConverter" />
+    <converters:SnapshotListConverter x:Key="SnapshotListConverter" />
+    <converters:ProxyDataTextMultiConverter x:Key="ProxyDataTextMultiConverter" />
+    <converters:NullableColorConverter x:Key="NullableColorConverter" />
+    <converters:AnyMafilesToVisibilityConverter x:Key="AnyMafilesToVisibilityConverter" />
+    <converters:BoolToMafileNamingConverter x:Key="BoolToMafileNamingConverter" />
+    <converters:ProxyAccountCountConverter x:Key="ProxyAccountCountConverter" />
+    <!-- Background converters -->
+    <background:BackgroundImageVisibleConverter x:Key="BackgroundImageVisibleConverter" />
+    <background:BackgroundSourceConverter x:Key="BackgroundSourceConverter" />
+    <background:BlurEffectConverter x:Key="BlurEffectConverter" />
+</ResourceDictionary>

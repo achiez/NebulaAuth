@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using JetBrains.Annotations;
-using MaterialDesignThemes.Wpf;
+using Material.Icons;
 using NebulaAuth.Core;
 using NebulaAuth.Model;
 using NebulaAuth.Model.Entities;
@@ -29,7 +29,6 @@ public partial class MainVM : ObservableObject
     }
 
     public bool IsMafileSelected => SelectedMafile != null;
-    public DialogHost CurrentDialogHost { get; set; } = null!;
 
     [ObservableProperty] private ObservableCollection<Mafile> _maFiles = new(Storage.MaFiles);
 
@@ -42,6 +41,9 @@ public partial class MainVM : ObservableObject
             new MaProxy(kvp.Key, kvp.Value)));
         Storage.MaFiles.CollectionChanged += MaFilesOnCollectionChanged;
         QueryGroups();
+        InitSkippedFiles();
+        InitNebulaLink();
+        _importGate.PhaseChanged += OnImportPhaseChanged;
         UpdateManager.CheckForUpdates();
     }
 
@@ -68,7 +70,11 @@ public partial class MainVM : ObservableObject
             LoginAgainCommand.NotifyCanExecuteChanged();
             RemoveAuthenticatorCommand.NotifyCanExecuteChanged();
             ConfirmLoginCommand.NotifyCanExecuteChanged();
+            QrLoginCommand.NotifyCanExecuteChanged();
             RemoveProxyCommand.NotifyCanExecuteChanged();
+            NotifyMaacAvailability();
+            OnPropertyChanged(nameof(CanConnectSelectedToLink));
+            OnPropertyChanged(nameof(CanDisconnectSelectedFromLink));
         }
     }
 
@@ -78,7 +84,7 @@ public partial class MainVM : ObservableObject
     {
         var selectedMafile = SelectedMafile;
         if (selectedMafile == null) return;
-        var currentPassword = PHandler.DecryptPassword(selectedMafile.Password);
+        var currentPassword = SteamPasswords.Get(selectedMafile.AccountName);
         var loginAgainVm = await DialogsController.ShowLoginAgainDialog(selectedMafile.AccountName, currentPassword);
         if (loginAgainVm == null)
         {
@@ -87,7 +93,7 @@ public partial class MainVM : ObservableObject
 
         var password = loginAgainVm.Password;
         var waitDialog = new WaitLoginDialog();
-        var wait = DialogHost.Show(waitDialog);
+        var wait = DialogService.Show(waitDialog);
         try
         {
             await MaClient.LoginAgain(selectedMafile, password, loginAgainVm.SavePassword);
@@ -152,7 +158,15 @@ public partial class MainVM : ObservableObject
 
         try
         {
-            if (await DialogsController.ShowConfirmCancelDialog(GetLocalization("ConfirmRemovingAuthenticator")))
+            if (await DialogsController.ShowConfirmCancelDialog(new ConfirmDialogOptions(
+                    GetLocalization("RemoveAuthenticatorTitle"),
+                    selectedMafile.AccountName,
+                    MaterialIconKind.ShieldRemove,
+                    GetLocalization("RemoveAuthenticatorText"),
+                    GetLocalization("RemoveAuthenticatorHint"),
+                    HintBoxSeverity.Error,
+                    GetLocalization("RemoveAuthenticatorConfirm"),
+                    IsDanger: true)))
             {
                 var result =
                     await SessionHandler.Handle(() => MaClient.RemoveAuthenticator(selectedMafile), selectedMafile);

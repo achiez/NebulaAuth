@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Windows.Media;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using NebulaAuth.Core;
 using NebulaAuth.Utility;
@@ -23,19 +23,31 @@ public partial class Settings : ObservableObject
         {ThemeType.Shadcn, "ShadcnTheme"}
     };
 
+    private static string FilePath => DataRoot.Combine("settings.json");
+
     static Settings()
     {
-        if (!File.Exists("settings.json"))
+        if (!File.Exists(FilePath))
         {
             Instance = new Settings();
             Instance.PropertyChanged += SettingsOnPropertyChanged;
-            Instance.Language = LanguageUtility.DetectPreferredLanguage();
+            SteamPasswords.SavingEnabled = Instance.SaveSteamPasswords;
+            try
+            {
+                Instance.Language = LanguageUtility.DetectPreferredLanguage();
+            }
+            catch (Exception)
+            {
+                // A failure here (culture lookup, first save) would break the static ctor and the app could not start:
+                // keep the default language
+            }
+
             return;
         }
 
         try
         {
-            var json = File.ReadAllText("settings.json");
+            var json = File.ReadAllText(FilePath);
             var settings = JsonConvert.DeserializeObject<Settings>(json) ?? throw new NullReferenceException();
             Instance = settings;
         }
@@ -48,6 +60,7 @@ public partial class Settings : ObservableObject
         }
 
         Instance.PropertyChanged += SettingsOnPropertyChanged;
+        SteamPasswords.SavingEnabled = Instance.SaveSteamPasswords;
     }
 
 
@@ -63,7 +76,7 @@ public partial class Settings : ObservableObject
     public static void Save()
     {
         var json = JsonConvert.SerializeObject(Instance, Formatting.Indented);
-        File.WriteAllText("settings.json", json);
+        File.WriteAllText(FilePath, json);
     }
 
     public static void ResetThemeDefaults()
@@ -88,8 +101,9 @@ public partial class Settings : ObservableObject
 
     [ObservableProperty] private bool _hideToTray;
     [ObservableProperty] private int _timerSeconds = 60;
-    [ObservableProperty] private Color? _iconColor;
-    [ObservableProperty] private bool _isPasswordSet;
+    // Persisted as "#AARRGGBB" (the format of existing settings.json files), null when unset
+    [ObservableProperty] [property: JsonConverter(typeof(HexColorJsonConverter))]
+    private Color? _iconColor;
     [ObservableProperty] private LocalizationLanguage _language = LocalizationLanguage.English;
     [ObservableProperty] private bool _confirmMafileImport = true;
     [ObservableProperty] private bool _allowAutoUpdate;
@@ -107,8 +121,48 @@ public partial class Settings : ObservableObject
     [ObservableProperty] private bool _proxyManagerDisplayProtocol;
     [ObservableProperty] private bool _proxyManagerDisplayCredentials;
 
+    /// <summary>Fewer animations (the Nebula Link waiting / success animations become static).</summary>
+    [ObservableProperty] private bool _reduceMotion;
+
     [ObservableProperty] private TimeSpan _maacErrorThreshold = TimeSpan.FromHours(3);
     [ObservableProperty] private TimeSpan _maacRetryInterval = TimeSpan.FromMinutes(15);
+
+    /// <summary>
+    ///     Steam passwords may be saved for automatic re-login (encrypted storage only). A missing field (older settings.json)
+    ///     means allowed. Turning it off is done by the Encryption settings, which also delete the saved passwords.
+    /// </summary>
+    [ObservableProperty] private bool _saveSteamPasswords = true;
+
+    partial void OnSaveSteamPasswordsChanged(bool value)
+    {
+        // Only the app settings drive the password store (a deserialized copy must not)
+        if (ReferenceEquals(this, Instance)) SteamPasswords.SavingEnabled = value;
+    }
+
+    /// <summary>
+    ///     Device model names added by the user (in addition to the built-in ones) for new accounts. Changed only through
+    ///     <see cref="DeviceModels.DeviceNames" />, which saves the settings. Removing a name does not change accounts.
+    /// </summary>
+    public List<string> CustomDeviceModels
+    {
+        get => _customDeviceModels;
+        set => _customDeviceModels = value ?? [];
+    }
+
+    private List<string> _customDeviceModels = [];
+
+    /// <summary>
+    ///     Built-in device models (<see cref="DeviceModels.DeviceModelInfo.Model" />) the user removed from the list. Only
+    ///     the removed ones are stored, so built-in models added by a newer version appear for everyone. Changed only
+    ///     through <see cref="DeviceModels.DeviceNames" />.
+    /// </summary>
+    public List<string> RemovedBuiltInDeviceModels
+    {
+        get => _removedBuiltInDeviceModels;
+        set => _removedBuiltInDeviceModels = value ?? [];
+    }
+
+    private List<string> _removedBuiltInDeviceModels = [];
 
     #endregion
 }

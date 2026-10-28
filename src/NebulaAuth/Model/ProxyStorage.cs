@@ -33,13 +33,15 @@ public static class ProxyStorage
     public static ObservableDictionary<int, ProxyData> Proxies { get; } = new();
 
 
+    private static string FilePath => DataRoot.Combine("proxies.json");
+
     static ProxyStorage()
     {
-        if (!File.Exists("proxies.json"))
+        if (!File.Exists(FilePath))
             return;
         try
         {
-            var json = File.ReadAllText("proxies.json");
+            var json = File.ReadAllText(FilePath);
             var proxies = JsonConvert.DeserializeObject<ProxiesSchema>(json) ?? throw new NullReferenceException();
             Proxies = proxies.ProxiesData;
             Proxies = new ObservableDictionary<int, ProxyData>(
@@ -123,7 +125,7 @@ public static class ProxyStorage
     {
         var p = Create();
         var json = JsonConvert.SerializeObject(p, Formatting.Indented);
-        File.WriteAllText("proxies.json", json);
+        File.WriteAllText(FilePath, json);
     }
 
     public static string GetProxyString(ProxyData proxyData)

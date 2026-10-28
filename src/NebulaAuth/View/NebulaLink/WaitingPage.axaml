@@ -1,0 +1,105 @@
+<!-- Waiting for the approval in Achiefy. The dots pulse unless Settings.ReduceMotion is on. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:pages="using:NebulaAuth.ViewModel.NebulaLink.Pages"
+             x:Class="NebulaAuth.View.NebulaLink.WaitingPage"
+             x:DataType="pages:WaitingPageVM">
+    <UserControl.Styles>
+        <Style Selector="Ellipse.Dot">
+            <Setter Property="Width" Value="8" />
+            <Setter Property="Height" Value="8" />
+            <Setter Property="Fill" Value="{DynamicResource SemiColorPrimary}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Opacity" Value="0.55" />
+        </Style>
+        <Style Selector="StackPanel.Animate Ellipse.Dot">
+            <Style.Animations>
+                <Animation Duration="0:0:1.2" IterationCount="Infinite">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="0.25" />
+                    </KeyFrame>
+                    <KeyFrame Cue="50%">
+                        <Setter Property="Opacity" Value="1" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="0.25" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+        <Style Selector="StackPanel.Animate Ellipse.Dot.D2">
+            <Style.Animations>
+                <Animation Duration="0:0:1.2" IterationCount="Infinite" Delay="0:0:0.2">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="0.25" />
+                    </KeyFrame>
+                    <KeyFrame Cue="50%">
+                        <Setter Property="Opacity" Value="1" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="0.25" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+        <Style Selector="StackPanel.Animate Ellipse.Dot.D3">
+            <Style.Animations>
+                <Animation Duration="0:0:1.2" IterationCount="Infinite" Delay="0:0:0.4">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="0.25" />
+                    </KeyFrame>
+                    <KeyFrame Cue="50%">
+                        <Setter Property="Opacity" Value="1" />
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="0.25" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+    </UserControl.Styles>
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Classes="Page">
+            <StackPanel Spacing="12">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="16"
+                            Classes.Animate="{Binding Animate}">
+                    <Border Classes="Tile">
+                        <TextBlock Text="N" />
+                    </Border>
+                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <Ellipse Classes="Dot D1" />
+                        <Ellipse Classes="Dot D2" />
+                        <Ellipse Classes="Dot D3" />
+                    </StackPanel>
+                    <Border Classes="Tile">
+                        <TextBlock Text="A" />
+                    </Border>
+                </StackPanel>
+                <TextBlock Classes="StepTitle" HorizontalAlignment="Center" TextAlignment="Center"
+                           Text="{Tr NebulaLink.Waiting.Title}" />
+                <TextBlock Classes="Lead" TextAlignment="Center" Text="{Tr NebulaLink.Waiting.Text}" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="6">
+                    <mi:MaterialIcon Kind="TimerSandEmpty" IconSize="14" VerticalAlignment="Center"
+                                     Foreground="{DynamicResource MutedForegroundBrush}" />
+                    <TextBlock Classes="Small" VerticalAlignment="Center">
+                        <Run Text="{Binding Remaining}" FontWeight="SemiBold" />
+                        <Run Text=" · " />
+                        <Run Text="{Binding Host}" />
+                    </TextBlock>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Spacing="8">
+                <Button Theme="{DynamicResource SolidButton}" Classes="Primary" HorizontalAlignment="Stretch"
+                        Command="{Binding Owner.OpenCabinetCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="{Tr NebulaLink.OpenAchiefy}" />
+                        <mi:MaterialIcon Kind="OpenInNew" IconSize="14" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Theme="{DynamicResource BorderlessButton}" Classes="Tertiary" HorizontalAlignment="Stretch"
+                        Command="{Binding CancelCommand}" Content="{Tr NebulaLink.Cancel}" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

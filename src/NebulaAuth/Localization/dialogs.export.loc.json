@@ -56,6 +56,16 @@
       "tr": "Dışa aktar",
       "kk": "Экспорт"
     },
+    "OpenFolder": {
+      "en": "Open folder",
+      "ru": "Открыть папку",
+      "zh": "打开文件夹",
+      "uk": "Відкрити папку",
+      "fr": "Ouvrir le dossier",
+      "es": "Abrir carpeta",
+      "tr": "Klasörü aç",
+      "kk": "Қалтаны ашу"
+    },
     "TemplateHint": {
       "ru": "Шаблон",
       "en": "Template",
@@ -65,6 +75,26 @@
       "es": "Plantilla",
       "tr": "Şablon",
       "kk": "Үлгі"
+    },
+    "AddTemplate": {
+      "ru": "Добавить шаблон",
+      "en": "Add template",
+      "uk": "Додати шаблон",
+      "fr": "Ajouter un modèle",
+      "zh": "添加模板",
+      "es": "Añadir plantilla",
+      "tr": "Şablon ekle",
+      "kk": "Үлгі қосу"
+    },
+    "RenameTemplate": {
+      "ru": "Переименовать шаблон",
+      "en": "Rename template",
+      "uk": "Перейменувати шаблон",
+      "fr": "Renommer le modèle",
+      "zh": "重命名模板",
+      "es": "Renombrar plantilla",
+      "tr": "Şablonu yeniden adlandır",
+      "kk": "Үлгінің атын өзгерту"
     },
     "SelectPathHint": {
       "ru": "Выберите путь",
@@ -177,16 +207,6 @@
         "tr": "Proxy",
         "kk": "Прокси"
       },
-      "NebulaPassword": {
-        "ru": "Пароль",
-        "en": "Password",
-        "uk": "Пароль",
-        "fr": "Mot de passe",
-        "zh": "密码",
-        "es": "Contraseña",
-        "tr": "Şifre",
-        "kk": "Құпиясөз"
-      },
       "NebulaGroup": {
         "ru": "Группа",
         "en": "Group",
@@ -196,6 +216,16 @@
         "es": "Grupo",
         "tr": "Grup",
         "kk": "Топ"
+      },
+      "DeviceName": {
+        "ru": "Устройство",
+        "en": "Device",
+        "uk": "Пристрій",
+        "fr": "Appareil",
+        "zh": "设备",
+        "es": "Dispositivo",
+        "tr": "Cihaz",
+        "kk": "Құрылғы"
       },
       "ExportToZip": {
         "ru": "Экспортировать в ZIP архив",
@@ -279,16 +309,6 @@
         "tr": "Nebula uyumlu proxy verilerini dahil et.",
         "kk": "Nebula үйлесімді прокси деректерін қосу."
       },
-      "NebulaPassword": {
-        "ru": "Включить Nebula-совместимые данные пароля.",
-        "en": "Include Nebula-compatible password data.",
-        "uk": "Увімкнути Nebula-сумісні дані пароля.",
-        "fr": "Inclure les données de mot de passe compatibles avec Nebula.",
-        "zh": "包含与 Nebula 兼容的密码数据。",
-        "es": "Incluir datos de contraseña compatibles con Nebula.",
-        "tr": "Nebula uyumlu parola verilerini dahil et.",
-        "kk": "Nebula үйлесімді құпиясөз деректерін қосу."
-      },
       "NebulaGroup": {
         "ru": "Включить Nebula-совместимые данные группы.",
         "en": "Include Nebula-compatible group data.",
@@ -298,6 +318,16 @@
         "es": "Incluir datos de grupo compatibles con Nebula.",
         "tr": "Nebula uyumlu grup verilerini dahil et.",
         "kk": "Nebula үйлесімді топ деректерін қосу."
+      },
+      "DeviceName": {
+        "ru": "Включить модель устройства (DeviceName), которую NebulaAuth передаёт Steam при мобильном входе. Без неё при импорте mafile в NebulaAuth будет назначена новая модель.",
+        "en": "Include the device model (DeviceName) that NebulaAuth sends to Steam at mobile login. Without it, a new model is assigned when the mafile is imported into NebulaAuth.",
+        "uk": "Увімкнути модель пристрою (DeviceName), яку NebulaAuth передає Steam під час мобільного входу. Без неї під час імпорту mafile в NebulaAuth буде призначено нову модель.",
+        "fr": "Inclure le modèle d’appareil (DeviceName) que NebulaAuth envoie à Steam lors de la connexion mobile. Sans lui, un nouveau modèle est attribué lors de l’import du mafile dans NebulaAuth.",
+        "zh": "包含 NebulaAuth 在移动端登录时发送给 Steam 的设备型号 (DeviceName)。不包含时，将该 mafile 导入 NebulaAuth 时会分配新的型号。",
+        "es": "Incluir el modelo de dispositivo (DeviceName) que NebulaAuth envía a Steam al iniciar sesión móvil. Sin él, se asignará un modelo nuevo al importar el mafile en NebulaAuth.",
+        "tr": "NebulaAuth’un mobil girişte Steam’e gönderdiği cihaz modelini (DeviceName) dahil et. Olmadan, mafile NebulaAuth’a içe aktarıldığında yeni bir model atanır.",
+        "kk": "NebulaAuth мобильді кіру кезінде Steam-ге жіберетін құрылғы моделін (DeviceName) қосу. Онсыз mafile NebulaAuth-қа импортталғанда жаңа модель тағайындалады."
       },
       "ExportToZip": {
         "ru": "Экспортировать в ZIP архив вместо папки. Архив будет сохранён в выбранной директории с именем вида N_timestamp.zip.",

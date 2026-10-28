@@ -1,58 +1,78 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Animation;
+using System;
+using System.Threading;
+using Avalonia;
+using Avalonia.Animation;
+using Avalonia.Animation.Easings;
+using Avalonia.Controls;
+using Avalonia.Styling;
 
 namespace NebulaAuth;
 
+/// <summary>
+///     Progress bar of the Steam Guard code lifetime: when <see cref="TimeRemaining" /> changes, animates smoothly from
+///     the elapsed part to 100% in <see cref="TimeRemaining" /> seconds. Uses the regular ProgressBar theme.
+/// </summary>
 public class CodeProgressBar : ProgressBar
 {
-    public static readonly DependencyProperty TimeRemainingProperty =
-        DependencyProperty.Register(nameof(TimeRemaining), typeof(double), typeof(CodeProgressBar),
-            new PropertyMetadata(-1.0, OnTimeRemainingChanged));
+    public static readonly StyledProperty<double> TimeRemainingProperty =
+        AvaloniaProperty.Register<CodeProgressBar, double>(nameof(TimeRemaining), -1.0);
 
-    public static readonly DependencyProperty MaxTimeProperty =
-        DependencyProperty.Register(nameof(MaxTime), typeof(double), typeof(CodeProgressBar),
-            new PropertyMetadata(30.0));
+    public static readonly StyledProperty<double> MaxTimeProperty =
+        AvaloniaProperty.Register<CodeProgressBar, double>(nameof(MaxTime), 30.0);
+
+    private CancellationTokenSource? _animationCts;
 
     public double TimeRemaining
     {
-        get => (double) GetValue(TimeRemainingProperty);
+        get => GetValue(TimeRemainingProperty);
         set => SetValue(TimeRemainingProperty, value);
     }
 
     public double MaxTime
     {
-        get => (double) GetValue(MaxTimeProperty);
+        get => GetValue(MaxTimeProperty);
         set => SetValue(MaxTimeProperty, value);
     }
 
-    private static void OnTimeRemainingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    protected override Type StyleKeyOverride => typeof(ProgressBar);
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
-        if (d is CodeProgressBar progressBar)
+        base.OnPropertyChanged(change);
+        if (change.Property == TimeRemainingProperty)
         {
-            var newValue = (double) e.NewValue;
-            progressBar.StartProgressAnimation(newValue);
+            StartProgressAnimation(change.GetNewValue<double>());
         }
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+        _animationCts?.Cancel();
     }
 
     private void StartProgressAnimation(double timeRemaining)
     {
         if (timeRemaining <= 0 || MaxTime <= 0) return;
 
-        var progress = (1 - timeRemaining / MaxTime) * 100;
-        Value = 0;
+        _animationCts?.Cancel();
+        var cts = new CancellationTokenSource();
+        _animationCts = cts;
+
+        var progress = Math.Clamp((1 - timeRemaining / MaxTime) * 100, 0, 100);
+        Minimum = 0;
+        Maximum = 100;
         Value = 100;
-        var animation = new DoubleAnimation
+        var animation = new Animation
         {
-            From = progress,
-            To = 100,
             Duration = TimeSpan.FromSeconds(timeRemaining),
-            AccelerationRatio = 0,
-            DecelerationRatio = 0
+            Easing = new LinearEasing(),
+            Children =
+            {
+                new KeyFrame {Cue = new Cue(0), Setters = {new Setter(ValueProperty, progress)}},
+                new KeyFrame {Cue = new Cue(1), Setters = {new Setter(ValueProperty, 100d)}}
+            }
         };
-
-
-        BeginAnimation(ValueProperty, animation);
+        _ = animation.RunAsync(this, cts.Token);
     }
 }

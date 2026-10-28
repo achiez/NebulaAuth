@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AchiesUtilities.Web.Models;
 using AchiesUtilities.Web.Proxy;
 using NebulaAuth.Model.Entities;
+using NebulaAuth.Model.QrLogin;
 using SteamLib.Api.Mobile;
 using SteamLib.Api.Services;
-using SteamLib.Api.Trade;
 using SteamLib.Authentication;
 using SteamLib.Exceptions.Authorization;
 using SteamLib.ProtoCore.Services;
-using SteamLib.SteamMobile.Confirmations;
 using SteamLib.Web;
 
 namespace NebulaAuth.Model;
@@ -42,13 +41,6 @@ public static class MaClient
         Proxy.SetData(account.Proxy?.Data);
     }
 
-    public static Task<IEnumerable<Confirmation>> GetConfirmations(Mafile mafile)
-    {
-        ValidateMafile(mafile);
-        SetProxy(mafile);
-        return SteamMobileConfirmationsApi.GetConfirmations(Client, mafile, mafile.SessionData!.SteamId);
-    }
-
     public static Task LoginAgain(Mafile mafile, string password, bool savePassword)
     {
         SetProxy(mafile);
@@ -62,61 +54,6 @@ public static class MaClient
         ValidateMafile(mafile, true);
         SetProxy(mafile);
         return SessionHandler.RefreshMobileToken(new HttpClientHandlerPair(Client, ClientHandler), mafile);
-    }
-
-    public static async Task<bool> SendConfirmation(Mafile mafile, Confirmation confirmation, bool confirm)
-    {
-        ValidateMafile(mafile);
-        SetProxy(mafile);
-        var res = await SteamMobileConfirmationsApi.SendConfirmation(Client, confirmation, mafile.SessionData!.SteamId,
-            mafile,
-            confirm);
-
-        if (!res && confirmation.ConfType == ConfirmationType.Trade)
-        {
-            Shell.Logger.Warn("Failed to send trade confirmation for {accountName}. Sending ack", mafile.AccountName);
-            await SteamTradeApi.Acknowledge(Client, mafile.SessionData.SessionId);
-            await Task.Delay(10);
-        }
-        else
-        {
-            return res;
-        }
-
-        return await SteamMobileConfirmationsApi.SendConfirmation(Client, confirmation, mafile.SessionData!.SteamId,
-            mafile,
-            confirm);
-    }
-
-    public static async Task<bool> SendMultipleConfirmation(Mafile mafile, IEnumerable<Confirmation> confirmations,
-        bool confirm)
-    {
-        var enumerable = confirmations.ToList();
-        if (enumerable.Count == 0)
-        {
-            return false;
-        }
-
-        ValidateMafile(mafile);
-        SetProxy(mafile);
-
-        var res = await SteamMobileConfirmationsApi.SendMultipleConfirmations(Client, enumerable,
-            mafile.SessionData!.SteamId,
-            mafile, confirm);
-        if (!res && enumerable.Any(c => c.ConfType == ConfirmationType.Trade))
-        {
-            Shell.Logger.Warn("Failed to send trade confirmations for {accountName}. Sending ack", mafile.AccountName);
-            await SteamTradeApi.Acknowledge(Client, mafile.SessionData.SessionId);
-            await Task.Delay(10);
-        }
-        else
-        {
-            return res;
-        }
-
-        return await SteamMobileConfirmationsApi.SendMultipleConfirmations(Client, enumerable,
-            mafile.SessionData!.SteamId,
-            mafile, confirm);
     }
 
     public static Task<RemoveAuthenticator_Response> RemoveAuthenticator(Mafile mafile)
@@ -176,16 +113,56 @@ public static class MaClient
 
         var clientId = sessions.ClientIds.Single();
         var clientInfo = await AuthenticationServiceApi.GetAuthSessionInfo(Client, token.Token, clientId);
-        var updateReq =
-            AuthRequestHelper.CreateMobileConfirmationRequest(1, clientId, mafile.SessionData.SteamId.Steam64,
-                mafile.SharedSecret);
-        await AuthenticationServiceApi.UpdateAuthSessionWithMobileConfirmation(Client, token.Token, updateReq);
+        await SendLoginApproval(mafile, token.Token, 1, clientId);
         return new LoginConfirmationResult
         {
             Country = clientInfo.Country,
             IP = clientInfo.IP,
             Success = true
         };
+    }
+
+    /// <summary>
+    ///     QR login, step 1: details of the login attempt from the QR code (no confirmation is sent).
+    /// </summary>
+    public static Task<GetAuthSessionInfo_Response> GetQrLoginInfo(Mafile mafile, SteamQrChallenge challenge)
+    {
+        ValidateMafile(mafile);
+        SetProxy(mafile);
+        var token = mafile.SessionData!.GetMobileToken()!.Value;
+        return AuthenticationServiceApi.GetAuthSessionInfo(Client, token.Token, challenge.ClientId);
+    }
+
+    /// <summary>
+    ///     QR login, step 2: approves the login attempt with the version and client id of the QR code.
+    ///     A 401 is reported as <see cref="SessionInvalidException" /> so <see cref="SessionHandler" /> refreshes the session.
+    /// </summary>
+    public static async Task<bool> ApproveQrLogin(Mafile mafile, SteamQrChallenge challenge)
+    {
+        ValidateMafile(mafile);
+        SetProxy(mafile);
+        var token = mafile.SessionData!.GetMobileToken()!.Value;
+        try
+        {
+            await SendLoginApproval(mafile, token.Token, challenge.Version, challenge.ClientId);
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            throw new SessionInvalidException(SessionInvalidException.GOT_401_MSG, ex);
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    ///     UpdateAuthSessionWithMobileConfirmation: confirm = true, persistence = Persistent, signed with the shared secret
+    ///     of <paramref name="mafile" />.
+    /// </summary>
+    private static Task SendLoginApproval(Mafile mafile, string accessToken, int version, ulong clientId)
+    {
+        var request = AuthRequestHelper.CreateMobileConfirmationRequest(version, clientId,
+            mafile.SessionData!.SteamId.Steam64, mafile.SharedSecret);
+        return AuthenticationServiceApi.UpdateAuthSessionWithMobileConfirmation(Client, accessToken, request);
     }
 
     public static HttpClientHandlerPair GetHttpClientHandlerPair(Mafile mafile)

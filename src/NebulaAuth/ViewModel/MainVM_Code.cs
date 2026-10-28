@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Threading;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NebulaAuth.Core;
 using NebulaAuth.Model;
+using NebulaAuth.Utility;
 using SteamLib.SteamMobile;
 
 namespace NebulaAuth.ViewModel;
@@ -32,12 +32,11 @@ public partial class MainVM
         var untilChange = currentTime % 30;
         if (untilChange != 0) return;
 
-        if (Application.Current == null) return;
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Dispatcher.UIThread.Post(() =>
         {
             CodeProgress = -1;
             CodeProgress = 30;
-            if (Application.Current.MainWindow?.WindowState == WindowState.Minimized) return;
+            if (AppHost.IsMainWindowMinimized) return;
             if (SelectedMafile == null) return;
             Code = SteamGuardCodeGenerator.GenerateCode(SelectedMafile.SharedSecret);
         }, DispatcherPriority.Normal);
@@ -59,8 +58,8 @@ public partial class MainVM
         if (selectedMafile == null) return;
         try
         {
-            Clipboard.SetText(Code);
-            Code = LocManager.GetOrDefault("CodeCopied", "MainWindow", "CodeCopied");
+            if (ClipboardHelper.Set(Code))
+                Code = LocManager.GetOrDefault("CodeCopied", "MainWindow", "CodeCopied");
         }
         catch (Exception ex)
         {

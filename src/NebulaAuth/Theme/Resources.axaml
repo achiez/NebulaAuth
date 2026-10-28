@@ -1,0 +1,257 @@
+<!--
+    App-wide overrides of Semi.Avalonia control tokens (sizes, radii, font sizes) and app ControlThemes.
+    Colors are NOT defined here: they are built from the active palette by NebulaAuth.Theme.ThemeResources.
+    Semi control themes read these keys with DynamicResource, so Application.Resources wins over Semi's defaults.
+-->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mi="using:Material.Icons.Avalonia">
+
+    <!-- ===== Radii: Semi uses 3px / 6px; the app uses softer 6px / 10px ===== -->
+    <CornerRadius x:Key="ButtonCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="ToggleButtonCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="TextBoxDefaultCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="ComboBoxSelectorCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="NumericUpDownCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="CalendarDatePickerCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="ButtonSpinnerButtonGroupCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="ExpanderCornerRadius">8</CornerRadius>
+    <CornerRadius x:Key="MenuItemCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="ListBoxItemCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="CheckBoxBoxCornerRadius">4</CornerRadius>
+    <CornerRadius x:Key="ProgressBarBackgroundCornerRadius">4</CornerRadius>
+    <CornerRadius x:Key="ComboBoxPopupBoxCornerRadius">10</CornerRadius>
+    <CornerRadius x:Key="AutoCompleteBoxPopupCornerRadius">10</CornerRadius>
+    <CornerRadius x:Key="MenuFlyoutCornerRadius">10</CornerRadius>
+    <CornerRadius x:Key="FlyoutCornerRadius">10</CornerRadius>
+    <CornerRadius x:Key="ToolTipCornerRadius">8</CornerRadius>
+    <CornerRadius x:Key="RadiusCardCornerRadius">12</CornerRadius>
+    <CornerRadius x:Key="NotificationCardCornerRadius">10</CornerRadius>
+
+    <!-- ===== Heights: text inherits FontSize 17 from MainWindow, so inputs are a bit taller than the Semi default ===== -->
+    <x:Double x:Key="ButtonDefaultHeight">34</x:Double>
+    <x:Double x:Key="TextBoxDefaultHeight">36</x:Double>
+    <x:Double x:Key="ComboBoxDefaultHeight">36</x:Double>
+    <x:Double x:Key="NumericUpDownDefaultHeight">36</x:Double>
+    <x:Double x:Key="AutoCompleteBoxDefaultHeight">36</x:Double>
+    <Thickness x:Key="ButtonDefaultPadding">16 0</Thickness>
+    <Thickness x:Key="ListBoxItemDefaultPadding">12 7</Thickness>
+    <Thickness x:Key="ToolTipPadding">10 6</Thickness>
+
+    <!-- ===== Font sizes of Semi controls that do not inherit FontSize ===== -->
+    <x:Double x:Key="ButtonDefaultFontSize">13</x:Double>
+    <x:Double x:Key="ToggleButtonDefaultFontSize">13</x:Double>
+    <x:Double x:Key="CheckBoxFontSize">15</x:Double>
+    <x:Double x:Key="RadioButtonFontSize">15</x:Double>
+    <x:Double x:Key="HyperlinkButtonFontSize">14</x:Double>
+    <x:Double x:Key="MenuFlyoutFontSize">14</x:Double>
+    <x:Double x:Key="TextBlockFontSize">14</x:Double>
+    <FontWeight x:Key="ButtonDefaultFontWeight">SemiBold</FontWeight>
+    <FontWeight x:Key="ToggleButtonDefaultFontWeight">SemiBold</FontWeight>
+
+    <!--
+        GhostIconButton: icon-only button (replaces MaterialDesignIconButton / IconForegroundButton / ToolButton).
+        The MaterialIcon inside takes its size from FontSize (20). Classes: Small (28px, icon 16), Large (44px, icon 24),
+        Primary (primary foreground), Danger (error foreground on hover).
+        <Button Theme="{StaticResource GhostIconButton}" ToolTip.Tip="{Tr ...}"><mi:MaterialIcon Kind="ContentCopy" /></Button>
+    -->
+    <ControlTheme x:Key="GhostIconButton" TargetType="Button">
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource SemiColorText1}" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <ControlTemplate TargetType="Button">
+                <ContentPresenter Name="PART_ContentPresenter"
+                                  Padding="{TemplateBinding Padding}"
+                                  Background="{TemplateBinding Background}"
+                                  CornerRadius="{TemplateBinding CornerRadius}"
+                                  Content="{TemplateBinding Content}"
+                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  Foreground="{TemplateBinding Foreground}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                  RecognizesAccessKey="True" />
+            </ControlTemplate>
+        </Setter>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.12" />
+            </Transitions>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SemiColorFill1}" />
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorText0}" />
+        </Style>
+        <Style Selector="^:pressed">
+            <Setter Property="Background" Value="{DynamicResource SemiColorFill2}" />
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorDisabledText}" />
+        </Style>
+        <Style Selector="^.Primary">
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorPrimary}" />
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="{DynamicResource SemiColorPrimaryLight}" />
+                <Setter Property="Foreground" Value="{DynamicResource SemiColorPrimary}" />
+            </Style>
+        </Style>
+        <Style Selector="^.Danger:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SemiColorDangerLight}" />
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorDanger}" />
+        </Style>
+        <Style Selector="^.Small">
+            <Setter Property="Width" Value="28" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="CornerRadius" Value="6" />
+        </Style>
+        <Style Selector="^.Large">
+            <Setter Property="Width" Value="44" />
+            <Setter Property="Height" Value="44" />
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="CornerRadius" Value="10" />
+        </Style>
+    </ControlTheme>
+
+    <!--
+        GhostIconToggleButton: icon-only toggle (replaces MaterialDesignFlatToggleButton / FlatPrimaryToggleButton).
+        Checked = primary tint + primary icon. Same size classes as GhostIconButton.
+    -->
+    <ControlTheme x:Key="GhostIconToggleButton" TargetType="ToggleButton">
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource SemiColorText2}" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <ControlTemplate TargetType="ToggleButton">
+                <ContentPresenter Name="PART_ContentPresenter"
+                                  Padding="{TemplateBinding Padding}"
+                                  Background="{TemplateBinding Background}"
+                                  CornerRadius="{TemplateBinding CornerRadius}"
+                                  Content="{TemplateBinding Content}"
+                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  Foreground="{TemplateBinding Foreground}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                  RecognizesAccessKey="True" />
+            </ControlTemplate>
+        </Setter>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.12" />
+            </Transitions>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SemiColorFill1}" />
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorText0}" />
+        </Style>
+        <Style Selector="^:pressed">
+            <Setter Property="Background" Value="{DynamicResource SemiColorFill2}" />
+        </Style>
+        <Style Selector="^:checked">
+            <Setter Property="Background" Value="{DynamicResource SemiColorPrimaryLight}" />
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorPrimary}" />
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="{DynamicResource SemiColorPrimaryLightPointerover}" />
+            </Style>
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorDisabledText}" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="^.Small">
+            <Setter Property="Width" Value="28" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="CornerRadius" Value="6" />
+        </Style>
+        <Style Selector="^.Large">
+            <Setter Property="Width" Value="44" />
+            <Setter Property="Height" Value="44" />
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="CornerRadius" Value="10" />
+        </Style>
+    </ControlTheme>
+
+    <!-- Close (X) button of DialogHeader: neutral, red on hover -->
+    <ControlTheme x:Key="DialogCloseButton" TargetType="Button" BasedOn="{StaticResource GhostIconButton}">
+        <Setter Property="Width" Value="32" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="Foreground" Value="{DynamicResource DialogHeaderForegroundBrush}" />
+        <Setter Property="Opacity" Value="0.8" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="Background" Value="{DynamicResource SemiColorDangerLight}" />
+            <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+        </Style>
+        <Style Selector="^:pressed">
+            <Setter Property="Background" Value="{DynamicResource SemiColorDangerLightActive}" />
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Opacity" Value="0.35" />
+            <Setter Property="Foreground" Value="{DynamicResource DialogHeaderForegroundBrush}" />
+        </Style>
+    </ControlTheme>
+
+    <!-- Other icon buttons of a dialog header (menu, expand): the size and color of the close button, the normal hover -->
+    <ControlTheme x:Key="DialogHeaderButton" TargetType="Button" BasedOn="{StaticResource GhostIconButton}">
+        <Setter Property="Width" Value="32" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="Foreground" Value="{DynamicResource DialogHeaderForegroundBrush}" />
+        <Setter Property="Opacity" Value="0.8" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="Foreground" Value="{DynamicResource DialogHeaderForegroundBrush}" />
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Opacity" Value="0.35" />
+            <Setter Property="Foreground" Value="{DynamicResource DialogHeaderForegroundBrush}" />
+        </Style>
+    </ControlTheme>
+
+    <!-- Plain text-like link button: <Button Theme="{StaticResource LinkButton}" Content="by achies" Command="..." /> -->
+    <ControlTheme x:Key="LinkButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource LinkOnSurfaceBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate TargetType="Button">
+                <ContentPresenter Name="PART_ContentPresenter"
+                                  Padding="{TemplateBinding Padding}"
+                                  Background="{TemplateBinding Background}"
+                                  Content="{TemplateBinding Content}"
+                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  Foreground="{TemplateBinding Foreground}"
+                                  RecognizesAccessKey="True" />
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover">
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorLinkPointerover}" />
+        </Style>
+        <Style Selector="^:pressed">
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorLinkActive}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AchiesUtilities.Extensions;
 using NebulaAuth.Core;
 using NebulaAuth.Model.Entities;
+using NebulaAuth.Model.LinkHost;
 
 namespace NebulaAuth.Model.MAAC;
 
@@ -70,6 +71,7 @@ public static class MultiAccountAutoConfirmer
                 {
                     conf = await MAACRequestHandler.HandleRequest(client.LinkedClient!,
                         () => client.LinkedClient!.Confirm());
+                    MaacErrorLog.Instance.Success(client.AccountName);
                 }
                 catch (ObjectDisposedException)
                 {
@@ -77,7 +79,12 @@ public static class MultiAccountAutoConfirmer
                 }
                 catch (Exception ex)
                 {
-                    Shell.Logger.Error(ex, "Internal error while confirming {accountName}", client.AccountName);
+                    // A dead proxy fails on every tick for every account using it: the first failure is logged in
+                    // full, repeats are summarized
+                    var proxy = client.Proxy?.Data ?? MaClient.DefaultProxy;
+                    var proxyLabel = client.Proxy != null ? $"proxy #{client.Proxy.Id}"
+                        : proxy != null ? "default proxy" : "no proxy";
+                    MaacErrorLog.Instance.Failure(client.AccountName, proxyLabel, ex, [proxy?.Password]);
                 }
 
                 confirmed += conf;
@@ -121,6 +128,8 @@ public static class MultiAccountAutoConfirmer
         foreach (var maf in clients)
         {
             if (maf.LinkedClient == null) continue;
+            // Nebula Link accounts are confirmed only per request and grant, never in bulk by type
+            if (NebulaLinkHost.IsLinked(maf)) continue;
             if (MAACRequestHandler.IsReady(maf))
             {
                 res.Add(maf);
@@ -130,8 +139,13 @@ public static class MultiAccountAutoConfirmer
         return res;
     }
 
+    /// <summary>
+    ///     Adds the account to the auto-confirmer. False for accounts connected through Nebula Link: automatic
+    ///     confirmation by type would bypass the per-request grants.
+    /// </summary>
     public static bool TryAddToConfirm(Mafile mafile)
     {
+        if (NebulaLinkHost.IsLinked(mafile)) return false;
         return Lock.WriteLock(() =>
         {
             if (Clients.Contains(mafile)) return false;

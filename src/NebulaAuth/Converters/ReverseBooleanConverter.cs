@@ -1,9 +1,13 @@
-﻿using System;
+using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace NebulaAuth.Converters;
 
+/// <summary>
+///     !value in both directions. For one-way bindings prefer the binding negation <c>{Binding !Flag}</c>;
+///     this converter is still needed for TwoWay bindings (e.g. <c>IsChecked</c>).
+/// </summary>
 public class ReverseBooleanConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)

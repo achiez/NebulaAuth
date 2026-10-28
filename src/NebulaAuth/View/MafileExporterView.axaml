@@ -1,0 +1,234 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:other="using:NebulaAuth.ViewModel.Other"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d"
+             x:Class="NebulaAuth.View.MafileExporterView"
+             x:DataType="other:MafileExporterVM"
+             MinWidth="500"
+             MaxWidth="500">
+    <UserControl.Styles>
+        <!-- Options text 13; Semi CheckBox has its own 15 -->
+        <Style Selector="Expander#TemplateExpander CheckBox">
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+        <Style Selector="Expander#TemplateExpander TextBlock.Section">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,6,0,0" />
+        </Style>
+        <!-- GhostIconButton declares ^:disabled before ^.Primary, so a disabled Primary icon button keeps the primary color.
+             Styles win over ControlTheme setters: grey out the disabled icon buttons (edit mode, no template) -->
+        <Style Selector="StackPanel.Field Button.Primary:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorDisabledText}" />
+        </Style>
+    </UserControl.Styles>
+
+    <!-- Auto,*,Auto,Auto: the body scrolls when the window is too low (e.g. expanded settings), the Export button stays visible -->
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
+        <nebulaAuth:DialogHeader Grid.Row="0"
+                                 IconKind="FileExport"
+                                 Title="{Tr ExportDialog.ExportTitle}" />
+
+        <ScrollViewer x:Name="BodyScroll" Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Classes="DialogBody" Margin="20,16,20,16" TextElement.FontSize="13">
+
+                <!-- Template: selector (or name editor in edit mode) + add / rename / remove -->
+                <StackPanel Classes="Field">
+                    <TextBlock Classes="FieldLabel" Text="{Tr ExportDialog.TemplateHint}" />
+                    <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="2">
+                        <ComboBox x:Name="TemplatesComboBox"
+                                  Grid.Column="0"
+                                  Margin="0,0,4,0"
+                                  PlaceholderText="{Tr ExportDialog.TemplateHint}"
+                                  ItemsSource="{Binding Templates}"
+                                  SelectedItem="{Binding CurrentTemplate}"
+                                  IsVisible="{Binding !EditMode}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="other:MafileExportTemplateVM">
+                                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <!-- LostFocus: the VM finds the stored template by the name cached when the edit mode started -->
+                        <TextBox x:Name="EditTemplateNameTextBox"
+                                 Grid.Column="0"
+                                 Margin="0,0,4,0"
+                                 PlaceholderText="{Tr ExportDialog.TemplateHint}"
+                                 Text="{Binding CurrentTemplate.Name, FallbackValue='', UpdateSourceTrigger=LostFocus}"
+                                 IsEnabled="{Binding CurrentTemplate, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                 IsVisible="{Binding EditMode}">
+                            <TextBox.KeyBindings>
+                                <KeyBinding Gesture="Enter" Command="{Binding ToggleEditModeCommand}" />
+                            </TextBox.KeyBindings>
+                        </TextBox>
+
+                        <Button Grid.Column="1"
+                                Theme="{StaticResource GhostIconButton}"
+                                Classes="Primary"
+                                AutomationProperties.Name="{Tr ExportDialog.AddTemplate, DefaultText='Add template'}"
+                                Command="{Binding AddTemplateCommand}">
+                            <mi:MaterialIcon Kind="Add" />
+                        </Button>
+
+                        <Button Grid.Column="2"
+                                Theme="{StaticResource GhostIconButton}"
+                                Classes="Primary"
+                                AutomationProperties.Name="{Tr ExportDialog.RenameTemplate, DefaultText='Rename template'}"
+                                Command="{Binding ToggleEditModeCommand}"
+                                Click="EditButton_Click">
+                            <Panel>
+                                <mi:MaterialIcon Kind="Edit" IsVisible="{Binding !EditMode}" />
+                                <mi:MaterialIcon Kind="Check" IsVisible="{Binding EditMode}" />
+                            </Panel>
+                        </Button>
+
+                        <Button Grid.Column="3"
+                                Theme="{StaticResource GhostIconButton}"
+                                Classes="Primary Danger"
+                                AutomationProperties.Name="{Tr Common.Delete}"
+                                Command="{Binding RemoveCurrentTemplateCommand}">
+                            <mi:MaterialIcon Kind="Trash" />
+                        </Button>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Export folder: typed (committed on focus loss) or picked -->
+                <StackPanel Classes="Field">
+                    <TextBlock Classes="FieldLabel" Text="{Tr ExportDialog.SelectPathHint}" />
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="2">
+                        <TextBox x:Name="PathTB"
+                                 Grid.Column="0"
+                                 Margin="0,0,4,0"
+                                 Classes="clearButton"
+                                 Text="{Binding CurrentTemplate.Path, FallbackValue='', UpdateSourceTrigger=LostFocus}"
+                                 IsEnabled="{Binding CurrentTemplate, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                        <Button Grid.Column="1"
+                                Theme="{StaticResource GhostIconButton}"
+                                Classes="Primary"
+                                AutomationProperties.Name="{Tr ExportDialog.SelectPathHint}"
+                                Command="{Binding OpenSelectDirectoryDialogCommand}">
+                            <mi:MaterialIcon Kind="FolderOpen" />
+                        </Button>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Template options -->
+                <Expander x:Name="TemplateExpander"
+                          Theme="{DynamicResource CardExpander}"
+                          Header="{Tr ExportDialog.ExportSettingsHeader}"
+                          HorizontalAlignment="Stretch"
+                          IsEnabled="{Binding CurrentTemplate, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <Expander.Resources>
+                        <!-- Semi default 16,4,16,8 puts the first option right under the header line -->
+                        <Thickness x:Key="ExpanderContentPadding">16,10,16,12</Thickness>
+                    </Expander.Resources>
+                    <StackPanel Spacing="4">
+                        <CheckBox IsChecked="{Binding CurrentTemplate.ExportToZip, FallbackValue=False}"
+                                  Content="{Tr ExportDialog.ExportOptions.ExportToZip}"
+                                  ToolTip.ShowDelay="200"
+                                  ToolTip.Tip="{Tr ExportDialog.Tooltips.ExportToZip}" />
+
+                        <TextBlock Classes="Section" Text="{Tr ExportDialog.ExportSettingsCommon}" />
+
+                        <CheckBox IsChecked="{Binding CurrentTemplate.UseLoginAsMafileName, FallbackValue=False}"
+                                  Content="{Tr ExportDialog.ExportOptions.UseLoginAsMafileName}"
+                                  ToolTip.ShowDelay="200"
+                                  ToolTip.Tip="{Tr ExportDialog.Tooltips.UseLoginAsMafileName}" />
+                        <CheckBox IsChecked="{Binding CurrentTemplate.IncludeSharedSecret, FallbackValue=False}"
+                                  Content="{Tr ExportDialog.ExportOptions.IncludeSharedSecret}"
+                                  ToolTip.ShowDelay="200"
+                                  ToolTip.Tip="{Tr ExportDialog.Tooltips.IncludeSharedSecret}" />
+                        <CheckBox IsChecked="{Binding CurrentTemplate.IncludeIdentitySecret, FallbackValue=False}"
+                                  Content="{Tr ExportDialog.ExportOptions.IncludeIdentitySecret}"
+                                  ToolTip.ShowDelay="200"
+                                  ToolTip.Tip="{Tr ExportDialog.Tooltips.IncludeIdentitySecret}" />
+                        <CheckBox IsChecked="{Binding CurrentTemplate.IncludeRCode, FallbackValue=False}"
+                                  Content="{Tr ExportDialog.ExportOptions.IncludeRCode}"
+                                  ToolTip.ShowDelay="200"
+                                  ToolTip.Tip="{Tr ExportDialog.Tooltips.IncludeRCode}" />
+                        <CheckBox IsChecked="{Binding CurrentTemplate.IncludeSessionData, FallbackValue=False}"
+                                  Content="{Tr ExportDialog.ExportOptions.IncludeSessionData}"
+                                  ToolTip.ShowDelay="200"
+                                  ToolTip.Tip="{Tr ExportDialog.Tooltips.IncludeSessionData}" />
+                        <CheckBox IsChecked="{Binding CurrentTemplate.IncludeOtherInfo, FallbackValue=False}"
+                                  Content="{Tr ExportDialog.ExportOptions.IncludeOtherInfo}"
+                                  ToolTip.ShowDelay="200"
+                                  ToolTip.Tip="{Tr ExportDialog.Tooltips.IncludeOtherInfo}" />
+
+                        <TextBlock Classes="Section" Text="{Tr ExportDialog.ExportSettingsNebula}" />
+
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <CheckBox Grid.Column="0"
+                                      IsChecked="{Binding CurrentTemplate.IncludeNebulaProxy, FallbackValue=False}"
+                                      Content="{Tr ExportDialog.ExportOptions.NebulaProxy}"
+                                      ToolTip.ShowDelay="200"
+                                      ToolTip.Tip="{Tr ExportDialog.Tooltips.NebulaProxy}" />
+                            <CheckBox Grid.Column="1"
+                                      HorizontalAlignment="Center"
+                                      IsChecked="{Binding CurrentTemplate.IncludeDeviceName, FallbackValue=False}"
+                                      Content="{Tr ExportDialog.ExportOptions.DeviceName}"
+                                      ToolTip.ShowDelay="200"
+                                      ToolTip.Tip="{Tr ExportDialog.Tooltips.DeviceName}" />
+                            <CheckBox Grid.Column="2"
+                                      HorizontalAlignment="Right"
+                                      IsChecked="{Binding CurrentTemplate.IncludeNebulaGroup, FallbackValue=False}"
+                                      Content="{Tr ExportDialog.ExportOptions.NebulaGroup}"
+                                      ToolTip.ShowDelay="200"
+                                      ToolTip.Tip="{Tr ExportDialog.Tooltips.NebulaGroup}" />
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+
+                <!-- Accounts to export (logins / SteamIDs / login:password, one per line; empty = all) -->
+                <TextBox x:Name="AccountsTB"
+                         Classes="TextArea"
+                         Height="250"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         PlaceholderText="{Tr ExportDialog.ExportAccountsPlaceholder}"
+                         Text="{Binding AccountsText}"
+                         IsEnabled="{Binding !ExportCommand.IsRunning}"
+                         GotFocus="AccountsTB_GotFocus" />
+
+                <!-- Result / error of the last export -->
+                <nebulaAuth:HintBox x:Name="ResultHint"
+                                    FontSize="13"
+                                    Severity="{Binding HintBoxSeverity}"
+                                    Text="{Binding HintText}"
+                                    IsVisible="{Binding HintText, Converter={x:Static ObjectConverters.IsNotNull}}" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Separator above the button row (also marks the edge of the scrolled body) -->
+        <Border Grid.Row="2" Classes="Divider" Margin="0" />
+
+        <StackPanel Grid.Row="3" Classes="DialogActions" Margin="20,14,20,20">
+            <u:IconButton Theme="{DynamicResource SolidIconButton}"
+                          Classes="Primary"
+                          MinWidth="130"
+                          Content="{Tr ExportDialog.ExportButton}"
+                          IsLoading="{Binding ExportCommand.IsRunning}"
+                          Command="{Binding ExportCommand}">
+                <u:IconButton.Icon>
+                    <mi:MaterialIcon Kind="FileExport" IconSize="16" />
+                </u:IconButton.Icon>
+            </u:IconButton>
+            <!-- Folder of the last successful export (opened automatically once; this reopens it) -->
+            <u:IconButton Theme="{DynamicResource OutlineIconButton}"
+                          Classes="Tertiary"
+                          Content="{Tr ExportDialog.OpenFolder}"
+                          ToolTip.Tip="{Binding LastExportFolder}"
+                          IsVisible="{Binding LastExportFolder, Converter={x:Static ObjectConverters.IsNotNull}}"
+                          Command="{Binding OpenExportFolderCommand}">
+                <u:IconButton.Icon>
+                    <mi:MaterialIcon Kind="FolderOpenOutline" IconSize="16" />
+                </u:IconButton.Icon>
+            </u:IconButton>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,41 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:semi="https://irihi.tech/semi"
+             xmlns:dialogHost="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="NebulaAuth.App"
+             Name="NebulaAuth"
+             RequestedThemeVariant="Dark">
+    <!--
+        Theme stack:
+        1. Semi.Avalonia + Ursa (Semi) + Semi ColorPicker: control templates.
+        2. NebulaAuth palette (Theme/Themes/*Theme.axaml): applied at runtime by Core/ThemeManager, which recolors Semi's
+           semantic tokens and adds the palette brushes (PrimaryBrush, Base100Brush, ...) to Application.Resources.
+        3. Theme/Resources.axaml: Semi size/radius/font overrides + app control themes (GhostIconButton, ...).
+        4. Theme/Styles.axaml: app style classes (Card, Field, DialogBody, ...).
+    -->
+    <!-- macOS application menu (replaces Avalonia's default "About Avalonia" item); not shown on Windows / Linux -->
+    <NativeMenu.Menu>
+        <NativeMenu>
+            <NativeMenuItem Header="About NebulaAuth" Click="AboutMenu_Click" />
+        </NativeMenu>
+    </NativeMenu.Menu>
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://NebulaAuth/Converters/Converters.axaml" />
+                <ResourceInclude Source="avares://NebulaAuth/Theme/Resources.axaml" />
+                <ResourceInclude Source="avares://NebulaAuth/Theme/WindowStyle/WindowStyle.axaml" />
+                <ResourceInclude Source="avares://NebulaAuth/Components/Components.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+    <Application.Styles>
+        <semi:SemiTheme Locale="en-US" />
+        <semi:UrsaSemiTheme Locale="en-US" />
+        <semi:ColorPickerSemiTheme />
+        <dialogHost:DialogHostStyles />
+        <materialIcons:MaterialIconStyles />
+        <StyleInclude Source="avares://NebulaAuth/Theme/Styles.axaml" />
+    </Application.Styles>
+</Application>

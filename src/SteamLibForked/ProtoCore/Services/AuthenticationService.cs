@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.ComponentModel;
+using System.Security.Cryptography;
 using ProtoBuf;
 using SteamLib.ProtoCore.Enums;
 using SteamLib.ProtoCore.Interfaces;
@@ -179,10 +180,19 @@ public class GetAuthSessionInfo_Response : IProtoMsg
     [ProtoMember(6)] public EAuthTokenPlatformType PlatformType { get; set; }
     [ProtoMember(7)] public string DeviceFriendlyName { get; set; }
     [ProtoMember(8)] public int Version { get; set; }
-    [ProtoMember(9)] public bool RequestorLocationMismatch { get; set; }
-    [ProtoMember(10)] public bool LoginHistory { get; set; }
+    [ProtoMember(9)] public EAuthSessionSecurityHistory LoginHistory { get; set; }
+    [ProtoMember(10)] public bool RequestorLocationMismatch { get; set; }
     [ProtoMember(11)] public bool HighUsageLogin { get; set; }
-    [ProtoMember(12)] public int RequestedPersistence { get; set; }
+
+    /// <summary>
+    ///     Proto default is <see cref="ESessionPersistence.Invalid" /> (-1): an absent field reads as Invalid.
+    /// </summary>
+    [ProtoMember(12)]
+    [DefaultValue(ESessionPersistence.Invalid)]
+    public ESessionPersistence RequestedPersistence { get; set; } = ESessionPersistence.Invalid;
+
+    [ProtoMember(13)] public int DeviceTrust { get; set; }
+    [ProtoMember(14)] public EAuthTokenAppType AppType { get; set; }
 }
 
 [ProtoContract]

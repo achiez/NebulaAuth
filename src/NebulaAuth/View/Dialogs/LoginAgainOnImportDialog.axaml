@@ -1,0 +1,79 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:core="using:NebulaAuth.Core"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:other="using:NebulaAuth.ViewModel.Other"
+             xmlns:entities="using:NebulaAuth.Model.Entities"
+             mc:Ignorable="d"
+             x:Class="NebulaAuth.View.Dialogs.LoginAgainOnImportDialog"
+             x:DataType="other:LoginAgainOnImportVM"
+             MinWidth="380" MaxWidth="500">
+    <Grid RowDefinitions="Auto,Auto">
+        <nebulaAuth:DialogHeader Grid.Row="0"
+                                 IconKind="Login"
+                                 Title="{Tr LoginAgainDialog.LoginFor, IsDynamic=False}"
+                                 TitleAccent="{Binding UserName}"
+                                 CloseParameter="{x:False}" />
+        <StackPanel Grid.Row="1" Classes="DialogBody">
+            <TextBox x:Name="PasswordField"
+                     Classes="clearButton"
+                     FontSize="14"
+                     Text="{Binding Password}"
+                     PlaceholderText="{Tr LoginAgainDialog.PasswordBox}">
+                <TextBox.InnerLeftContent>
+                    <mi:MaterialIcon Classes="InputIcon" Kind="Key" />
+                </TextBox.InnerLeftContent>
+            </TextBox>
+            <nebulaAuth:PasswordHints Target="{Binding #PasswordField}" Margin="2,-6,2,0" />
+            <ComboBox x:Name="ProxyBox"
+                      FontSize="14"
+                      ItemsSource="{Binding Proxies}"
+                      SelectedItem="{Binding SelectedProxy}"
+                      PlaceholderText="{Tr Common.Proxy}"
+                      ToolTip.Tip="{Tr LoginAgainDialog.ProxyToolTip}"
+                      HorizontalAlignment="Stretch">
+                <ComboBox.KeyBindings>
+                    <KeyBinding Gesture="Delete" Command="{Binding RemoveProxyCommand}" />
+                </ComboBox.KeyBindings>
+                <ComboBox.ItemTemplate>
+                    <DataTemplate DataType="entities:MaProxy">
+                        <TextBlock Text="{Binding Converter={StaticResource ProxyTextConverter}, Mode=OneWay}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <!-- Steam passwords are saved only in the encrypted password store -->
+            <CheckBox FontSize="14"
+                      IsVisible="{Binding CanSavePassword}"
+                      IsChecked="{Binding SavePassword}"
+                      Content="{Tr LoginAgainDialog.SaveEncryptedPassword}" />
+            <Panel IsVisible="{Binding !CanSavePassword}" Margin="2,-4,2,0">
+                <TextBlock Classes="FieldHelper" TextWrapping="Wrap"
+                           IsVisible="{Binding !SaveTurnedOff}"
+                           Text="{Tr LoginAgainDialog.SaveRequiresEncryption}" />
+                <TextBlock Classes="FieldHelper" TextWrapping="Wrap"
+                           IsVisible="{Binding SaveTurnedOff}"
+                           Text="{Tr LoginAgainDialog.SaveTurnedOff}" />
+            </Panel>
+            <CheckBox FontSize="14"
+                      IsEnabled="{Binding MafileHasProxy}"
+                      IsChecked="{Binding UseMafileProxy}"
+                      Content="{Tr LoginAgainDialog.UseMafileProxy}" />
+            <StackPanel Classes="DialogActions">
+                <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                        Content="{Tr LoginAgainDialog.LoginButton}"
+                        IsEnabled="{Binding IsFormValid}"
+                        IsDefault="True"
+                        Command="{x:Static core:DialogService.CloseDialogCommand}"
+                        CommandParameter="{x:True}" />
+                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                        Content="{Tr LoginAgainDialog.CancelButton}"
+                        IsCancel="True"
+                        Command="{x:Static core:DialogService.CloseDialogCommand}"
+                        CommandParameter="{x:False}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

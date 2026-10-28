@@ -11,6 +11,7 @@ namespace NebulaAuth.Model.MafilesLegacy;
 #pragma warning disable CS8603 // Possible null reference return.
 #pragma warning disable SYSLIB0022
 #pragma warning disable SYSLIB0041
+#pragma warning disable SYSLIB0060
 //Resharper disable all
 //Pragma is disabled because it's legacy code from SDA
 

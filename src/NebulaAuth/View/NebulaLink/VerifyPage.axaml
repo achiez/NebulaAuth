@@ -1,0 +1,41 @@
+<!-- The verified server address, the Achiefy account and the workspace: shown before the device waits for approval. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:pages="using:NebulaAuth.ViewModel.NebulaLink.Pages"
+             x:Class="NebulaAuth.View.NebulaLink.VerifyPage"
+             x:DataType="pages:VerifyPageVM">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Classes="Page">
+            <StackPanel Spacing="10">
+                <Border Classes="PageIcon">
+                    <mi:MaterialIcon Kind="ShieldAccountOutline" />
+                </Border>
+                <TextBlock Classes="StepTitle" HorizontalAlignment="Center" TextAlignment="Center"
+                           Text="{Tr NebulaLink.Verify.Title}" />
+                <TextBlock Classes="Lead" TextAlignment="Center" Text="{Tr NebulaLink.Verify.Text}" />
+            </StackPanel>
+            <Border Classes="InfoBox">
+                <Grid ColumnDefinitions="Auto,14,*" RowDefinitions="Auto,10,Auto,10,Auto">
+                    <TextBlock Grid.Row="0" Grid.Column="0" Classes="InfoLabel" Text="{Tr NebulaLink.Verify.Account}" />
+                    <TextBlock Grid.Row="0" Grid.Column="2" Classes="InfoValue" Text="{Binding Pairing.AccountLabel}"
+                               ToolTip.Tip="{Binding Pairing.AccountLabel}" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Classes="InfoLabel" Text="{Tr NebulaLink.Verify.Workspace}" />
+                    <TextBlock Grid.Row="2" Grid.Column="2" Classes="InfoValue" Text="{Binding Pairing.TenantLabel}" />
+                    <TextBlock Grid.Row="4" Grid.Column="0" Classes="InfoLabel" Text="{Tr NebulaLink.Verify.Server}" />
+                    <StackPanel Grid.Row="4" Grid.Column="2" Orientation="Horizontal" Spacing="6">
+                        <mi:MaterialIcon Kind="Lock" IconSize="14" VerticalAlignment="Center"
+                                         Foreground="{DynamicResource SuccessTextBrush}" IsVisible="{Binding IsSecure}" />
+                        <TextBlock Classes="InfoValue" FontWeight="Normal" Text="{Binding Origin}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <StackPanel Spacing="8">
+                <Button Theme="{DynamicResource SolidButton}" Classes="Primary" HorizontalAlignment="Stretch"
+                        IsDefault="True" Command="{Binding ContinueCommand}" Content="{Tr NebulaLink.Verify.Continue}" />
+                <Button Theme="{DynamicResource BorderlessButton}" Classes="Tertiary" HorizontalAlignment="Stretch"
+                        Command="{Binding CancelCommand}" Content="{Tr NebulaLink.Cancel}" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

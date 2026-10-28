@@ -1,0 +1,115 @@
+<!--
+    First page: NebulaAuth ⇄ Achiefy, what Nebula Link is (one short paragraph), the pairing link field (primary), the
+    consent before the first pairing, Connect. Enter = Connect.
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             xmlns:pages="using:NebulaAuth.ViewModel.NebulaLink.Pages"
+             x:Class="NebulaAuth.View.NebulaLink.ConnectPage"
+             x:DataType="pages:ConnectPageVM">
+    <UserControl.Styles>
+        <Style Selector="Border.Wire">
+            <Setter Property="Width" Value="22" />
+            <Setter Property="Height" Value="2" />
+            <Setter Property="CornerRadius" Value="1" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Background" Value="{DynamicResource DividerBrush}" />
+        </Style>
+    </UserControl.Styles>
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Classes="Page">
+            <!-- What it is -->
+            <StackPanel Spacing="12">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="6">
+                    <Border Classes="Tile" ToolTip.Tip="NebulaAuth">
+                        <TextBlock Text="N" />
+                    </Border>
+                    <Border Classes="Wire" />
+                    <Border Width="30" Height="30" CornerRadius="15" VerticalAlignment="Center"
+                            Background="{DynamicResource SemiColorPrimary}">
+                        <mi:MaterialIcon Kind="LinkVariant" IconSize="17" Foreground="{DynamicResource OnPrimaryBrush}" />
+                    </Border>
+                    <Border Classes="Wire" />
+                    <Border Classes="Tile" ToolTip.Tip="Achiefy">
+                        <TextBlock Text="A" />
+                    </Border>
+                </StackPanel>
+                <TextBlock Classes="StepTitle" HorizontalAlignment="Center" TextAlignment="Center"
+                           Text="{Tr NebulaLink.Connect.Title}" />
+                <TextBlock Classes="Lead" TextAlignment="Center" Text="{Tr NebulaLink.Connect.Text}" />
+            </StackPanel>
+
+            <!-- Pairing not possible now -->
+            <StackPanel Spacing="6" IsVisible="{Binding OriginsUnavailable}">
+                <nebulaAuth:HintBox Severity="Warning" FontSize="13" Text="{Tr NebulaLink.Connect.Unavailable}" />
+                <Button Theme="{StaticResource LinkButton}" FontSize="13" Command="{Binding RetryOriginsCommand}"
+                        Content="{Tr NebulaLink.Connect.Retry}" />
+            </StackPanel>
+            <nebulaAuth:HintBox Severity="Error" FontSize="13" IsVisible="{Binding NoStore}"
+                                Text="{Tr NebulaLink.Connect.NoStore}" />
+
+            <!-- The link -->
+            <StackPanel Classes="Field">
+                <TextBlock Classes="FieldLabel" Text="{Tr NebulaLink.Connect.Label}" />
+                <TextBox x:Name="LinkBox" Classes="clearButton" FontSize="14"
+                         IsEnabled="{Binding CanEnterLink}"
+                         PlaceholderText="{Tr NebulaLink.Connect.Placeholder}"
+                         Text="{Binding Input}">
+                    <TextBox.InnerLeftContent>
+                        <mi:MaterialIcon Classes="InputIcon" Kind="LinkVariant" />
+                    </TextBox.InnerLeftContent>
+                    <TextBox.InnerRightContent>
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Small" Margin="0,0,4,0"
+                                ToolTip.Tip="{Tr NebulaLink.Connect.Paste}"
+                                AutomationProperties.Name="{Tr NebulaLink.Connect.Paste}"
+                                Command="{Binding PasteCommand}">
+                            <mi:MaterialIcon Kind="ContentPaste" />
+                        </Button>
+                    </TextBox.InnerRightContent>
+                </TextBox>
+                <TextBlock Classes="FieldError" IsVisible="{Binding HasError}" Text="{Binding Error}" />
+                <StackPanel Orientation="Horizontal" Spacing="5" IsVisible="{Binding HasTargetHost}">
+                    <mi:MaterialIcon Kind="ShieldCheckOutline" IconSize="14" VerticalAlignment="Center"
+                                     Foreground="{DynamicResource SuccessTextBrush}" />
+                    <TextBlock Classes="FieldHelper" VerticalAlignment="Center">
+                        <Run Text="{Tr NebulaLink.Connect.Server}" />
+                        <Run Text="{Binding TargetHost}" FontWeight="SemiBold" />
+                    </TextBlock>
+                </StackPanel>
+                <TextBlock Classes="FieldHelper" Text="{Tr NebulaLink.Connect.Where}">
+                    <TextBlock.IsVisible>
+                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                            <Binding Path="!HasTargetHost" />
+                            <Binding Path="!HasError" />
+                        </MultiBinding>
+                    </TextBlock.IsVisible>
+                </TextBlock>
+            </StackPanel>
+
+            <!-- Consent (until accepted in this session; nothing is stored before a successful pairing) -->
+            <CheckBox IsVisible="{Binding NeedsConsent}" IsChecked="{Binding Consent}" FontSize="13">
+                <TextBlock TextWrapping="Wrap" Text="{Tr NebulaLink.Connect.Consent}" />
+            </CheckBox>
+
+            <StackPanel Spacing="10">
+                <u:IconButton Theme="{DynamicResource SolidIconButton}" Classes="Primary" HorizontalAlignment="Stretch"
+                              IsDefault="True" IsLoading="{Binding IsBusy}"
+                              Command="{Binding ConnectCommand}" Content="{Tr NebulaLink.Connect.Connect}" />
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <Button Grid.Column="0" Theme="{StaticResource LinkButton}" FontSize="13"
+                            Command="{Binding Owner.OpenCabinetCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="{Tr NebulaLink.OpenAchiefy}" />
+                            <mi:MaterialIcon Kind="OpenInNew" IconSize="13" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Grid.Column="2" Theme="{StaticResource LinkButton}" FontSize="13"
+                            Command="{Binding Owner.OpenDataDescriptionCommand}" Content="{Tr NebulaLink.WhatIsSent}" />
+                </Grid>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,40 @@
+<!--
+    Storage files that were not loaded or not converted to the storage mode (opened from the startup snackbar, the status
+    bar badge or the Encryption settings). The other accounts are available; the files stay where they are. The list is
+    virtualized and has a bounded height, so hundreds of files keep the dialog compact.
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:core="using:NebulaAuth.Core"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             xmlns:view="using:NebulaAuth.View"
+             xmlns:other="using:NebulaAuth.ViewModel.Other"
+             x:Class="NebulaAuth.View.Dialogs.SkippedFilesDialog"
+             x:DataType="other:SkippedFilesVM"
+             Width="560">
+    <Grid RowDefinitions="Auto,*">
+        <nebulaAuth:DialogHeader Grid.Row="0" IconKind="FileAlertOutline"
+                                 Title="{Tr SkippedFiles.Title}"
+                                 TitleAccent="{Binding Count}" />
+        <!-- Rows: description, list (shrinks with a small window, at most 420), actions -->
+        <Grid Grid.Row="1" Margin="20,16,20,20" RowDefinitions="Auto,*,Auto" RowSpacing="14">
+            <TextBlock Grid.Row="0" Classes="DialogText" Text="{Tr SkippedFiles.Description}" />
+            <view:SkippedFilesList Grid.Row="1" MaxHeight="420" />
+            <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto">
+                <Button Grid.Column="0" Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                        Command="{Binding OpenFolderCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <mi:MaterialIcon Kind="FolderOpenOutline" IconSize="16" />
+                        <TextBlock Text="{Tr SkippedFiles.OpenFolder}" />
+                    </StackPanel>
+                </Button>
+                <Button Grid.Column="2" Theme="{DynamicResource SolidButton}" Classes="Primary" MinWidth="110"
+                        Content="{Tr SkippedFiles.Close}"
+                        IsDefault="True" IsCancel="True"
+                        Command="{x:Static core:DialogService.CloseDialogCommand}"
+                        CommandParameter="{x:Null}" />
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

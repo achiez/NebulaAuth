@@ -1,0 +1,70 @@
+<!--
+    macOS only: shown instead of the app when Gatekeeper runs a translocated copy (DataRoot.TranslocatedApp), i.e.
+    NebulaAuth.app was started from the folder it was downloaded / unpacked to. No data folder is used in that state.
+-->
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:nebulaAuth="using:NebulaAuth"
+        xmlns:mi="using:Material.Icons.Avalonia"
+        x:Class="NebulaAuth.View.TranslocationWindow"
+        Title="NebulaAuth"
+        Icon="avares://NebulaAuth/Theme/lock.ico"
+        Width="560"
+        SizeToContent="Height"
+        MaxHeight="760"
+        CanResize="False"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource DialogBackgroundBrush}"
+        FontSize="15">
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0" Background="{DynamicResource DialogHeaderBackgroundBrush}" MinHeight="52"
+                Padding="20,0">
+            <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <mi:MaterialIcon Kind="FolderMoveOutline" IconSize="20"
+                                 Foreground="{DynamicResource DialogHeaderForegroundBrush}" />
+                <TextBlock Text="{Tr TranslocationDialog.Title}" FontSize="16" FontWeight="SemiBold"
+                           Foreground="{DynamicResource DialogHeaderForegroundBrush}" VerticalAlignment="Center" />
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Classes="DialogBody">
+                <TextBlock Classes="DialogText" Text="{Tr TranslocationDialog.Description}" />
+
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="DialogText">
+                        <Run Text="1." FontWeight="SemiBold" />
+                        <Run Text="{Tr TranslocationDialog.Step1}" />
+                    </TextBlock>
+                    <TextBlock Classes="DialogText">
+                        <Run Text="2." FontWeight="SemiBold" />
+                        <Run Text="{Tr TranslocationDialog.Step2}" />
+                    </TextBlock>
+                    <TextBlock Classes="DialogText">
+                        <Run Text="3." FontWeight="SemiBold" />
+                        <Run Text="{Tr TranslocationDialog.Step3}" />
+                    </TextBlock>
+                </StackPanel>
+
+                <nebulaAuth:HintBox FontSize="14" Text="{Tr TranslocationDialog.NothingChanged}" />
+                <TextBlock Classes="FieldHelper" TextWrapping="Wrap" Text="{Tr TranslocationDialog.PortableHint}" />
+
+                <StackPanel Spacing="4">
+                    <TextBlock Classes="FieldLabel" Text="{Tr TranslocationDialog.StartedFrom}" />
+                    <SelectableTextBlock x:Name="AppPathText" Classes="Mono" FontSize="12" TextWrapping="Wrap"
+                                         Foreground="{DynamicResource MutedForegroundBrush}" />
+                </StackPanel>
+
+                <StackPanel Classes="DialogActions">
+                    <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                            Content="{Tr TranslocationDialog.Quit}"
+                            IsDefault="True" IsCancel="True"
+                            Click="Quit_OnClick" />
+                    <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                            Content="{Tr TranslocationDialog.OpenDownloads}"
+                            Click="OpenDownloads_OnClick" />
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

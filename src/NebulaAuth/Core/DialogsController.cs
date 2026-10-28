@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoUpdaterDotNET;
-using MaterialDesignThemes.Wpf;
 using NebulaAuth.Model;
 using NebulaAuth.Model.Entities;
+using NebulaAuth.Model.LinkHost;
+using NebulaAuth.Model.Mafiles.Protection;
 using NebulaAuth.Model.Update;
 using NebulaAuth.View;
 using NebulaAuth.View.Dialogs;
+using NebulaAuth.ViewModel.NebulaLink;
 using NebulaAuth.ViewModel.Linker;
 using NebulaAuth.ViewModel.MafileMover;
 using NebulaAuth.ViewModel.Other;
@@ -22,14 +23,14 @@ public static class DialogsController
         {
             UserName = username,
             Password = currentPassword ?? string.Empty,
-            SavePassword = PHandler.IsPasswordSet,
+            SavePassword = SteamPasswords.CanSave,
             ShowNoProxyWarning = showNoProxyWarning
         };
         var content = new LoginAgainDialog
         {
             DataContext = vm
         };
-        var result = await DialogHost.Show(content);
+        var result = await DialogService.Show(content);
         if (result is true)
         {
             return vm;
@@ -46,7 +47,7 @@ public static class DialogsController
         {
             DataContext = vm
         };
-        var result = await DialogHost.Show(content);
+        var result = await DialogService.Show(content);
         if (result is true)
         {
             return vm;
@@ -66,7 +67,7 @@ public static class DialogsController
         {
             DataContext = vm
         };
-        var result = await DialogHost.Show(content);
+        var result = await DialogService.Show(content);
         if (result is true)
         {
             return vm.Password;
@@ -76,14 +77,14 @@ public static class DialogsController
     }
 
     public static async Task<MafileImportDialogResult?> ShowMafileImportDialog(IEnumerable<string> groups,
-        int totalCount, int conflictCount)
+        MafileImportCounts counts)
     {
-        var vm = new MafileImportDialogVM(groups, totalCount, conflictCount);
+        var vm = new MafileImportDialogVM(groups, counts);
         var content = new MafileImportDialog
         {
             DataContext = vm
         };
-        var result = await DialogHost.Show(content);
+        var result = await DialogService.Show(content);
         return result is MafileImportDialogVM
             ? new MafileImportDialogResult(
                 !vm.AddToGroup || string.IsNullOrWhiteSpace(vm.Group) ? null : vm.Group.Trim(),
@@ -98,13 +99,13 @@ public static class DialogsController
         {
             DataContext = vm
         };
-        await DialogHost.Show(view);
+        await DialogService.Show(view);
         return vm.AnyChanges;
     }
 
     public static void CloseDialog()
     {
-        DialogHost.Close(null);
+        DialogService.Close();
     }
 
     public static async Task ShowLinkerDialog()
@@ -117,7 +118,7 @@ public static class DialogsController
             {
                 DataContext = vm
             };
-            await DialogHost.Show(view);
+            await DialogService.Show(view);
         }
         finally
         {
@@ -135,7 +136,7 @@ public static class DialogsController
             {
                 DataContext = vm
             };
-            await DialogHost.Show(view);
+            await DialogService.Show(view);
         }
         finally
         {
@@ -150,28 +151,86 @@ public static class DialogsController
         {
             DataContext = vm
         };
-        await DialogHost.Show(dialog);
+        await DialogService.Show(dialog);
     }
 
     public static async Task ShowExportDialog()
     {
-        var vm = new MafileExporterVM();
-        var dialog = new MafileExporterView
+        MafileExporterVM? vm = null;
+        try
         {
-            DataContext = vm
-        };
-        await DialogHost.Show(dialog);
+            vm = new MafileExporterVM();
+            var dialog = new MafileExporterView
+            {
+                DataContext = vm
+            };
+            await DialogService.Show(dialog);
+        }
+        finally
+        {
+            vm?.Dispose();
+        }
     }
 
-    public static async Task ShowUpdateDialog(UpdateInfoEventArgs args, ChangelogEntry? changelog,
-        string? htmlFallbackUrl)
+    /// <summary>
+    ///     Shows the update dialog over <paramref name="status" />. Does nothing when it is already open; waits when
+    ///     another dialog is open (the update dialog must not replace a dialog the user is working in).
+    /// </summary>
+    public static async Task ShowUpdateDialog(UpdateStatus status)
     {
-        var vm = new UpdateDialogVM(args, changelog, htmlFallbackUrl);
+        if (DialogService.GetSession()?.Content is UpdateDialog) return;
+        while (DialogService.IsDialogOpen)
+        {
+            await Task.Delay(500);
+            if (DialogService.GetSession()?.Content is UpdateDialog) return;
+        }
+
+        using var vm = new UpdateDialogVM(status);
         var dialog = new UpdateDialog
         {
             DataContext = vm
         };
-        await DialogHost.Show(dialog);
+        await DialogService.Show(dialog);
+    }
+
+    /// <summary>
+    ///     Settings dialog opened on <paramref name="tab" /> (<see cref="SettingsVM.MAIN_TAB" />,
+    ///     <see cref="SettingsVM.ENCRYPTION_TAB" />...).
+    /// </summary>
+    public static async Task ShowSettingsDialog(int tab = SettingsVM.MAIN_TAB)
+    {
+        var vm = new SettingsVM {SelectedTab = tab};
+        await DialogService.Show(new SettingsView {DataContext = vm});
+    }
+
+    /// <summary>
+    ///     Storage files that were not loaded or not converted to the storage mode (name, reason, not protected); the
+    ///     current list of the storage when <paramref name="files" /> is null. Nothing happens while another dialog is open.
+    /// </summary>
+    public static async Task ShowSkippedFilesDialog(IEnumerable<SkippedFile>? files = null)
+    {
+        if (DialogService.IsDialogOpen) return;
+        files ??= MafileStorageService.Current.SkippedFiles;
+        await DialogService.Show(new SkippedFilesDialog {DataContext = new SkippedFilesVM(files)});
+    }
+
+    /// <summary>
+    ///     The Nebula Link (Nebula Protocol) modal: pairing before the link exists, the accounts table after it.
+    ///     <paramref name="focus" /> selects that account's row (account context menu); <paramref name="linkIntent" />
+    ///     pre-checks it for connecting (true) or disconnecting (false). Nothing changes until the user confirms.
+    /// </summary>
+    public static async Task ShowNebulaLinkDialog(Mafile? focus = null, bool? linkIntent = null)
+    {
+        if (DialogService.IsDialogOpen || NebulaLinkHost.Integration is not { } integration) return;
+        using var vm = new NebulaLinkVM(integration, focus, linkIntent);
+        await DialogService.Show(new NebulaLinkView {DataContext = vm});
+    }
+
+    /// <summary>QR login confirmation. True = approve; false = cancel (also the X and Esc).</summary>
+    public static async Task<bool> ShowQrLoginDialog(QrLoginDialogVM vm)
+    {
+        var result = await DialogService.Show(new QrLoginDialog {DataContext = vm});
+        return result is true;
     }
 
     #region CommonDialogs
@@ -180,14 +239,23 @@ public static class DialogsController
     {
         var content = msg == null ? new ConfirmCancelDialog() : new ConfirmCancelDialog(msg);
 
-        var result = await DialogHost.Show(content);
+        var result = await DialogService.Show(content);
         return result != null && (bool) result;
+    }
+
+    /// <summary>
+    ///     Confirmation with a description, a hint callout (severity) and optionally a red confirm button.
+    /// </summary>
+    public static async Task<bool> ShowConfirmCancelDialog(ConfirmDialogOptions options)
+    {
+        var result = await DialogService.Show(new ConfirmCancelDialog(options));
+        return result is true;
     }
 
     public static async Task<string?> ShowTextFieldDialog(string? title = null, string? msg = null)
     {
         var content = new TextFieldDialog(title, msg);
-        var result = await DialogHost.Show(content);
+        var result = await DialogService.Show(content);
         return result as string;
     }
 

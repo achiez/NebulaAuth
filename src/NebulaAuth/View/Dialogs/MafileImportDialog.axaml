@@ -1,0 +1,125 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:core="using:NebulaAuth.Core"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             xmlns:other="using:NebulaAuth.ViewModel.Other"
+             mc:Ignorable="d"
+             x:Class="NebulaAuth.View.Dialogs.MafileImportDialog"
+             x:DataType="other:MafileImportDialogVM"
+             MinWidth="440" MaxWidth="520">
+    <Grid RowDefinitions="Auto,Auto">
+        <nebulaAuth:DialogHeader Grid.Row="0"
+                                 Title="{Tr MafileImportDialog.Title}"
+                                 CloseParameter="{x:Null}" />
+        <StackPanel Grid.Row="1" Classes="DialogBody">
+            <Border Padding="12,10" CornerRadius="8" BorderThickness="1">
+                <Border.Background>
+                    <SolidColorBrush Color="{DynamicResource BaseContentColor}" Opacity="0.07" />
+                </Border.Background>
+                <Border.BorderBrush>
+                    <SolidColorBrush Color="{DynamicResource BaseContentColor}" Opacity="0.12" />
+                </Border.BorderBrush>
+                <!-- No RowSpacing: it would still be added while rows 1-3 are hidden and push the single row off-center.
+                     Rows 1-3 get their gap from their own top margin, which disappears together with them. -->
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
+                    <TextBlock Grid.Row="0" Grid.Column="0"
+                               Classes="Muted"
+                               VerticalAlignment="Center"
+                               Text="{Tr MafileImportDialog.TotalCount}" />
+                    <TextBlock Grid.Row="0" Grid.Column="1"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Text="{Binding TotalCount, Mode=OneWay}" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0"
+                               Margin="0,6,0,0"
+                               Classes="Muted"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding HasConflicts}"
+                               Text="{Tr MafileImportDialog.ConflictCount}" />
+                    <!-- WarningTextBrush: warning hue contrast-corrected for the card, readable in the Light theme too -->
+                    <TextBlock Grid.Row="1" Grid.Column="1"
+                               Margin="0,6,0,0"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource WarningTextBrush}"
+                               IsVisible="{Binding HasConflicts}"
+                               Text="{Binding ConflictCount, Mode=OneWay}" />
+
+                    <!-- Invalid / unsupported / unreadable files: not imported -->
+                    <TextBlock Grid.Row="2" Grid.Column="0"
+                               Margin="0,6,0,0"
+                               Classes="Muted"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding HasErrors}"
+                               Text="{Tr MafileImportDialog.ErrorCount}" />
+                    <TextBlock Grid.Row="2" Grid.Column="1"
+                               Margin="0,6,0,0"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource ErrorTextBrush}"
+                               IsVisible="{Binding HasErrors}"
+                               Text="{Binding ErrorCount, Mode=OneWay}" />
+
+                    <!-- With errors the counts no longer add up to the selection: show its size too -->
+                    <TextBlock Grid.Row="3" Grid.Column="0"
+                               Margin="0,6,0,0"
+                               Classes="Muted"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding HasErrors}"
+                               Text="{Tr MafileImportDialog.SelectedCount}" />
+                    <TextBlock Grid.Row="3" Grid.Column="1"
+                               Margin="0,6,0,0"
+                               Classes="Muted"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding HasErrors}"
+                               Text="{Binding SelectedCount, Mode=OneWay}" />
+                </Grid>
+            </Border>
+
+            <TextBlock Classes="FieldHelper"
+                       Margin="0,-6,0,0"
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding HasErrors}"
+                       Text="{Tr MafileImportDialog.ErrorsHint}" />
+
+            <CheckBox IsVisible="{Binding HasConflicts}"
+                      IsChecked="{Binding OverwriteConflicts}"
+                      Content="{Tr MafileImportDialog.OverwriteConflicts}" />
+
+            <Border Classes="Divider" IsVisible="{Binding HasConflicts}" />
+
+            <CheckBox IsChecked="{Binding AddToGroup}"
+                      Content="{Tr MafileImportDialog.AddToGroup}" />
+
+            <ComboBox x:Name="GroupBox"
+                      Margin="28,0,0,0"
+                      IsEditable="True"
+                      Classes="clearButton"
+                      ItemsSource="{Binding Groups}"
+                      Text="{Binding Group}"
+                      PlaceholderText="{Tr MafileImportDialog.GroupFieldHint}"
+                      IsVisible="{Binding AddToGroup}"
+                      HorizontalAlignment="Stretch" />
+
+            <StackPanel Classes="DialogActions">
+                <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                        Content="{Tr Common.OK}"
+                        IsDefault="True"
+                        Command="{x:Static core:DialogService.CloseDialogCommand}"
+                        CommandParameter="{Binding}" />
+                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                        Content="{Tr Common.Cancel}"
+                        IsCancel="True"
+                        Command="{x:Static core:DialogService.CloseDialogCommand}"
+                        CommandParameter="{x:Null}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

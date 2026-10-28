@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using NebulaAuth.Model.Entities;
 
@@ -10,6 +10,9 @@ public class ExportResult
     public Dictionary<Mafile, string>? Exported { get; }
     public List<string>? NotFound { get; }
     public List<string>? Conflict { get; }
+
+    /// <summary>Absolute folder the files were exported to (null on error).</summary>
+    public string? Folder { get; }
 
     [MemberNotNullWhen(true, nameof(Exported))]
     [MemberNotNullWhen(true, nameof(NotFound))]
@@ -26,9 +29,11 @@ public class ExportResult
         Conflict = conflict;
     }
 
-    public ExportResult(Dictionary<Mafile, string> exported, List<string> notFound, List<string> conflict)
+    public ExportResult(Dictionary<Mafile, string> exported, List<string> notFound, List<string> conflict,
+        string folder)
         : this(null, exported, notFound, conflict)
     {
+        Folder = folder;
     }
 
 

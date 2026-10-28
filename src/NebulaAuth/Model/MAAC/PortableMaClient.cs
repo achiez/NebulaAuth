@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using AchiesUtilities.Web.Models;
 using AchiesUtilities.Web.Proxy;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using NebulaAuth.Core;
 using NebulaAuth.Model.Entities;
@@ -140,7 +140,7 @@ public partial class PortableMaClient : ObservableObject, IDisposable
 
     public void SetStatus(PortableMaClientStatus status)
     {
-        Application.Current.Dispatcher.Invoke(() => Status = status);
+        Dispatcher.UIThread.Invoke(() => Status = status);
         if (status.StatusType == PortableMaClientStatusType.Error)
         {
             Shell.Logger.Warn("Timer {accountName}: disabled due to error.", Mafile.AccountName);

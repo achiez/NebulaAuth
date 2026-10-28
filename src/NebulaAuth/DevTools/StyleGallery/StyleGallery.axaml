@@ -1,0 +1,203 @@
+<!--
+    Style gallery (debug builds: run with NEBULA_STYLE_GALLERY=1). Shows every app style in the
+    current theme; the buttons on top switch theme / language live (through Settings, like SettingsView).
+    Not used by the product UI.
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:theme="using:NebulaAuth.Theme"
+             x:Class="NebulaAuth.Theme.StyleGallery"
+             x:DataType="theme:StyleGallery">
+    <UserControl.Styles>
+        <!-- {Tr} inside a style setter -->
+        <Style Selector="TextBlock.TrSetter">
+            <Setter Property="Text" Value="{Tr Common.Save}" />
+        </Style>
+    </UserControl.Styles>
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="14" ColumnDefinitions="*,12,*">
+        <StackPanel Grid.Column="0" Spacing="12">
+            <Border Classes="Card">
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="Heading" Text="Theme / language" />
+                    <WrapPanel ItemSpacing="6" LineSpacing="6">
+                        <Button Theme="{DynamicResource OutlineButton}" Content="Default" Tag="0" Click="Theme_OnClick" />
+                        <Button Theme="{DynamicResource OutlineButton}" Content="Black" Tag="1" Click="Theme_OnClick" />
+                        <Button Theme="{DynamicResource OutlineButton}" Content="Light" Tag="2" Click="Theme_OnClick" />
+                        <Button Theme="{DynamicResource OutlineButton}" Content="Luxury" Tag="3" Click="Theme_OnClick" />
+                        <Button Theme="{DynamicResource OutlineButton}" Content="Shadcn" Tag="4" Click="Theme_OnClick" />
+                        <Button Theme="{DynamicResource BorderlessButton}" Content="EN" Tag="0" Click="Language_OnClick" />
+                        <Button Theme="{DynamicResource BorderlessButton}" Content="RU" Tag="1" Click="Language_OnClick" />
+                    </WrapPanel>
+                    <WrapPanel ItemSpacing="8" LineSpacing="6">
+                        <Menu>
+                            <MenuItem Header="{Tr MainWindow.Menu.File.Caption}">
+                                <MenuItem Header="{Tr MainWindow.Menu.File.Settings}" />
+                            </MenuItem>
+                        </Menu>
+                        <Button Theme="{StaticResource GhostIconButton}" ToolTip.Tip="{Tr MainWindow.AppBar.MarketTimerHint}">
+                            <mi:MaterialIcon Kind="ShoppingCart" />
+                        </Button>
+                        <TextBox Width="220" PlaceholderText="{Tr MainWindow.LeftPart.SearchBoxHint}" />
+                        <ItemsControl ItemsSource="{Binding $parent[theme:StyleGallery].SampleKeys}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="8" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <Border Classes="Card Flat" Padding="8,4">
+                                        <TextBlock Text="{Tr Common.OK}" ToolTip.Tip="{Binding}" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </WrapPanel>
+                    <TextBlock>
+                        <Run Text="Tr (dynamic): " />
+                        <Run Text="{Tr Common.Cancel}" FontWeight="SemiBold" />
+                        <Run Text=" | IsDynamic=False: " />
+                        <Run Text="{Tr Common.Cancel, IsDynamic=False}" FontWeight="SemiBold" />
+                    </TextBlock>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="Style setter:" />
+                        <TextBlock Classes="TrSetter" FontWeight="SemiBold" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="Card">
+                <StackPanel Spacing="10">
+                    <TextBlock Classes="Heading" Text="Buttons" />
+                    <WrapPanel ItemSpacing="8" LineSpacing="8">
+                        <Button Theme="{DynamicResource SolidButton}" Classes="Primary" Content="Solid (FlatDarkBg/Raised)" />
+                        <Button Theme="{DynamicResource OutlineButton}" Content="Outline" />
+                        <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary" Content="Outline Tertiary" />
+                        <Button Theme="{DynamicResource BorderlessButton}" Content="Borderless (Flat)" />
+                        <Button Content="Default (Light)" />
+                        <Button Theme="{DynamicResource SolidButton}" Classes="Danger" Content="Danger" />
+                        <Button Theme="{DynamicResource SolidButton}" Classes="Primary" Content="Disabled" IsEnabled="False" />
+                    </WrapPanel>
+                    <WrapPanel ItemSpacing="8" LineSpacing="8">
+                        <Button Theme="{StaticResource GhostIconButton}" ToolTip.Tip="GhostIconButton">
+                            <mi:MaterialIcon Kind="ContentCopy" />
+                        </Button>
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Primary">
+                            <mi:MaterialIcon Kind="Settings" />
+                        </Button>
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Danger">
+                            <mi:MaterialIcon Kind="Trash" />
+                        </Button>
+                        <Button Theme="{StaticResource GhostIconButton}" Classes="Small">
+                            <mi:MaterialIcon Kind="Close" />
+                        </Button>
+                        <ToggleButton Theme="{StaticResource GhostIconToggleButton}" IsChecked="True">
+                            <mi:MaterialIcon Kind="ShoppingCart" />
+                        </ToggleButton>
+                        <ToggleButton Theme="{StaticResource GhostIconToggleButton}">
+                            <mi:MaterialIcon Kind="AccountArrowRight" />
+                        </ToggleButton>
+                        <Button Theme="{StaticResource LinkButton}" Content="by achies (LinkButton)" />
+                        <ProgressBar Theme="{DynamicResource ProgressRing}" IsIndeterminate="True" Width="28" Height="28" />
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="Card">
+                <StackPanel Classes="Form">
+                    <TextBlock Classes="Heading" Text="Form fields" />
+                    <StackPanel Classes="Field">
+                        <TextBlock Classes="FieldLabel" Text="Login (FieldLabel)" />
+                        <TextBox PlaceholderText="PlaceholderText" Classes="clearButton" Text="achies" />
+                        <TextBlock Classes="FieldHelper" Text="FieldHelper: helper text under the input" />
+                    </StackPanel>
+                    <StackPanel Classes="Field">
+                        <TextBlock Classes="FieldLabel" Text="Password (revealPasswordButton)" />
+                        <TextBox PasswordChar="•" Classes="revealPasswordButton" Text="secret" />
+                    </StackPanel>
+                    <TextBox PlaceholderText="Search with a leading icon">
+                        <TextBox.InnerLeftContent>
+                            <mi:MaterialIcon Classes="InputIcon" Kind="Magnify" />
+                        </TextBox.InnerLeftContent>
+                    </TextBox>
+                    <Grid ColumnDefinitions="*,12,*">
+                        <ComboBox Grid.Column="0" PlaceholderText="ComboBox" HorizontalAlignment="Stretch">
+                            <ComboBoxItem Content="English" />
+                            <ComboBoxItem Content="Русский" />
+                        </ComboBox>
+                        <ComboBox Grid.Column="2" SelectedIndex="0" HorizontalAlignment="Stretch">
+                            <ComboBoxItem Content="Steam ID" />
+                            <ComboBoxItem Content="Login" />
+                        </ComboBox>
+                    </Grid>
+                    <WrapPanel ItemSpacing="16" LineSpacing="8">
+                        <CheckBox Content="Minimize to tray" IsChecked="True" />
+                        <CheckBox Content="Unchecked" />
+                        <RadioButton Content="Radio A" IsChecked="True" GroupName="g" />
+                        <RadioButton Content="Radio B" GroupName="g" />
+                        <ToggleSwitch IsChecked="True" />
+                    </WrapPanel>
+                    <Slider Minimum="0" Maximum="100" Value="35" />
+                    <Slider Classes="HideActiveTrack" Minimum="0" Maximum="100" Value="60" />
+                    <ProgressBar Value="62" />
+                    <ProgressBar IsIndeterminate="True" />
+                    <nebulaAuth:CodeProgressBar MaxTime="30" TimeRemaining="20" Height="4" />
+                    <!-- md:ColorPicker (hue bar) replacement -->
+                    <Grid ColumnDefinitions="*,12,Auto">
+                        <ColorSlider Grid.Column="0" ColorModel="Hsva" ColorComponent="Component1" IsPerceptive="True"
+                                     IsAlphaVisible="False" Color="#FFCA2727" VerticalAlignment="Center" />
+                        <ColorPicker Grid.Column="2" Color="#FFCA2727" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+        <StackPanel Grid.Column="2" Spacing="12">
+            <Border Classes="Card">
+                <StackPanel Spacing="10">
+                    <TextBlock Classes="Heading" Text="HintBox / tabs / list" />
+                    <nebulaAuth:HintBox FontSize="14" Text="Info hint box with a close button" ShowCloseButton="True" />
+                    <nebulaAuth:HintBox FontSize="14" Severity="Warning" Text="Warning hint box" />
+                    <nebulaAuth:HintBox FontSize="14" Severity="Error" Text="Error hint box" />
+                    <TabControl Classes="Uniform">
+                        <TabItem Header="Main">
+                            <TextBlock Margin="8" Classes="Muted" Text="TabControl.Uniform (MaterialDesignUniformTabControl)" />
+                        </TabItem>
+                        <TabItem Header="Theme">
+                            <TextBlock Margin="8" Text="Second tab" />
+                        </TabItem>
+                    </TabControl>
+                    <ListBox Classes="Stretch" SelectedIndex="1">
+                        <ListBoxItem Content="alphaecho" />
+                        <ListBoxItem Content="auracode (selected)" />
+                        <ListBoxItem Content="blueloom" />
+                    </ListBox>
+                    <Expander Header="Expander" HorizontalAlignment="Stretch">
+                        <TextBlock Text="Expander content" />
+                    </Expander>
+                    <TextBlock Classes="Muted" Text="Muted text" />
+                    <TextBlock Classes="Caption" Text="Caption text" />
+                    <Border Classes="Divider" />
+                    <TextBlock Classes="Mono" Text="http://127.0.0.1:8080" />
+                </StackPanel>
+            </Border>
+
+            <Border Classes="Card">
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="Heading" Text="Dialogs / snackbar" />
+                    <WrapPanel ItemSpacing="8" LineSpacing="8">
+                        <Button Theme="{DynamicResource OutlineButton}" Content="ConfirmCancelDialog" Click="Confirm_OnClick" />
+                        <Button Theme="{DynamicResource OutlineButton}" Content="TextFieldDialog" Click="TextField_OnClick" />
+                        <Button Theme="{DynamicResource OutlineButton}" Content="Snackbar" Click="Snackbar_OnClick" />
+                        <Button Theme="{DynamicResource OutlineButton}" Content="Snackbar + action" Click="SnackbarAction_OnClick" />
+                    </WrapPanel>
+                    <nebulaAuth:DialogHeader IconKind="Settings" Title="DialogHeader" TitleAccent="accent" CornerRadius="8" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

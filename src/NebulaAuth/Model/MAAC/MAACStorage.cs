@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using NebulaAuth.Core;
 using NebulaAuth.Model.Entities;
+using NebulaAuth.Model.LinkHost;
 using NebulaAuth.Model.Mafiles;
 using Newtonsoft.Json;
 
@@ -86,25 +87,36 @@ public static class MAACStorage
             Save();
     }
 
+    private static string FilePath => DataRoot.Combine("maac.json");
+
     public static void Save()
     {
         var json = JsonConvert.SerializeObject(Clients, Formatting.Indented);
-        File.WriteAllText("maac.json", json);
+        File.WriteAllText(FilePath, json);
     }
 
     public static void Initialize()
     {
         MultiAccountAutoConfirmer.Clients.CollectionChanged += ClientsOnCollectionChanged;
-        if (!File.Exists("maac.json")) return;
+        if (!File.Exists(FilePath)) return;
         try
         {
-            var json = File.ReadAllText("maac.json");
+            var json = File.ReadAllText(FilePath);
             var clients = JsonConvert.DeserializeObject<Dictionary<string, StoredClient>>(json) ?? [];
+            var droppedLinked = false;
             foreach (var (fileName, storedClient) in clients)
             {
                 var mafile = Storage.MaFiles.FirstOrDefault(x => x.Filename == fileName);
                 if (mafile == null) continue;
                 if (storedClient is {AutoConfirmMarket: false, AutoConfirmTrades: false}) continue;
+                // Accounts connected through Nebula Link are never auto-confirmed; their saved flags are dropped for good (they are
+                // not restored when the account is unlinked later)
+                if (NebulaLinkHost.IsLinked(mafile))
+                {
+                    droppedLinked = true;
+                    continue;
+                }
+
                 if (MultiAccountAutoConfirmer.TryAddToConfirm(mafile) && mafile.LinkedClient != null)
                 {
                     mafile.LinkedClient.AutoConfirmMarket = storedClient.AutoConfirmMarket;
@@ -113,6 +125,9 @@ public static class MAACStorage
                     Clients[fileName] = storedClient;
                 }
             }
+
+            // The restored flags (and the dropped entries of linked accounts) are written back now
+            if (droppedLinked || Clients.Count > 0) Save();
         }
         catch (Exception ex)
         {
@@ -122,19 +137,40 @@ public static class MAACStorage
         }
     }
 
+    /// <summary>
+    ///     Mafiles were renamed: the stored flags follow the new file names. Entries of files that were not renamed are
+    ///     kept as they are.
+    /// </summary>
     public static void NotifyMafilesRenamed(IDictionary<string, string> oldNewNames)
     {
-        var updatedClients = new Dictionary<string, StoredClient>();
+        var updatedClients = new Dictionary<string, StoredClient>(Clients);
+        var moved = new List<(string NewName, StoredClient Client)>();
         foreach (var (oldName, newName) in oldNewNames)
         {
-            if (Clients.Remove(oldName, out var storedClient))
-            {
-                updatedClients[newName] = storedClient;
-            }
+            if (updatedClients.Remove(oldName, out var storedClient)) moved.Add((newName, storedClient));
         }
 
+        // Added after all removals: a rename chain (a→b, b→c) must not drop an entry
+        foreach (var (newName, storedClient) in moved) updatedClients[newName] = storedClient;
         Clients = updatedClients;
         Save();
+    }
+
+    /// <summary>
+    ///     The account was connected through Nebula Link: auto-confirmation is turned off and its saved flags are forgotten (not
+    ///     restored when the account is unlinked; the user enables it again explicitly).
+    /// </summary>
+    public static void ForgetAccount(Mafile mafile)
+    {
+        if (Avalonia.Application.Current != null && !Avalonia.Threading.Dispatcher.UIThread.CheckAccess())
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Post(() => ForgetAccount(mafile));
+            return;
+        }
+
+        if (mafile.LinkedClient != null || MultiAccountAutoConfirmer.Clients.Contains(mafile))
+            MultiAccountAutoConfirmer.RemoveFromConfirm(mafile);
+        if (mafile.Filename != null && Clients.Remove(mafile.Filename)) Save();
     }
 
     private class StoredClient

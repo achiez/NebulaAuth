@@ -67,6 +67,36 @@
       "tr": "Zaten mevcut:",
       "kk": "Бұрыннан бар:"
     },
+    "SelectedCount": {
+      "en": "Files selected",
+      "ru": "Выбрано файлов",
+      "zh": "已选择的文件",
+      "uk": "Вибрано файлів",
+      "fr": "Fichiers sélectionnés",
+      "es": "Archivos seleccionados",
+      "tr": "Seçilen dosyalar",
+      "kk": "Таңдалған файлдар"
+    },
+    "ErrorCount": {
+      "en": "Errors",
+      "ru": "Ошибок",
+      "zh": "错误",
+      "uk": "Помилок",
+      "fr": "Erreurs",
+      "es": "Errores",
+      "tr": "Hatalar",
+      "kk": "Қателер"
+    },
+    "ErrorsHint": {
+      "en": "Files with errors are not imported: they are not valid mafiles, can't be read or belong to another encrypted storage.",
+      "ru": "Файлы с ошибками не будут импортированы: это некорректные мафайлы, их не удалось прочитать или они зашифрованы другим хранилищем.",
+      "zh": "有错误的文件不会被导入：它们不是有效的 mafile、无法读取，或属于另一个加密存储。",
+      "uk": "Файли з помилками не буде імпортовано: це некоректні мафайли, їх не вдалося прочитати або вони зашифровані іншим сховищем.",
+      "fr": "Les fichiers en erreur ne sont pas importés : ce ne sont pas des mafiles valides, ils sont illisibles ou appartiennent à un autre stockage chiffré.",
+      "es": "Los archivos con errores no se importan: no son mafiles válidos, no se pueden leer o pertenecen a otro almacenamiento cifrado.",
+      "tr": "Hatalı dosyalar içe aktarılmaz: geçerli mafile değildir, okunamaz veya başka bir şifreli depolamaya aittir.",
+      "kk": "Қатесі бар файлдар импортталмайды: олар жарамды mafile емес, оқылмайды немесе басқа шифрланған қоймаға тиесілі."
+    },
     "OverwriteConflicts": {
       "en": "Overwrite conflicting mafiles",
       "ru": "Перезаписать конфликтующие мафайлы",

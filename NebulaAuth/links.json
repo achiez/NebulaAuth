@@ -1,4 +1,12 @@
 {
-  "Website": "https://achiefy.pro/?nebula=true",
-  "Documentation": "https://achiefy-project.gitbook.io/nebulaauth"
+  "Website": "https://achiefy.pro/nebulaauth?utm_source=nebulaauth&utm_medium=desktop_app&utm_campaign=about",
+  "Documentation": "https://docs.achiefy.pro/en/nebula-auth/",
+  "LocalizedDocumentation": "https://docs.achiefy.pro/{lang}/nebula-auth/",
+  "Telegram": "https://t.me/nebulaauth",
+  "GitHub": "https://github.com/achiez/NebulaAuth-Steam-Desktop-Authenticator-by-Achies",
+  "Releases": "https://github.com/achiez/NebulaAuth-Steam-Desktop-Authenticator-by-Achies/releases/latest",
+  "LinkingTroubleshooting": "https://docs.achiefy.pro/{lang}/nebula-auth/support/linking-troubleshooting",
+  "NebulaLinkApis": ["https://api.achiefy.pro/tenant"],
+  "NebulaLinkCabinet": "https://achiefy.pro/profile/nebula-link?utm_source=nebulaauth&utm_medium=desktop_app&utm_campaign=nebula_link",
+  "NebulaLinkData": "https://achiefy.pro/nebula-link/data?utm_source=nebulaauth&utm_medium=desktop_app&utm_campaign=nebula_link_data"
 }

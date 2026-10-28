@@ -20,6 +20,7 @@ public static class MAACRequestHandler
     public static void Unregister(Mafile mafile)
     {
         _errors.TryRemove(mafile, out _);
+        MaacErrorLog.Instance.Forget(mafile.AccountName);
     }
 
     public static PortableMaClientStatus ClearErrors(Mafile mafile)

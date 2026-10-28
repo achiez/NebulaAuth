@@ -86,7 +86,7 @@ public static class MobileConfirmationScrapper
     }
 
 
-    //BUG: ArgumentOutOfRangeException
+    // A trade whose details failed to load: a single empty summary line and no icon
     //{
     //     "success": true,
     //     "conf":
@@ -118,8 +118,9 @@ public static class MobileConfirmationScrapper
         var userName = json.Headline;
 
 
+        // summary[1] is the "you will receive" line; a trade whose details failed to load has a single empty line
         var receiveNodeText = string.Empty;
-        if (json.Summary.Count > 0)
+        if (json.Summary is {Count: > 1})
         {
             receiveNodeText = json.Summary[1];
         }
@@ -129,7 +130,7 @@ public static class MobileConfirmationScrapper
 
         return new TradeConfirmation(json.Id, json.Nonce, json.CreatorId, json.TypeName)
         {
-            UserAvatarUri = avatarUri!.ToString(),
+            UserAvatarUri = avatarUri?.ToString() ?? string.Empty,
             UserName = userName,
             IsReceiveNothing = receiveNothing,
             Time = json.CreationTime.ToLocalDateTime()

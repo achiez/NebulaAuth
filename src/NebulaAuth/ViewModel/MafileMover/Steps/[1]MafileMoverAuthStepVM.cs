@@ -22,6 +22,14 @@ public partial class MafileMoverAuthStepVM : MafileMoverStepVM
 
     [ObservableProperty] private KeyValuePair<int, ProxyData>? _selectedProxy;
 
+    /// <summary>
+    ///     The password is kept for automatic re-login only in an encrypted storage (separate password store).
+    /// </summary>
+    public bool CanSavePassword { get; init; } = SteamPasswords.CanSave;
+
+    /// <summary>The storage is encrypted, but saving Steam passwords is turned off in the settings.</summary>
+    public bool SaveTurnedOff { get; init; } = SteamPasswords.IsTurnedOff;
+
 
     public MafileMoverAuthStepVM(KeyValuePair<int, ProxyData>? selectedProxy)
     {

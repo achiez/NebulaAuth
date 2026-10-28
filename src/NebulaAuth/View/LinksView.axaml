@@ -1,0 +1,101 @@
+<!--
+    Small floating list of link buttons (Telegram, GitHub, website, docs, check for updates) without a DialogHeader.
+    MainVM.OpenLinksViewCommand enables CloseOnClickAway while it is open.
+    The root DialogHost draws the dialog card and adds no padding inside it (Theme/Styles.axaml
+    "dialogHost|DialogHost.Root"), so this view sets no Background (it would double the card outline) but its own
+    Margin="24". Link rows stretch to the list width (Semi buttons default to Center) so hover/press areas are equal.
+    Icons take the button's inherited text foreground, so a disabled row fades as a whole.
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:core="using:NebulaAuth.Core"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800"
+             x:Class="NebulaAuth.View.LinksView"
+             TextElement.Foreground="{DynamicResource BaseContentBrush}">
+
+    <StackPanel Margin="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+        <TextBlock Text="{Tr LinksView.UsefulLinks}"
+                   FontSize="15"
+                   FontWeight="Bold"
+                   TextAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,10" />
+
+        <Button x:Name="TelegramButton" Margin="0,0,0,5" FontSize="17" Theme="{DynamicResource BorderlessButton}"
+                HorizontalAlignment="Stretch" Click="Telegram_OnClick">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Viewbox Width="22" Height="22" Margin="0,0,8,0">
+                    <Canvas Width="22" Height="22">
+                        <Path Width="22" Height="22"
+                              Fill="{Binding $self.(TextElement.Foreground)}"
+                              Data="M22.122 10.040c0.006-0 0.014-0 0.022-0 0.209 0 0.403 0.065 0.562 0.177l-0.003-0.002c0.116 0.101 0.194 0.243 0.213 0.403l0 0.003c0.020 0.122 0.031 0.262 0.031 0.405 0 0.065-0.002 0.129-0.007 0.193l0-0.009c-0.225 2.369-1.201 8.114-1.697 10.766-0.21 1.123-0.623 1.499-1.023 1.535-0.869 0.081-1.529-0.574-2.371-1.126-1.318-0.865-2.063-1.403-3.342-2.246-1.479-0.973-0.52-1.51 0.322-2.384 0.221-0.23 4.052-3.715 4.127-4.031 0.004-0.019 0.006-0.040 0.006-0.062 0-0.078-0.029-0.149-0.076-0.203l0 0c-0.052-0.034-0.117-0.053-0.185-0.053-0.045 0-0.088 0.009-0.128 0.024l0.002-0.001q-0.198 0.045-6.316 4.174c-0.445 0.351-1.007 0.573-1.619 0.599l-0.006 0c-0.867-0.105-1.654-0.298-2.401-0.573l0.074 0.024c-0.938-0.306-1.683-0.467-1.619-0.985q0.051-0.404 1.114-0.827 6.548-2.853 8.733-3.761c1.607-0.853 3.47-1.555 5.429-2.010l0.157-0.031zM15.93 1.025c-8.302 0.020-15.025 6.755-15.025 15.060 0 8.317 6.742 15.060 15.060 15.060s15.060-6.742 15.060-15.060c0-8.305-6.723-15.040-15.023-15.060h-0.002q-0.035-0-0.070 0z"
+                              Stretch="Fill" />
+                    </Canvas>
+                </Viewbox>
+                <TextBlock Text="Telegram" VerticalAlignment="Center" />
+            </StackPanel>
+        </Button>
+
+        <Button x:Name="GitHubButton" Margin="0,0,0,5" FontSize="17" Theme="{DynamicResource BorderlessButton}"
+                HorizontalAlignment="Stretch" Click="GitHub_OnClick">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Viewbox Width="22" Height="22" Margin="0,0,8,0">
+                    <Canvas Width="22" Height="22">
+                        <Path Width="22" Height="22"
+                              Fill="{Binding $self.(TextElement.Foreground)}"
+                              Data="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"
+                              Stretch="Fill" />
+                    </Canvas>
+                </Viewbox>
+                <TextBlock Text="GitHub" VerticalAlignment="Center" />
+            </StackPanel>
+        </Button>
+
+        <Button x:Name="WebsiteButton" Margin="0,0,0,5" FontSize="17"
+                Theme="{DynamicResource BorderlessButton}" HorizontalAlignment="Stretch"
+                IsEnabled="False"
+                Click="Website_OnClick">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <mi:MaterialIcon Kind="Web" Width="24" Height="24" Margin="0,0,8,0" />
+                <TextBlock Text="Achiefy" VerticalAlignment="Center" />
+            </StackPanel>
+        </Button>
+
+        <Button x:Name="DocumentationButton" Margin="0,0,0,5" FontSize="17"
+                Theme="{DynamicResource BorderlessButton}" HorizontalAlignment="Stretch"
+                IsEnabled="False"
+                Click="Documentation_OnClick">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Viewbox Width="22" Height="22" Margin="0,0,8,0">
+                    <Canvas Width="22" Height="22">
+                        <Path Width="22" Height="22"
+                              Fill="{Binding $self.(TextElement.Foreground)}"
+                              Data="M27.3964 34.2196C30.5255 36.0256 32.09 36.9286 33.8083 36.9301C35.5265 36.9316 37.0926 36.0314 40.2249 34.2308L60.1914 22.7535C61.0927 22.2354 61.6484 21.275 61.6484 20.2353C61.6484 19.1956 61.0927 18.2352 60.1914 17.7171L40.2177 6.23561C37.0888 4.43703 35.5243 3.53774 33.8078 3.53841C32.0912 3.53908 30.5275 4.43959 27.4 6.24061L10.2293 16.1287C10.102 16.202 10.0384 16.2386 9.97907 16.2733C4.1137 19.7069 0.489885 25.9755 0.441431 32.7718C0.440941 32.8405 0.440941 32.9139 0.440941 33.0608C0.440941 33.2075 0.440941 33.2808 0.44143 33.3494C0.489777 40.1381 4.10551 46.4008 9.96043 49.8371C10.0196 49.8719 10.0831 49.9085 10.2102 49.9819L20.9659 56.1919C27.2332 59.8105 30.3668 61.6197 33.8081 61.6209C37.2493 61.6221 40.3842 59.8149 46.6539 56.2006L58.008 49.6552C61.1474 47.8454 62.7171 46.9406 63.579 45.4488C64.4409 43.957 64.4409 42.1452 64.4409 38.5215V31.5213C64.4409 30.516 63.8965 29.5896 63.0182 29.1004C62.1683 28.6271 61.1325 28.6341 60.2891 29.1189L37.0074 42.5019C35.4454 43.3999 34.6643 43.8488 33.8072 43.8491C32.9502 43.8493 32.1689 43.4008 30.6063 42.5039L14.8487 33.4587C14.0594 33.0056 13.6647 32.779 13.3477 32.7381C12.625 32.6449 11.9301 33.0497 11.6548 33.7244C11.5341 34.0204 11.5365 34.4754 11.5414 35.3855C11.545 36.0556 11.5468 36.3906 11.6094 36.6987C11.7497 37.3888 12.1127 38.0137 12.6428 38.4772C12.8795 38.6842 13.1696 38.8517 13.7499 39.1866L30.5974 48.9103C32.1641 49.8145 32.9474 50.2666 33.8075 50.2669C34.6677 50.2671 35.4513 49.8154 37.0184 48.9121L57.6684 37.0086C58.2037 36.7 58.4714 36.5458 58.6721 36.6617C58.8727 36.7777 58.8727 37.0866 58.8727 37.7045V40.8796C58.8727 41.7856 58.8727 42.2385 58.6572 42.6115C58.4417 42.9844 58.0493 43.2107 57.2644 43.6631L40.2322 53.4811C37.0966 55.2886 35.5288 56.1923 33.8079 56.1915C32.0869 56.1908 30.5199 55.2856 27.386 53.4752L11.4509 44.2702C11.4003 44.2409 11.375 44.2263 11.3514 44.2125C8.01023 42.2601 5.94859 38.6883 5.92925 34.8185C5.92911 34.7912 5.92911 34.762 5.92911 34.7035V31.7889C5.92911 29.6526 7.06688 27.6781 8.91512 26.6068C10.5483 25.6601 12.5628 25.6582 14.1977 26.6019L27.3964 34.2196Z"
+                              Stretch="Fill" />
+                    </Canvas>
+                </Viewbox>
+                <TextBlock Text="{Tr LinksView.Documentation}" VerticalAlignment="Center" />
+            </StackPanel>
+        </Button>
+
+        <Button Margin="0,5,0,5" FontSize="17" Theme="{DynamicResource BorderlessButton}" HorizontalAlignment="Stretch"
+                Click="CheckForUpdates_OnClick">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <mi:MaterialIcon Kind="Update" Width="22" Height="22" Margin="0,0,8,0" />
+                <TextBlock Text="{Tr LinksView.CheckForUpdates}" VerticalAlignment="Center" />
+            </StackPanel>
+        </Button>
+
+        <!-- Invisible IsCancel button: Escape closes the dialog (result null) even though there is no visible
+             Cancel/X button in this view. Semi's Button theme sets MinHeight/MinWidth/Padding,
+             which would win over Width/Height=0 and leave an empty band under the list: reset them. It must stay
+             IsVisible/IsEnabled for IsCancel to fire; IsTabStop=False keeps Tab from landing on an invisible focus. -->
+        <Button Command="{x:Static core:DialogService.CloseDialogCommand}" IsCancel="True" IsTabStop="False"
+                Width="0" Height="0" MinWidth="0" MinHeight="0" Padding="0" BorderThickness="0" />
+    </StackPanel>
+</UserControl>

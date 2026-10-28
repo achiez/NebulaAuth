@@ -25,5 +25,6 @@
     <File Path="changelog/1.8.4.json" />
   </Folder>
   <Project Path="src/NebulaAuth/NebulaAuth.csproj" />
+  <Project Path="src/NebulaAuth.NebulaLink/NebulaAuth.NebulaLink.csproj" />
   <Project Path="src/SteamLibForked/SteamLibForked.csproj" />
 </Solution>

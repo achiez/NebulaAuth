@@ -30,16 +30,6 @@
       "tr": "Değişiklik listesi mevcut değil",
       "kk": "Өзгерістер тізімі жоқ"
     },
-    "UpdateNow": {
-      "en": "Update now",
-      "ru": "Обновить сейчас",
-      "zh": "立即更新",
-      "uk": "Оновити зараз",
-      "fr": "Mettre à jour maintenant",
-      "es": "Actualizar ahora",
-      "tr": "Şimdi güncelle",
-      "kk": "Қазір жаңарту"
-    },
     "RemindLater": {
       "en": "Remind later",
       "ru": "Напомнить позже",
@@ -110,6 +100,238 @@
         "es": "7 días",
         "tr": "7 gün",
         "kk": "7 күн"
+      }
+    },
+    "DownloadAndInstall": {
+      "en": "Download and install",
+      "ru": "Скачать и установить",
+      "zh": "下载并安装",
+      "uk": "Завантажити й встановити",
+      "fr": "Télécharger et installer",
+      "es": "Descargar e instalar",
+      "tr": "İndir ve yükle",
+      "kk": "Жүктеп алу және орнату"
+    },
+    "InstallHint": {
+      "en": "NebulaAuth restarts to install it; accounts and settings stay in place",
+      "ru": "NebulaAuth перезапустится для установки; аккаунты и настройки останутся на месте",
+      "zh": "NebulaAuth 将重启以完成安装；账户和设置保持不变",
+      "uk": "NebulaAuth перезапуститься для встановлення; акаунти й налаштування залишаться на місці",
+      "fr": "NebulaAuth redémarre pour l'installer ; les comptes et les paramètres restent en place",
+      "es": "NebulaAuth se reiniciará para instalarla; las cuentas y la configuración se conservan",
+      "tr": "Yüklemek için NebulaAuth yeniden başlar; hesaplar ve ayarlar yerinde kalır",
+      "kk": "Орнату үшін NebulaAuth қайта іске қосылады; аккаунттар мен баптаулар сақталады"
+    },
+    "OpenDownloadPage": {
+      "en": "Open download page",
+      "ru": "Открыть страницу загрузки",
+      "zh": "打开下载页面",
+      "uk": "Відкрити сторінку завантаження",
+      "fr": "Ouvrir la page de téléchargement",
+      "es": "Abrir la página de descarga",
+      "tr": "İndirme sayfasını aç",
+      "kk": "Жүктеу бетін ашу"
+    },
+    "Downloading": {
+      "en": "Downloading the update",
+      "ru": "Загрузка обновления",
+      "zh": "正在下载更新",
+      "uk": "Завантаження оновлення",
+      "fr": "Téléchargement de la mise à jour",
+      "es": "Descargando la actualización",
+      "tr": "Güncelleme indiriliyor",
+      "kk": "Жаңарту жүктелуде"
+    },
+    "DownloadContinues": {
+      "en": "You can close this window: the download continues in the background.",
+      "ru": "Окно можно закрыть: загрузка продолжится в фоне.",
+      "zh": "可以关闭此窗口：下载将在后台继续。",
+      "uk": "Вікно можна закрити: завантаження продовжиться у фоні.",
+      "fr": "Vous pouvez fermer cette fenêtre : le téléchargement continue en arrière-plan.",
+      "es": "Puedes cerrar esta ventana: la descarga continúa en segundo plano.",
+      "tr": "Bu pencereyi kapatabilirsiniz: indirme arka planda devam eder.",
+      "kk": "Терезені жабуға болады: жүктеу фондық режимде жалғасады."
+    },
+    "ReadyTitle": {
+      "en": "Update ready:",
+      "ru": "Обновление готово:",
+      "zh": "更新已就绪：",
+      "uk": "Оновлення готове:",
+      "fr": "Mise à jour prête :",
+      "es": "Actualización lista:",
+      "tr": "Güncelleme hazır:",
+      "kk": "Жаңарту дайын:"
+    },
+    "ReadyText": {
+      "en": "The update is downloaded and verified. NebulaAuth will close, install it and start again. Accounts, settings and backups stay where they are.",
+      "ru": "Обновление загружено и проверено. NebulaAuth закроется, установит его и запустится снова. Аккаунты, настройки и резервные копии останутся на месте.",
+      "zh": "更新已下载并通过校验。NebulaAuth 将关闭、安装更新并重新启动。账户、设置和备份保持不变。",
+      "uk": "Оновлення завантажено й перевірено. NebulaAuth закриється, встановить його та запуститься знову. Акаунти, налаштування й резервні копії залишаться на місці.",
+      "fr": "La mise à jour est téléchargée et vérifiée. NebulaAuth va se fermer, l'installer et redémarrer. Les comptes, les paramètres et les sauvegardes restent en place.",
+      "es": "La actualización se ha descargado y verificado. NebulaAuth se cerrará, la instalará y se volverá a iniciar. Las cuentas, la configuración y las copias de seguridad se conservan.",
+      "tr": "Güncelleme indirildi ve doğrulandı. NebulaAuth kapanacak, güncellemeyi yükleyecek ve yeniden başlayacak. Hesaplar, ayarlar ve yedekler yerinde kalır.",
+      "kk": "Жаңарту жүктеліп, тексерілді. NebulaAuth жабылып, оны орнатады және қайта іске қосылады. Аккаунттар, баптаулар мен сақтық көшірмелер орнында қалады."
+    },
+    "RestartAndUpdate": {
+      "en": "Restart and update",
+      "ru": "Перезапустить и обновить",
+      "zh": "重启并更新",
+      "uk": "Перезапустити й оновити",
+      "fr": "Redémarrer et mettre à jour",
+      "es": "Reiniciar y actualizar",
+      "tr": "Yeniden başlat ve güncelle",
+      "kk": "Қайта іске қосып, жаңарту"
+    },
+    "Later": {
+      "en": "Later",
+      "ru": "Позже",
+      "zh": "稍后",
+      "uk": "Пізніше",
+      "fr": "Plus tard",
+      "es": "Más tarde",
+      "tr": "Daha sonra",
+      "kk": "Кейінірек"
+    },
+    "FailedTitle": {
+      "en": "Update failed",
+      "ru": "Не удалось обновить",
+      "zh": "更新失败",
+      "uk": "Не вдалося оновити",
+      "fr": "Échec de la mise à jour",
+      "es": "No se pudo actualizar",
+      "tr": "Güncelleme başarısız",
+      "kk": "Жаңарту сәтсіз аяқталды"
+    },
+    "TryAgain": {
+      "en": "Try again",
+      "ru": "Повторить",
+      "zh": "重试",
+      "uk": "Повторити",
+      "fr": "Réessayer",
+      "es": "Reintentar",
+      "tr": "Tekrar dene",
+      "kk": "Қайталау"
+    },
+    "DownloadManually": {
+      "en": "Download manually",
+      "ru": "Скачать вручную",
+      "zh": "手动下载",
+      "uk": "Завантажити вручну",
+      "fr": "Télécharger manuellement",
+      "es": "Descargar manualmente",
+      "tr": "Elle indir",
+      "kk": "Қолмен жүктеп алу"
+    },
+    "ManualHint": {
+      "en": "Manual update:",
+      "ru": "Ручное обновление:",
+      "zh": "手动更新：",
+      "uk": "Ручне оновлення:",
+      "fr": "Mise à jour manuelle :",
+      "es": "Actualización manual:",
+      "tr": "Elle güncelleme:",
+      "kk": "Қолмен жаңарту:"
+    },
+    "CurrentVersionKept": {
+      "en": "The current version keeps working, your data was not changed.",
+      "ru": "Текущая версия продолжает работать, ваши данные не изменены.",
+      "zh": "当前版本仍可正常使用，您的数据未被更改。",
+      "uk": "Поточна версія продовжує працювати, ваші дані не змінено.",
+      "fr": "La version actuelle continue de fonctionner, vos données n'ont pas été modifiées.",
+      "es": "La versión actual sigue funcionando; tus datos no se han modificado.",
+      "tr": "Mevcut sürüm çalışmaya devam ediyor, verileriniz değiştirilmedi.",
+      "kk": "Ағымдағы нұсқа жұмысын жалғастырады, деректеріңіз өзгертілмеді."
+    },
+    "Close": {
+      "en": "Close",
+      "ru": "Закрыть",
+      "zh": "关闭",
+      "uk": "Закрити",
+      "fr": "Fermer",
+      "es": "Cerrar",
+      "tr": "Kapat",
+      "kk": "Жабу"
+    },
+    "Failure": {
+      "Network": {
+        "en": "Could not reach the update server. Check your internet connection and try again.",
+        "ru": "Не удалось связаться с сервером обновлений. Проверьте подключение к интернету и повторите попытку.",
+        "zh": "无法连接到更新服务器。请检查网络连接后重试。",
+        "uk": "Не вдалося зв'язатися із сервером оновлень. Перевірте підключення до інтернету та повторіть спробу.",
+        "fr": "Impossible de joindre le serveur de mises à jour. Vérifiez votre connexion Internet et réessayez.",
+        "es": "No se pudo conectar con el servidor de actualizaciones. Comprueba tu conexión a Internet e inténtalo de nuevo.",
+        "tr": "Güncelleme sunucusuna ulaşılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.",
+        "kk": "Жаңарту серверіне қосылу мүмкін болмады. Интернет байланысын тексеріп, қайталап көріңіз."
+      },
+      "Signature": {
+        "en": "The update information did not pass the authenticity check and was rejected. Nothing was downloaded or installed. Download new versions only from the official release page.",
+        "ru": "Информация об обновлении не прошла проверку подлинности и отклонена. Ничего не скачано и не установлено. Скачивайте новые версии только со страницы официального релиза.",
+        "zh": "更新信息未通过真实性校验，已被拒绝。未下载或安装任何内容。请仅从官方发布页面下载新版本。",
+        "uk": "Інформація про оновлення не пройшла перевірку автентичності й відхилена. Нічого не завантажено й не встановлено. Завантажуйте нові версії лише зі сторінки офіційного релізу.",
+        "fr": "Les informations de mise à jour n'ont pas passé la vérification d'authenticité et ont été rejetées. Rien n'a été téléchargé ni installé. Téléchargez les nouvelles versions uniquement depuis la page officielle des versions.",
+        "es": "La información de la actualización no superó la comprobación de autenticidad y se rechazó. No se descargó ni instaló nada. Descarga las nuevas versiones solo desde la página oficial de versiones.",
+        "tr": "Güncelleme bilgisi doğruluk denetiminden geçemedi ve reddedildi. Hiçbir şey indirilmedi veya yüklenmedi. Yeni sürümleri yalnızca resmi sürüm sayfasından indirin.",
+        "kk": "Жаңарту туралы ақпарат түпнұсқалық тексеруінен өтпей, қабылданбады. Ештеңе жүктелмеді және орнатылмады. Жаңа нұсқаларды тек ресми шығарылым бетінен жүктеп алыңыз."
+      },
+      "Checksum": {
+        "en": "The downloaded package is damaged (checksum mismatch) and was discarded. Nothing was installed.",
+        "ru": "Загруженный пакет повреждён (не совпадает контрольная сумма) и удалён. Ничего не установлено.",
+        "zh": "下载的安装包已损坏（校验和不匹配），已被丢弃。未安装任何内容。",
+        "uk": "Завантажений пакет пошкоджено (не збігається контрольна сума), його видалено. Нічого не встановлено.",
+        "fr": "Le paquet téléchargé est endommagé (somme de contrôle incorrecte) et a été supprimé. Rien n'a été installé.",
+        "es": "El paquete descargado está dañado (la suma de comprobación no coincide) y se descartó. No se instaló nada.",
+        "tr": "İndirilen paket bozuk (sağlama toplamı uyuşmuyor) ve silindi. Hiçbir şey yüklenmedi.",
+        "kk": "Жүктелген бума зақымдалған (бақылау сомасы сәйкес келмейді) және жойылды. Ештеңе орнатылмады."
+      },
+      "NoWriteAccess": {
+        "en": "NebulaAuth can't write to its program folder without administrator rights. Move the program folder to a location your account can write to (for example, inside your user folder) or update manually.",
+        "ru": "NebulaAuth не может записывать в папку программы без прав администратора. Перенесите папку программы туда, где у вашей учётной записи есть права на запись (например, в папку пользователя), или обновите вручную.",
+        "zh": "NebulaAuth 没有管理员权限，无法写入程序文件夹。请将程序文件夹移动到当前账户可写的位置（例如用户文件夹内），或手动更新。",
+        "uk": "NebulaAuth не може записувати в папку програми без прав адміністратора. Перенесіть папку програми туди, де ваш обліковий запис має право на запис (наприклад, у папку користувача), або оновіть вручну.",
+        "fr": "NebulaAuth ne peut pas écrire dans son dossier sans droits d'administrateur. Déplacez le dossier du programme vers un emplacement accessible en écriture pour votre compte (par exemple dans votre dossier utilisateur) ou mettez à jour manuellement.",
+        "es": "NebulaAuth no puede escribir en su carpeta sin permisos de administrador. Mueve la carpeta del programa a una ubicación en la que tu cuenta pueda escribir (por ejemplo, dentro de tu carpeta de usuario) o actualiza manualmente.",
+        "tr": "NebulaAuth yönetici hakları olmadan program klasörüne yazamıyor. Program klasörünü hesabınızın yazabildiği bir konuma (örneğin kullanıcı klasörünüze) taşıyın veya elle güncelleyin.",
+        "kk": "NebulaAuth әкімші құқықтарынсыз бағдарлама қалтасына жаза алмайды. Бағдарлама қалтасын тіркелгіңіз жаза алатын орынға (мысалы, пайдаланушы қалтасына) жылжытыңыз немесе қолмен жаңартыңыз."
+      },
+      "NoSpace": {
+        "en": "Not enough free disk space to download and install the update. Free up some space and try again.",
+        "ru": "Недостаточно свободного места на диске для загрузки и установки обновления. Освободите место и повторите попытку.",
+        "zh": "磁盘空间不足，无法下载和安装更新。请释放空间后重试。",
+        "uk": "Недостатньо вільного місця на диску для завантаження й встановлення оновлення. Звільніть місце та повторіть спробу.",
+        "fr": "Espace disque insuffisant pour télécharger et installer la mise à jour. Libérez de l'espace et réessayez.",
+        "es": "No hay suficiente espacio en disco para descargar e instalar la actualización. Libera espacio e inténtalo de nuevo.",
+        "tr": "Güncellemeyi indirip yüklemek için yeterli disk alanı yok. Biraz yer açıp tekrar deneyin.",
+        "kk": "Жаңартуды жүктеп, орнату үшін дискіде бос орын жеткіліксіз. Орын босатып, қайталап көріңіз."
+      },
+      "ApplyFailed": {
+        "en": "The update could not be installed, so the previous version was started again. A program file may have been in use.",
+        "ru": "Обновление не удалось установить, поэтому снова запущена прежняя версия. Возможно, какой-то файл программы был занят.",
+        "zh": "更新未能安装，已重新启动旧版本。可能有程序文件正被占用。",
+        "uk": "Оновлення не вдалося встановити, тому знову запущено попередню версію. Можливо, якийсь файл програми був зайнятий.",
+        "fr": "La mise à jour n'a pas pu être installée, la version précédente a donc été relancée. Un fichier du programme était peut-être en cours d'utilisation.",
+        "es": "No se pudo instalar la actualización, así que se volvió a iniciar la versión anterior. Es posible que algún archivo del programa estuviera en uso.",
+        "tr": "Güncelleme yüklenemedi, bu yüzden önceki sürüm yeniden başlatıldı. Programın bir dosyası kullanımda olabilir.",
+        "kk": "Жаңартуды орнату мүмкін болмады, сондықтан алдыңғы нұсқа қайта іске қосылды. Бағдарламаның қандай да бір файлы бос емес болуы мүмкін."
+      },
+      "Busy": {
+        "en": "Another NebulaAuth window or update is running from this folder. Close it and try again.",
+        "ru": "Из этой папки запущено ещё одно окно NebulaAuth или обновление. Закройте его и повторите попытку.",
+        "zh": "此文件夹中还有另一个 NebulaAuth 窗口或更新正在运行。请关闭后重试。",
+        "uk": "З цієї папки запущено ще одне вікно NebulaAuth або оновлення. Закрийте його та повторіть спробу.",
+        "fr": "Une autre fenêtre ou mise à jour de NebulaAuth est en cours dans ce dossier. Fermez-la et réessayez.",
+        "es": "Hay otra ventana o actualización de NebulaAuth ejecutándose desde esta carpeta. Ciérrala e inténtalo de nuevo.",
+        "tr": "Bu klasörden başka bir NebulaAuth penceresi veya güncellemesi çalışıyor. Kapatıp tekrar deneyin.",
+        "kk": "Осы қалтадан NebulaAuth-тың басқа терезесі немесе жаңартуы іске қосылған. Оны жауып, қайталап көріңіз."
+      },
+      "Unknown": {
+        "en": "The update failed because of an unexpected error. Details are in the log file.",
+        "ru": "Обновление не удалось из-за непредвиденной ошибки. Подробности — в журнале.",
+        "zh": "由于意外错误，更新失败。详细信息见日志文件。",
+        "uk": "Оновлення не вдалося через непередбачену помилку. Подробиці — у журналі.",
+        "fr": "La mise à jour a échoué à cause d'une erreur inattendue. Les détails se trouvent dans le fichier journal.",
+        "es": "La actualización falló por un error inesperado. Los detalles están en el archivo de registro.",
+        "tr": "Beklenmeyen bir hata nedeniyle güncelleme başarısız oldu. Ayrıntılar günlük dosyasında.",
+        "kk": "Күтпеген қатеге байланысты жаңарту сәтсіз аяқталды. Толығырақ журнал файлында."
       }
     }
   }

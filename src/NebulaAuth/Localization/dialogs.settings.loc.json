@@ -137,6 +137,16 @@
         "tr": "Diyalog açıldığında bulanıklık",
         "kk": "Диалог ашылғанда бұлыңғырлау"
       },
+      "ReduceMotion": {
+        "en": "Reduce animations",
+        "ru": "Меньше анимаций",
+        "zh": "减少动画",
+        "uk": "Менше анімацій",
+        "fr": "Réduire les animations",
+        "es": "Reducir animaciones",
+        "tr": "Animasyonları azalt",
+        "kk": "Анимацияларды азайту"
+      },
       "RippleDisabled": {
         "en": "Disable ripple animations",
         "ru": "Отключить анимации «ripple»",

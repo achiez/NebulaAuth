@@ -1,0 +1,68 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:core="using:NebulaAuth.Core"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             x:Class="NebulaAuth.Snackbar"
+             x:DataType="core:SnackbarMessageQueue"
+             HorizontalAlignment="Center"
+             VerticalAlignment="Bottom">
+    <!-- DataContext of the inner card is the queue (set in code-behind from MessageQueue) -->
+    <UserControl.Styles>
+        <Style Selector="Border#Card">
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="RenderTransform" Value="translateY(14px)" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.18" Easing="CubicEaseOut" />
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.22" Easing="CubicEaseOut" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Border#Card.active">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="RenderTransform" Value="translateY(0px)" />
+            <Setter Property="IsHitTestVisible" Value="True" />
+        </Style>
+        <!-- The card is inverted (text color as background): the neutral hover fill of GhostIconButton is invisible here -->
+        <Style Selector="Button#ActionButton:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SnackbarActionHoverBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource SnackbarActionBrush}" />
+        </Style>
+    </UserControl.Styles>
+
+    <Border x:Name="Card"
+            Classes.active="{Binding IsActive}"
+            MinWidth="240"
+            MaxWidth="560"
+            MinHeight="44"
+            Padding="16,8,8,8"
+            CornerRadius="10"
+            BorderThickness="0"
+            Background="{DynamicResource SnackbarBackgroundBrush}"
+            BorderBrush="{DynamicResource SnackbarBorderBrush}"
+            BoxShadow="0 8 24 0 #40000000">
+        <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+            <TextBlock Grid.Column="0"
+                       Margin="0,4,8,4"
+                       VerticalAlignment="Center"
+                       TextWrapping="Wrap"
+                       FontSize="14"
+                       Foreground="{DynamicResource SnackbarForegroundBrush}"
+                       Text="{Binding Current.Text, FallbackValue=''}" />
+            <Button x:Name="ActionButton"
+                    Grid.Column="1"
+                    Theme="{StaticResource GhostIconButton}"
+                    Width="NaN"
+                    Height="32"
+                    Padding="12,0"
+                    FontSize="13"
+                    FontWeight="SemiBold"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource SnackbarActionBrush}"
+                    Content="{Binding Current.ActionText, FallbackValue=''}"
+                    IsVisible="{Binding Current.HasAction, FallbackValue=False}"
+                    Click="ActionButton_OnClick" />
+        </Grid>
+    </Border>
+</UserControl>

@@ -1,0 +1,37 @@
+<!-- Revoked / used by another copy / update needed / access key unavailable or refused. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mi="using:Material.Icons.Avalonia"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:pages="using:NebulaAuth.ViewModel.NebulaLink.Pages"
+             x:Class="NebulaAuth.View.NebulaLink.StatePage"
+             x:DataType="pages:StatePageVM">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Classes="Page">
+            <StackPanel Spacing="10">
+                <Border Classes="PageIcon Warn" IsVisible="{Binding IsLinkOff}">
+                    <mi:MaterialIcon Kind="LinkVariantOff" />
+                </Border>
+                <Border Classes="PageIcon" IsVisible="{Binding IsUpdate}">
+                    <mi:MaterialIcon Kind="Update" />
+                </Border>
+                <Border Classes="PageIcon Bad" IsVisible="{Binding IsKeyProblem}">
+                    <mi:MaterialIcon Kind="KeyAlert" />
+                </Border>
+                <TextBlock Classes="StepTitle" HorizontalAlignment="Center" TextAlignment="Center" Text="{Binding Title}" />
+                <TextBlock Classes="Lead" TextAlignment="Center" Text="{Binding Text}" />
+            </StackPanel>
+            <StackPanel Spacing="8">
+                <Button Theme="{DynamicResource SolidButton}" Classes="Primary" HorizontalAlignment="Stretch"
+                        IsVisible="{Binding CanPairAgain}"
+                        Command="{Binding PairAgainCommand}" Content="{Tr NebulaLink.StatePage.PairAgain}" />
+                <u:IconButton Theme="{DynamicResource SolidIconButton}" Classes="Primary" HorizontalAlignment="Stretch"
+                              IsVisible="{Binding CanReconnect}" IsLoading="{Binding IsBusy}"
+                              Command="{Binding ReconnectCommand}" Content="{Binding ReconnectText}" />
+                <Button Theme="{DynamicResource OutlineButton}" Classes="Danger" HorizontalAlignment="Stretch"
+                        IsVisible="{Binding CanUnlink}" IsEnabled="{Binding !IsBusy}"
+                        Command="{Binding UnlinkCommand}" Content="{Tr NebulaLink.Header.Unlink}" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

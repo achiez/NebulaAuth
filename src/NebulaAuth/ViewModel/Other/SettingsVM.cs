@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Windows.Media;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NebulaAuth.Core;
@@ -12,13 +12,17 @@ namespace NebulaAuth.ViewModel.Other;
 
 public partial class SettingsVM : ObservableObject
 {
-    public Settings Settings => Settings.Instance;
+    public const int MAIN_TAB = 0;
+    public const int ENCRYPTION_TAB = 2;
+    public const int DEVICES_TAB = 3;
 
-    [ObservableProperty] private string? _password;
+    public Settings Settings => Settings.Instance;
 
     [ObservableProperty] private double _renameMafilesProgress;
 
     [ObservableProperty] private string? _renameResultText;
+
+    [ObservableProperty] private int _selectedTab;
 
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(ApplyRenameSettingCommand))]
     private bool _useAccountNameAsMafileNamePreview;
@@ -28,11 +32,15 @@ public partial class SettingsVM : ObservableObject
         _useAccountNameAsMafileNamePreview = Settings.UseAccountNameAsMafileName;
     }
 
-    [RelayCommand]
-    private void SetPassword()
-    {
-        Settings.IsPasswordSet = PHandler.SetPassword(Password);
-    }
+    /// <summary>
+    ///     Third tab: storage mode and the encryption operations.
+    /// </summary>
+    public EncryptionSettingsVM Encryption { get; } = new();
+
+    /// <summary>
+    ///     Fourth tab: phone models used as the device names of the accounts.
+    /// </summary>
+    public DeviceModelsSettingsVM Devices { get; } = new();
 
     [RelayCommand]
     private void ResetThemeDefaults()
@@ -108,6 +116,22 @@ public partial class SettingsVM : ObservableObject
         set => Settings.HideToTray = value;
     }
 
+    /// <summary>Fewer animations (Nebula Link pairing / success animations; follows no OS setting).</summary>
+    public bool ReduceMotion
+    {
+        get => Settings.ReduceMotion;
+        set => Settings.ReduceMotion = value;
+    }
+
+    /// <summary>Closes the settings and opens the Nebula Link modal (one dialog at a time).</summary>
+    [RelayCommand]
+    private static void OpenNebulaLink()
+    {
+        DialogService.Close();
+        Avalonia.Threading.DispatcherTimer.RunOnce(() => _ = DialogsController.ShowNebulaLinkDialog(),
+            System.TimeSpan.FromMilliseconds(250));
+    }
+
     public Dictionary<BackgroundMode, string> BackgroundModes => new()
     {
         {BackgroundMode.Default, LocManager.GetOrDefault("Default", "SettingsDialog", "BackgroundMode", "Default")},
@@ -139,7 +163,13 @@ public partial class SettingsVM : ObservableObject
     public Color? IconColor
     {
         get => Settings.IconColor;
-        set => Settings.IconColor = value;
+        set
+        {
+            // The color picker (non-nullable Color) stays bound while the indicator is off:
+            // only UseIcon may turn the indicator on
+            if (value != null && !UseIcon) return;
+            Settings.IconColor = value;
+        }
     }
 
     public bool UseIcon
@@ -148,9 +178,9 @@ public partial class SettingsVM : ObservableObject
         set
         {
             if (!value)
-                IconColor = null;
+                Settings.IconColor = null;
             else
-                IconColor = Color.FromRgb(202, 39, 39);
+                Settings.IconColor = Color.FromRgb(202, 39, 39);
 
             OnPropertyChanged();
             OnPropertyChanged(nameof(IconColor));

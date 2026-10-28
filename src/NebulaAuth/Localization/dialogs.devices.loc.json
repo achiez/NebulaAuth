@@ -1,0 +1,160 @@
+{
+  "SettingsDialog": {
+    "Devices": {
+      "Tab": {
+        "en": "Devices",
+        "ru": "Устройства",
+        "uk": "Пристрої",
+        "fr": "Appareils",
+        "zh": "设备",
+        "es": "Dispositivos",
+        "tr": "Cihazlar",
+        "kk": "Құрылғылар"
+      },
+      "Description": {
+        "en": "Each account has its own phone model: NebulaAuth sends it to Steam as the device name at mobile login. New accounts and accounts without a model get a random one from the list below. An assigned model never changes.",
+        "ru": "У каждого аккаунта своя модель телефона: NebulaAuth передаёт её Steam как имя устройства при мобильном входе. Новые аккаунты и аккаунты без модели получают случайную модель из списка ниже. Назначенная модель больше не меняется.",
+        "uk": "Кожен акаунт має власну модель телефона: NebulaAuth передає її Steam як ім’я пристрою під час мобільного входу. Нові акаунти та акаунти без моделі отримують випадкову модель зі списку нижче. Призначена модель більше не змінюється.",
+        "fr": "Chaque compte a son propre modèle de téléphone : NebulaAuth l’envoie à Steam comme nom d’appareil lors de la connexion mobile. Les nouveaux comptes et ceux sans modèle en reçoivent un au hasard dans la liste ci-dessous. Un modèle attribué ne change plus.",
+        "zh": "每个账户都有自己的手机型号：NebulaAuth 在移动端登录时将其作为设备名称发送给 Steam。新账户和没有型号的账户会从下方列表中随机获得一个型号。已分配的型号不会再改变。",
+        "es": "Cada cuenta tiene su propio modelo de teléfono: NebulaAuth lo envía a Steam como nombre del dispositivo al iniciar sesión móvil. Las cuentas nuevas y las que no tienen modelo reciben uno al azar de la lista de abajo. Un modelo asignado ya no cambia.",
+        "tr": "Her hesabın kendi telefon modeli vardır: NebulaAuth mobil girişte bunu Steam’e cihaz adı olarak gönderir. Yeni hesaplar ve modeli olmayan hesaplar aşağıdaki listeden rastgele bir model alır. Atanan model bir daha değişmez.",
+        "kk": "Әр аккаунттың өз телефон моделі бар: NebulaAuth оны мобильді кіру кезінде Steam-ге құрылғы атауы ретінде жібереді. Жаңа аккаунттар мен моделі жоқ аккаунттар төмендегі тізімнен кездейсоқ модель алады. Тағайындалған модель бұдан былай өзгермейді."
+      },
+      "Section": {
+        "Models": {
+          "en": "Phone models",
+          "ru": "Модели телефонов",
+          "uk": "Моделі телефонів",
+          "fr": "Modèles de téléphone",
+          "zh": "手机型号",
+          "es": "Modelos de teléfono",
+          "tr": "Telefon modelleri",
+          "kk": "Телефон модельдері"
+        }
+      },
+      "NewPlaceholder": {
+        "en": "Model name, e.g. SM-G991B",
+        "ru": "Например, SM-G991B",
+        "uk": "Наприклад, SM-G991B",
+        "fr": "Par ex. SM-G991B",
+        "zh": "例如 SM-G991B",
+        "es": "Por ej. SM-G991B",
+        "tr": "Ör. SM-G991B",
+        "kk": "Мысалы, SM-G991B"
+      },
+      "Add": {
+        "en": "Add",
+        "ru": "Добавить",
+        "uk": "Додати",
+        "fr": "Ajouter",
+        "zh": "添加",
+        "es": "Añadir",
+        "tr": "Ekle",
+        "kk": "Қосу"
+      },
+      "Remove": {
+        "en": "Remove",
+        "ru": "Удалить",
+        "uk": "Видалити",
+        "fr": "Supprimer",
+        "zh": "删除",
+        "es": "Eliminar",
+        "tr": "Kaldır",
+        "kk": "Жою"
+      },
+      "BuiltInBadge": {
+        "en": "Built-in",
+        "ru": "Встроенная",
+        "uk": "Вбудована",
+        "fr": "Intégré",
+        "zh": "内置",
+        "es": "Integrado",
+        "tr": "Yerleşik",
+        "kk": "Кірістірілген"
+      },
+      "BuiltInBadgeTip": {
+        "en": "Included with NebulaAuth. Can be removed and restored later.",
+        "ru": "Входит в NebulaAuth. Её можно удалить и потом вернуть.",
+        "uk": "Входить до NebulaAuth. Її можна видалити й потім повернути.",
+        "fr": "Fourni avec NebulaAuth. Peut être supprimé puis restauré.",
+        "zh": "NebulaAuth 自带。可以删除，之后也可以恢复。",
+        "es": "Incluido en NebulaAuth. Se puede eliminar y restaurar más tarde.",
+        "tr": "NebulaAuth ile gelir. Kaldırılabilir ve daha sonra geri yüklenebilir.",
+        "kk": "NebulaAuth құрамында бар. Оны жойып, кейін қайтаруға болады."
+      },
+      "LastModel": {
+        "en": "At least one model must remain in the list.",
+        "ru": "В списке должна остаться хотя бы одна модель.",
+        "uk": "У списку має залишитися хоча б одна модель.",
+        "fr": "La liste doit contenir au moins un modèle.",
+        "zh": "列表中至少要保留一个型号。",
+        "es": "La lista debe conservar al menos un modelo.",
+        "tr": "Listede en az bir model kalmalıdır.",
+        "kk": "Тізімде кемінде бір модель қалуы керек."
+      },
+      "RestoreBuiltIn": {
+        "en": "Restore built-in models",
+        "ru": "Вернуть встроенные модели",
+        "uk": "Повернути вбудовані моделі",
+        "fr": "Restaurer les modèles intégrés",
+        "zh": "恢复内置型号",
+        "es": "Restaurar modelos integrados",
+        "tr": "Yerleşik modelleri geri yükle",
+        "kk": "Кірістірілген модельдерді қайтару"
+      },
+      "RemoveHint": {
+        "en": "Removing a model doesn't change accounts that already use it.",
+        "ru": "Удаление модели не меняет аккаунты, которым она уже назначена.",
+        "uk": "Видалення моделі не змінює акаунти, яким її вже призначено.",
+        "fr": "Supprimer un modèle ne modifie pas les comptes qui l’utilisent déjà.",
+        "zh": "删除型号不会改变已使用该型号的账户。",
+        "es": "Eliminar un modelo no cambia las cuentas que ya lo usan.",
+        "tr": "Bir modeli kaldırmak, onu zaten kullanan hesapları değiştirmez.",
+        "kk": "Модельді жою оны қолданып жүрген аккаунттарды өзгертпейді."
+      },
+      "Errors": {
+        "Empty": {
+          "en": "Enter a model name.",
+          "ru": "Введите название модели.",
+          "uk": "Введіть назву моделі.",
+          "fr": "Saisissez un nom de modèle.",
+          "zh": "请输入型号名称。",
+          "es": "Introduce un nombre de modelo.",
+          "tr": "Bir model adı girin.",
+          "kk": "Модель атауын енгізіңіз."
+        },
+        "TooLong": {
+          "en": "The name is too long (at most {0} characters).",
+          "ru": "Слишком длинное название (не более {0} символов).",
+          "uk": "Задовга назва (не більше {0} символів).",
+          "fr": "Le nom est trop long ({0} caractères au maximum).",
+          "zh": "名称过长（最多 {0} 个字符）。",
+          "es": "El nombre es demasiado largo (máximo {0} caracteres).",
+          "tr": "Ad çok uzun (en fazla {0} karakter).",
+          "kk": "Атауы тым ұзын ({0} таңбадан аспауы керек)."
+        },
+        "InvalidCharacters": {
+          "en": "The name contains invalid characters.",
+          "ru": "Название содержит недопустимые символы.",
+          "uk": "Назва містить неприпустимі символи.",
+          "fr": "Le nom contient des caractères non valides.",
+          "zh": "名称包含无效字符。",
+          "es": "El nombre contiene caracteres no válidos.",
+          "tr": "Ad geçersiz karakterler içeriyor.",
+          "kk": "Атауында жарамсыз таңбалар бар."
+        },
+        "Duplicate": {
+          "en": "This model is already in the list.",
+          "ru": "Такая модель уже есть в списке.",
+          "uk": "Така модель уже є у списку.",
+          "fr": "Ce modèle est déjà dans la liste.",
+          "zh": "该型号已在列表中。",
+          "es": "Este modelo ya está en la lista.",
+          "tr": "Bu model zaten listede.",
+          "kk": "Бұл модель тізімде бар."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,43 @@
+<!--
+    Confirmation dialog; the reference layout of the header + body dialogs:
+    - root: UserControl with MinWidth/MaxWidth, no Background (the dialog card is drawn by the root DialogHost);
+    - row 0: nebulaAuth:DialogHeader (its X closes with CloseParameter as the result);
+    - row 1: body with Classes="DialogBody" (margins) and a StackPanel.DialogActions button row
+      (primary action first: SolidButton Primary; secondary: OutlineButton Tertiary);
+    - results through DialogService.CloseDialogCommand with {x:True} / {x:False}.
+    Content: ConfirmDialogOptions (code-behind): title (+ accent, icon), description, hint + severity, confirm text, danger.
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:core="using:NebulaAuth.Core"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             mc:Ignorable="d"
+             x:Class="NebulaAuth.View.Dialogs.ConfirmCancelDialog"
+             MinWidth="380" MaxWidth="500">
+    <Grid RowDefinitions="Auto,Auto">
+        <nebulaAuth:DialogHeader x:Name="Header"
+                                 Grid.Row="0"
+                                 Title="{Tr ConfirmCancelDialog.Title}"
+                                 CloseParameter="{x:False}" />
+        <StackPanel Grid.Row="1" Classes="DialogBody">
+            <!-- Main content: what will happen (DialogText); the HintBox adds the consequence / reassurance -->
+            <TextBlock x:Name="DescriptionText" Classes="DialogText" IsVisible="False" />
+            <nebulaAuth:HintBox x:Name="ConfirmHint" Text="Confirm?" />
+            <StackPanel Classes="DialogActions">
+                <Button x:Name="ConfirmButton"
+                        Theme="{DynamicResource SolidButton}" Classes="Primary"
+                        Content="{Tr Common.OK}"
+                        IsDefault="True"
+                        Command="{x:Static core:DialogService.CloseDialogCommand}"
+                        CommandParameter="{x:True}" />
+                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                        Content="{Tr Common.Cancel}"
+                        IsCancel="True"
+                        Command="{x:Static core:DialogService.CloseDialogCommand}"
+                        CommandParameter="{x:False}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows;
 using AchiesUtilities.Collections;
 using AchiesUtilities.Web.Proxy;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NebulaAuth.Core;
 using NebulaAuth.Model;
+using NebulaAuth.Utility;
 
 namespace NebulaAuth.ViewModel.Other;
 
@@ -59,8 +59,9 @@ public partial class ProxyManagerVM : ObservableObject
         if (string.IsNullOrEmpty(input)) return;
 
 
+        // Both line endings: Enter inserts Environment.NewLine, pasted text keeps its own (cross-platform)
         var split = input
-            .Split(Environment.NewLine)
+            .Split(["\r\n", "\n"], StringSplitOptions.None)
             .Where(s => !string.IsNullOrWhiteSpace(s))
             .Select(x => x.Trim())
             .ToArray();
@@ -92,7 +93,7 @@ public partial class ProxyManagerVM : ObservableObject
             }
 
 
-            if (ProxyStorage.DefaultScheme.TryParse(str, out var proxy))
+            if (ProxyStorage.DefaultScheme.TryParse(str, out var proxy) || ProxyStorage.SignAtScheme.TryParse(str, out proxy))
             {
                 if (id != null && proxies.Any(kvp => kvp.Key == id))
                 {
@@ -195,7 +196,7 @@ public partial class ProxyManagerVM : ObservableObject
         if (data == null) return;
         try
         {
-            Clipboard.SetText(ProxyStorage.GetProxyString(data));
+            ClipboardHelper.Set(ProxyStorage.GetProxyString(data));
         }
         catch (Exception ex)
         {
@@ -207,7 +208,7 @@ public partial class ProxyManagerVM : ObservableObject
     private void CopyProxyAddress(ProxyData? obj)
     {
         if (obj == null) return;
-        Clipboard.SetText(obj.ToString(ProxyStorage.ADDRESS_FORMAT));
+        ClipboardHelper.Set(obj.ToString(ProxyStorage.ADDRESS_FORMAT));
     }
 
     private static string GetLocalizationOrDefault(string key)

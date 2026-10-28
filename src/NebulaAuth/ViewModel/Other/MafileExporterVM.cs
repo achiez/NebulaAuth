@@ -5,16 +5,16 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NebulaAuth.Core;
 using NebulaAuth.Model.MafileExport;
 using NebulaAuth.Model.Mafiles;
+using NebulaAuth.Utility;
 
 namespace NebulaAuth.ViewModel.Other;
 
-public partial class MafileExporterVM : ObservableObject
+public partial class MafileExporterVM : ObservableObject, IDisposable
 {
     public MafileExportTemplateVM? CurrentTemplate
     {
@@ -36,6 +36,16 @@ public partial class MafileExporterVM : ObservableObject
     [ObservableProperty] private HintBoxSeverity _hintBoxSeverity = HintBoxSeverity.Error;
 
     [ObservableProperty] private string? _hintText;
+
+    /// <summary>
+    ///     Folder of the last export that wrote at least one file (resolved when it ran): a later template or path change
+    ///     does not change it.
+    /// </summary>
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(OpenExportFolderCommand))]
+    private string? _lastExportFolder;
+
+    // Opens a folder in the file manager (replaced by tests)
+    private static Action<string> _openFolder = PlatformUtils.OpenFolder;
 
     public MafileExporterVM()
     {
@@ -158,8 +168,8 @@ public partial class MafileExporterVM : ObservableObject
             IncludeSessionData = true,
             IncludeOtherInfo = true,
             IncludeNebulaProxy = true,
-            IncludeNebulaPassword = true,
             IncludeNebulaGroup = true,
+            IncludeDeviceName = true,
             ExportToZip = false,
             Path = null
         };
@@ -197,18 +207,13 @@ public partial class MafileExporterVM : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CurrentTemplateNotNull))]
-    private void OpenSelectDirectoryDialog()
+    private async Task OpenSelectDirectoryDialog()
     {
         if (CurrentTemplate == null) return;
-        var dialog = new FolderBrowserDialog
+        var selectedPath = await FileDialogs.PickFolderAsync();
+        if (selectedPath != null && CurrentTemplate != null)
         {
-            UseDescriptionForTitle = true,
-            ShowNewFolderButton = true
-        };
-        var result = dialog.ShowDialog();
-        if (result == DialogResult.OK)
-        {
-            CurrentTemplate!.Path = dialog.SelectedPath;
+            CurrentTemplate.Path = selectedPath;
         }
     }
 
@@ -272,6 +277,23 @@ public partial class MafileExporterVM : ObservableObject
         var text = string.Join(Environment.NewLine, errorLines);
 
         AccountsText = text;
+
+        if (res.Exported.Count > 0 && res.Folder != null)
+        {
+            LastExportFolder = res.Folder;
+            _openFolder(res.Folder);
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(HasLastExportFolder))]
+    private void OpenExportFolder()
+    {
+        if (LastExportFolder != null) _openFolder(LastExportFolder);
+    }
+
+    private bool HasLastExportFolder()
+    {
+        return LastExportFolder != null;
     }
 
     // Strips the password part from "login:password" input lines.
@@ -311,14 +333,23 @@ public partial class MafileExporterVM : ObservableObject
     }
 
     #endregion
+
+    public void Dispose()
+    {
+        MafileExporterStorage.Templates.CollectionChanged -= OnTemplatesOnCollectionChanged;
+        if (_currentTemplate != null)
+        {
+            _currentTemplate.PropertyChanged -= OnCurrentTemplatePropertyChanged;
+        }
+    }
 }
 
 public partial class MafileExportTemplateVM : ObservableObject
 {
     [ObservableProperty] private bool _exportToZip;
+    [ObservableProperty] private bool _includeDeviceName;
     [ObservableProperty] private bool _includeIdentitySecret;
     [ObservableProperty] private bool _includeNebulaGroup;
-    [ObservableProperty] private bool _includeNebulaPassword;
     [ObservableProperty] private bool _includeNebulaProxy;
     [ObservableProperty] private bool _includeOtherInfo;
     [ObservableProperty] private bool _includeRCode;
@@ -341,8 +372,8 @@ public partial class MafileExportTemplateVM : ObservableObject
             IncludeSessionData = x.IncludeSessionData,
             IncludeOtherInfo = x.IncludeOtherInfo,
             IncludeNebulaProxy = x.IncludeNebulaProxy,
-            IncludeNebulaPassword = x.IncludeNebulaPassword,
             IncludeNebulaGroup = x.IncludeNebulaGroup,
+            IncludeDeviceName = x.IncludeDeviceName,
             ExportToZip = x.ExportToZip,
             Path = x.Path
         };
@@ -360,8 +391,8 @@ public partial class MafileExportTemplateVM : ObservableObject
             IncludeSessionData = IncludeSessionData,
             IncludeOtherInfo = IncludeOtherInfo,
             IncludeNebulaProxy = IncludeNebulaProxy,
-            IncludeNebulaPassword = IncludeNebulaPassword,
             IncludeNebulaGroup = IncludeNebulaGroup,
+            IncludeDeviceName = IncludeDeviceName,
             ExportToZip = ExportToZip,
             Path = Path
         };
@@ -377,8 +408,8 @@ public partial class MafileExportTemplateVM : ObservableObject
         model.IncludeSessionData = IncludeSessionData;
         model.IncludeOtherInfo = IncludeOtherInfo;
         model.IncludeNebulaProxy = IncludeNebulaProxy;
-        model.IncludeNebulaPassword = IncludeNebulaPassword;
         model.IncludeNebulaGroup = IncludeNebulaGroup;
+        model.IncludeDeviceName = IncludeDeviceName;
         model.ExportToZip = ExportToZip;
         model.Path = Path;
     }

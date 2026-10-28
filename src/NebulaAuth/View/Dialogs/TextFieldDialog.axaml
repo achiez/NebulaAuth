@@ -1,0 +1,35 @@
+<!--
+    Single text field dialog: OK returns the text of the field ({Binding #TextField.Text}), Cancel and the header X
+    return null. The field gets the focus when the dialog opens (code-behind), Enter = OK, Esc = Cancel.
+-->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:core="using:NebulaAuth.Core"
+             xmlns:nebulaAuth="using:NebulaAuth"
+             mc:Ignorable="d"
+             x:Class="NebulaAuth.View.Dialogs.TextFieldDialog"
+             MinWidth="380" MaxWidth="500">
+    <Grid RowDefinitions="Auto,Auto">
+        <nebulaAuth:DialogHeader x:Name="TitleHeader"
+                                 Grid.Row="0"
+                                 Title="{Tr TextFieldDialog.Title}"
+                                 CloseParameter="{x:Null}" />
+        <StackPanel Grid.Row="1" Classes="DialogBody">
+            <TextBox x:Name="TextField" Classes="clearButton" />
+            <StackPanel Classes="DialogActions">
+                <Button Theme="{DynamicResource SolidButton}" Classes="Primary"
+                        Content="{Tr Common.OK}"
+                        IsDefault="True"
+                        Command="{x:Static core:DialogService.CloseDialogCommand}"
+                        CommandParameter="{Binding #TextField.Text}" />
+                <Button Theme="{DynamicResource OutlineButton}" Classes="Tertiary"
+                        Content="{Tr Common.Cancel}"
+                        IsCancel="True"
+                        Command="{x:Static core:DialogService.CloseDialogCommand}"
+                        CommandParameter="{x:Null}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

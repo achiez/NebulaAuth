@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using CodingSeb.Localization;
 using CodingSeb.Localization.Loaders;
@@ -42,8 +41,15 @@ public static class LocManager
     }
 
 
+    private static bool _initialized;
+
+    /// <summary>
+    ///     Loads the translation files once (the data folder choice needs them before <c>Shell.Initialize</c>).
+    /// </summary>
     public static void Init()
     {
+        if (_initialized) return;
+        _initialized = true;
         Loc.Instance.LogOutMissingTranslations = true;
 
         LocalizationLoader.Instance.FileLanguageLoaders.Add(new JsonFileLoader());
@@ -53,7 +59,7 @@ public static class LocManager
 
     public static void ReloadFiles()
     {
-        var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+        var baseDir = AppContext.BaseDirectory;
         var path = Path.Combine(baseDir, LOC_DIR);
         LocalizationLoader.Instance.AddDirectory(path);
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using NebulaAuth.Core;
 using Newtonsoft.Json;
 
 namespace NebulaAuth.Model.MafileExport;
@@ -11,6 +12,8 @@ public static class MafileExporterStorage
 {
     private const string FILE_NAME = "export_templates.json";
     public static ObservableCollection<MafileExportTemplate> Templates { get; } = new();
+
+    private static string FilePath => DataRoot.Combine(FILE_NAME);
 
 
     public static void Initialize()
@@ -39,7 +42,7 @@ public static class MafileExporterStorage
 
     private static void LoadOrCreateTemplate()
     {
-        if (!File.Exists(FILE_NAME))
+        if (!File.Exists(FilePath))
         {
             Templates.Clear();
             foreach (var mafileExportTemplate in CreateDefaultTemplate())
@@ -51,7 +54,7 @@ public static class MafileExporterStorage
             return;
         }
 
-        var json = File.ReadAllText(FILE_NAME);
+        var json = File.ReadAllText(FilePath);
         try
         {
             var loadedTemplates = JsonConvert.DeserializeObject<List<MafileExportTemplate>>(json);
@@ -75,7 +78,7 @@ public static class MafileExporterStorage
     public static void Save()
     {
         var json = JsonConvert.SerializeObject(Templates, Formatting.Indented);
-        File.WriteAllText(FILE_NAME, json);
+        File.WriteAllText(FilePath, json);
     }
 
     private static IEnumerable<MafileExportTemplate> CreateDefaultTemplate()
@@ -92,8 +95,8 @@ public static class MafileExporterStorage
                 IncludeSessionData = true,
                 IncludeOtherInfo = true,
                 IncludeNebulaProxy = true,
-                IncludeNebulaPassword = true,
                 IncludeNebulaGroup = true,
+                IncludeDeviceName = true,
                 Path = null
             },
             new MafileExportTemplate
@@ -106,8 +109,8 @@ public static class MafileExporterStorage
                 IncludeSessionData = false,
                 IncludeOtherInfo = false,
                 IncludeNebulaProxy = false,
-                IncludeNebulaPassword = false,
                 IncludeNebulaGroup = false,
+                IncludeDeviceName = false,
                 Path = null
             }
         ];
