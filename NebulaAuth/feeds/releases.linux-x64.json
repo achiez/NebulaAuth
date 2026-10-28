@@ -1,0 +1,20 @@
+{
+  "Assets": [
+    {
+      "PackageId": "NebulaAuth",
+      "Version": "2.0.0",
+      "Type": "Full",
+      "FileName": "https://github.com/achiez/NebulaAuth/releases/download/v2.0.0/NebulaAuth-2.0.0-linux-x64-full.nupkg",
+      "SHA1": "331FFFB6901A43E7F172686DAFE92EE6B0A2B6F1",
+      "SHA256": "4BF3E2DEB7F03F4AF178BCB0662D86AB53D6593855A642942490E615B1807DA8",
+      "Size": 58832797
+    }
+  ],
+  "Nebula": {
+    "Channel": "linux-x64",
+    "Version": "2.0.0",
+    "Published": "2026-10-28T17:59:48+00:00",
+    "ReleaseUrl": "https://github.com/achiez/NebulaAuth/releases/tag/v2.0.0",
+    "ManualUrl": "https://github.com/achiez/NebulaAuth/releases/download/v2.0.0/NebulaAuth-linux-x64.AppImage"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "Assets": [
+    {
+      "PackageId": "NebulaAuth",
+      "Version": "2.0.0",
+      "Type": "Full",
+      "FileName": "https://github.com/achiez/NebulaAuth/releases/download/v2.0.0/NebulaAuth-2.0.0-win-x64-full.nupkg",
+      "SHA1": "5AE4844419CF1F5D05C21C54A1F9DA8BABA492A1",
+      "SHA256": "159AB18339C3262264A31CB5CEF94CEE20DB6B8C24D5E49721333D26E896BCA6",
+      "Size": 61049167
+    }
+  ],
+  "Nebula": {
+    "Channel": "win-x64",
+    "Version": "2.0.0",
+    "Published": "2026-10-28T17:59:48+00:00",
+    "ReleaseUrl": "https://github.com/achiez/NebulaAuth/releases/tag/v2.0.0",
+    "ManualUrl": "https://github.com/achiez/NebulaAuth/releases/download/v2.0.0/NebulaAuth-win-x64-Portable.zip"
+  }
+}

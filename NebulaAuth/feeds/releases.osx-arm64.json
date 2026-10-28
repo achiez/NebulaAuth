@@ -1,0 +1,20 @@
+{
+  "Assets": [
+    {
+      "PackageId": "NebulaAuth",
+      "Version": "2.0.0",
+      "Type": "Full",
+      "FileName": "https://github.com/achiez/NebulaAuth/releases/download/v2.0.0/NebulaAuth-2.0.0-osx-arm64-full.nupkg",
+      "SHA1": "061DC45B7133749A7A7658F8569DDF6E4F5CF116",
+      "SHA256": "A738441821A2E950FDF37271720EF65D752491A8C6E3EB71E21D9C9D1FFE4C0A",
+      "Size": 59089570
+    }
+  ],
+  "Nebula": {
+    "Channel": "osx-arm64",
+    "Version": "2.0.0",
+    "Published": "2026-10-28T17:59:48+00:00",
+    "ReleaseUrl": "https://github.com/achiez/NebulaAuth/releases/tag/v2.0.0",
+    "ManualUrl": "https://github.com/achiez/NebulaAuth/releases/download/v2.0.0/NebulaAuth-osx-arm64-Portable.zip"
+  }
+}
