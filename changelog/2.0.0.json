@@ -1,0 +1,38 @@
+{
+  "version": "2.0.0",
+  "date": "2026-10-28",
+  "changes": [
+    {
+      "type": "NEW",
+      "text": "Rebuilt on Avalonia: runs on Windows, macOS and Linux"
+    },
+    {
+      "type": "NEW",
+      "text": "Steam login by QR code from the clipboard"
+    },
+    {
+      "type": "NEW",
+      "text": "Optional mafile encryption with a master password"
+    },
+    {
+      "type": "NEW",
+      "text": "Reworked mafile import, export and copy"
+    },
+    {
+      "type": "NEW",
+      "text": "Mobile device model per account"
+    },
+    {
+      "type": "NEW",
+      "text": "Embedded Steam browser signed in to the account"
+    },
+    {
+      "type": "NEW",
+      "text": "Nebula Link: connect accounts to Achiefy"
+    },
+    {
+      "type": "NEW",
+      "text": "New update system with signed packages and in-app changelog"
+    }
+  ]
+}

@@ -69,7 +69,7 @@ public static class NebulaLinkText
         return ModuleCatalogs.DisplayName(catalog, moduleId, LanguageCode) ?? Module(moduleId);
     }
 
-    /// <summary>Permission category: trades, market sales, market purchases.</summary>
+    /// <summary>Permission category: trades, Steam Market selling, Steam Market buying.</summary>
     public static string Category(string category)
     {
         return Get(category, "Category", KeyOf(category));

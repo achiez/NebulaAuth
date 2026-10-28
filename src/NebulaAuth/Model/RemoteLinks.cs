@@ -4,14 +4,20 @@ namespace NebulaAuth.Model;
 public class RemoteLinks
 {
     public string? Website { get; set; }
+
+    /// <summary>Documentation for 1.x, which opens it as is: no "{lang}" here.</summary>
     public string? Documentation { get; set; }
+
+    /// <summary>Documentation; "{lang}" is replaced by the documentation language of the UI (ru or en).</summary>
+    public string? LocalizedDocumentation { get; set; }
+
     public string? Telegram { get; set; }
     public string? GitHub { get; set; }
 
     /// <summary>The latest release page (manual download when an update can't be installed).</summary>
     public string? Releases { get; set; }
 
-    /// <summary>Linking troubleshooting guide; "{lang}" is replaced by the UI language code.</summary>
+    /// <summary>Linking troubleshooting guide; "{lang}" is replaced by the documentation language of the UI (ru or en).</summary>
     public string? LinkingTroubleshooting { get; set; }
 
     /// <summary>Achiefy API bases Nebula Link may pair with (full addresses with their path).</summary>

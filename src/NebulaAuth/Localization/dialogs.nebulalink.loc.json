@@ -2146,24 +2146,24 @@
         "kk": "Трейдтер"
       },
       "market_sell": {
-        "en": "Market sales",
-        "ru": "Продажи на маркете",
-        "uk": "Продажі на маркеті",
-        "zh": "市场出售",
-        "fr": "Ventes sur le marché",
-        "es": "Ventas en el mercado",
-        "tr": "Pazar satışları",
-        "kk": "Маркеттегі сатылымдар"
+        "en": "Steam Market selling",
+        "ru": "Продажа на Steam Market",
+        "uk": "Продаж на Steam Market",
+        "zh": "在 Steam Market 出售",
+        "fr": "Vente sur le Steam Market",
+        "es": "Venta en Steam Market",
+        "tr": "Steam Market'te satış",
+        "kk": "Steam Market-те сату"
       },
       "market_buy": {
-        "en": "Market purchases",
-        "ru": "Покупки на маркете",
-        "uk": "Покупки на маркеті",
-        "zh": "市场购买",
-        "fr": "Achats sur le marché",
-        "es": "Compras en el mercado",
-        "tr": "Pazar alımları",
-        "kk": "Маркеттегі сатып алулар"
+        "en": "Steam Market buying",
+        "ru": "Покупка на Steam Market",
+        "uk": "Купівля на Steam Market",
+        "zh": "在 Steam Market 购买",
+        "fr": "Achat sur le Steam Market",
+        "es": "Compra en Steam Market",
+        "tr": "Steam Market'ten alım",
+        "kk": "Steam Market-тен сатып алу"
       }
     },
     "Duplicate": {

@@ -31,16 +31,6 @@
         "tr": "RCode eksik",
         "kk": "RCode жоқ"
       },
-      "ConfirmRemovingAuthenticator": {
-        "ru": "Вы точно уверены, что хотите удалить аутентификатор?\r\nПосле этого вы не сможете обмениваться, использовать торговую площадку 15 дней. Мафайл будет удалён навсегда",
-        "en": "Are you sure you want to remove the authenticator?\r\nAfter that, you will not be able to trade or use the marketplace for 15 days. Mafile will be deleted permanently",
-        "zh": "您确定要移除身份验证器吗？\r\n之后，您将在15天内无法进行交易或使用市场。Mafile 将被永久删除。",
-        "uk": "Ви точно впевнені, що хочете видалити автентифікатор?\r\nПісля цього ви не зможете обмінюватися, використовувати торгову площадку 15 днів. Мафайл буде видалено назавжди",
-        "fr": "Êtes-vous sûr de vouloir supprimer l'authenticateur?\r\nAprès cela, vous ne pourrez pas échanger ou utiliser le marché pendant 15 jours. Le mafile sera supprimé définitivement",
-        "es": "¿Seguro que quieres eliminar el autenticador?\r\nDespués no podrás comerciar ni usar el mercado durante 15 días. El mafile se eliminará permanentemente",
-        "tr": "Kimlik doğrulayıcıyı kaldırmak istediğinizden emin misiniz?\r\nBundan sonra 15 gün boyunca ticaret yapamaz veya pazarı kullanamazsınız. Mafile kalıcı olarak silinecek",
-        "kk": "Аутентификаторды жойғыңыз келетініне сенімдісіз бе?\r\nОсыдан кейін 15 күн бойы сауда жасай алмайсыз және нарықты пайдалана алмайсыз. Mafile біржола жойылады"
-      },
       "AuthenticatorRemoved": {
         "ru": "Аутентификатор удален",
         "en": "Authenticator removed",
@@ -242,14 +232,14 @@
         "kk": "Аутентификаторды жою"
       },
       "RemoveAuthenticatorText": {
-        "ru": "Steam Guard будет отвязан от аккаунта, а мафайл удалён навсегда.",
-        "en": "Steam Guard will be removed from the account and the mafile will be deleted permanently.",
-        "zh": "Steam Guard 将从账户中移除，mafile 将被永久删除。",
-        "uk": "Steam Guard буде відв'язано від облікового запису, а мафайл видалено назавжди.",
-        "fr": "Le Steam Guard sera retiré du compte et le mafile sera supprimé définitivement.",
-        "es": "Steam Guard se eliminará de la cuenta y el mafile se borrará permanentemente.",
-        "tr": "Steam Guard hesaptan kaldırılacak ve mafile kalıcı olarak silinecek.",
-        "kk": "Steam Guard аккаунттан ажыратылады, ал mafile біржола жойылады."
+        "ru": "Steam Guard будет отвязан от аккаунта, а мафайл перемещён в папку maFiles_removed.",
+        "en": "Steam Guard will be removed from the account and the mafile moved to the maFiles_removed folder.",
+        "zh": "Steam Guard 将从账户中移除，mafile 将移至 maFiles_removed 文件夹。",
+        "uk": "Steam Guard буде відв'язано від облікового запису, а мафайл переміщено до папки maFiles_removed.",
+        "fr": "Le Steam Guard sera retiré du compte et le mafile déplacé dans le dossier maFiles_removed.",
+        "es": "Steam Guard se eliminará de la cuenta y el mafile se moverá a la carpeta maFiles_removed.",
+        "tr": "Steam Guard hesaptan kaldırılacak ve mafile maFiles_removed klasörüne taşınacak.",
+        "kk": "Steam Guard аккаунттан ажыратылады, ал mafile maFiles_removed қалтасына көшіріледі."
       },
       "RemoveAuthenticatorHint": {
         "ru": "15 дней вы не сможете обмениваться и пользоваться торговой площадкой. Это действие нельзя отменить.",
@@ -526,6 +516,16 @@
   },
   "MainWindow": {
     "Global": {
+      "DropNoFiles": {
+        "en": "No files could be read from the drop",
+        "ru": "Не удалось прочитать перетащенные файлы",
+        "zh": "无法读取拖入的文件",
+        "uk": "Не вдалося прочитати перетягнуті файли",
+        "fr": "Impossible de lire les fichiers déposés",
+        "es": "No se pudieron leer los archivos soltados",
+        "tr": "Bırakılan dosyalar okunamadı",
+        "kk": "Сүйреп әкелінген файлдар оқылмады"
+      },
       "DragNDropHint": {
         "en": "Release to import mafiles",
         "ru": "Отпустите для импорта мафайлов",
@@ -702,6 +702,16 @@
           "es": "Iniciar sesión",
           "tr": "Giriş yap",
           "kk": "Кіру"
+        },
+        "OpenInBrowser": {
+          "en": "Open in browser",
+          "ru": "Открыть в браузере",
+          "zh": "在浏览器中打开",
+          "uk": "Відкрити в браузері",
+          "fr": "Ouvrir dans le navigateur",
+          "es": "Abrir en el navegador",
+          "tr": "Tarayıcıda aç",
+          "kk": "Браузерде ашу"
         }
       }
     },

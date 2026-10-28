@@ -30,7 +30,8 @@ public partial class MainWindow
     ///     For screenshots without input: NEBULA_MAIN_DEMO is a comma-separated list of
     ///     "select" (select the first account), "search" (type "a" into the search box: the filter selects the first match),
     ///     "confirmations" (select the first account and show realistic fake confirmations of every type with placeholder
-    ///     images, no network), "expand" (expand the grouped market listings), "maac" (accounts 2-4 with
+    ///     images, no network), "readme" (the same with the three confirmations of the README screenshot), "expand"
+    ///     (expand the grouped market listings), "maac" (accounts 2-4 with
     ///     auto-confirmation statuses), "blink" (update badge blink), "drop" (drag and drop overlay), "snackbar",
     ///     "narrow" (minimum window width), "proxy" (assign the first proxy of proxies.json to the selected account),
     ///     "menu" (open the first app bar menu), "submenu" (also its "Other" submenu), "accountmenu" (the "Account" menu),
@@ -60,7 +61,7 @@ public partial class MainWindow
         {
             if (ViewModel is not { } vm) return;
             var qrScenario = parts.FirstOrDefault(p => p is "qr" or "qrrisk" or "qrminimal" or "qrexpired");
-            if (parts.Contains("select") || parts.Contains("confirmations") || qrScenario != null)
+            if (parts.Contains("select") || parts.Contains("confirmations") || parts.Contains("readme") || qrScenario != null)
                 vm.SelectedMafile = vm.MaFiles.FirstOrDefault();
             if (parts.Contains("proxy"))
                 vm.SelectedProxy = vm.Proxies.FirstOrDefault();
@@ -68,6 +69,8 @@ public partial class MainWindow
                 vm.SearchText = "a";
             if (parts.Contains("confirmations"))
                 vm.ShowDemoConfirmations();
+            if (parts.Contains("readme"))
+                vm.ShowDemoConfirmations(readme: true);
             if (parts.Contains("maac"))
                 vm.ShowDemoMaacStatuses();
             // Nebula Link status bar item, row icons and context menu with a fake link (no part = the real, disabled one);

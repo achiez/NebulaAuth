@@ -24,18 +24,27 @@ public static partial class LinksManager
     private static int _fetching;
 
     public static string? WebsiteUrl { get; private set; }
-    public static string? DocumentationUrl { get; private set; }
     public static string? TelegramUrl { get; private set; }
     public static string? GitHubUrl { get; private set; }
     public static string? ReleasesUrl { get; private set; }
     public static string? NebulaLinkCabinetUrl { get; private set; }
     public static string? NebulaLinkDataUrl { get; private set; }
 
+    private static string? _documentation;
     private static string? _linkingTroubleshooting;
 
+    /// <summary>The documentation in the UI language; null when links.json has none.</summary>
+    public static string? DocumentationUrl => InDocsLanguage(_documentation);
+
     /// <summary>The linking troubleshooting guide in the UI language; null when links.json has none.</summary>
-    public static string? LinkingTroubleshootingUrl =>
-        _linkingTroubleshooting?.Replace("{lang}", Uri.EscapeDataString(LocManager.GetCurrentLanguageCode()), StringComparison.Ordinal);
+    public static string? LinkingTroubleshootingUrl => InDocsLanguage(_linkingTroubleshooting);
+
+    // The documentation exists in Russian and English only
+    private static string? InDocsLanguage(string? url)
+    {
+        var language = LocManager.GetCurrentLanguageCode() == "ru" ? "ru" : "en";
+        return url?.Replace("{lang}", language, StringComparison.Ordinal);
+    }
 
     public static async Task FetchAsync()
     {
@@ -47,7 +56,7 @@ public static partial class LinksManager
             var json = await HttpClient.GetStringAsync(LINKS_URL).ConfigureAwait(false);
             var links = JsonConvert.DeserializeObject<RemoteLinks>(json);
             WebsiteUrl = links?.Website;
-            DocumentationUrl = links?.Documentation;
+            _documentation = links?.LocalizedDocumentation ?? links?.Documentation;
             TelegramUrl = links?.Telegram;
             GitHubUrl = links?.GitHub;
             ReleasesUrl = links?.Releases;

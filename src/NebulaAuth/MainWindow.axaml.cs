@@ -283,25 +283,30 @@ public partial class MainWindow : Window
         if (isOpen) SetDropOverlayVisible(false);
     }
 
-    private static bool HasFiles(DragEventArgs e)
-    {
-        return e.DataTransfer.Contains(DataFormat.File);
-    }
+    private DateTime _lastRefusedDragLog;
 
     /// <summary>
     ///     No drop target while a dialog is open or an import runs (its check / writing has no dialog).
     /// </summary>
     private bool CanAcceptDrop(DragEventArgs e)
     {
-        return !DialogService.IsDialogOpen && ViewModel?.IsImportBusy != true && HasFiles(e);
+        return !DialogService.IsDialogOpen && ViewModel?.IsImportBusy != true &&
+               DroppedFiles.MayContainFiles(e.DataTransfer);
     }
 
     private void ContentRoot_OnDragEnter(object? sender, DragEventArgs e)
     {
+        e.Handled = true;
         if (!CanAcceptDrop(e))
         {
+            // Once per drag (the event repeats for every control under the pointer): the formats show what was offered
+            if (!DialogService.IsDialogOpen && ViewModel?.IsImportBusy != true &&
+                DateTime.UtcNow - _lastRefusedDragLog > TimeSpan.FromSeconds(5))
+            {
+                _lastRefusedDragLog = DateTime.UtcNow;
+                Shell.Logger.Info("Drag and drop: no files offered ({formats})", DroppedFiles.DescribeFormats(e.DataTransfer));
+            }
             e.DragEffects = DragDropEffects.None;
-            e.Handled = true;
             return;
         }
 
@@ -311,6 +316,7 @@ public partial class MainWindow : Window
 
     private void ContentRoot_OnDragOver(object? sender, DragEventArgs e)
     {
+        e.Handled = true;
         e.DragEffects = CanAcceptDrop(e) ? DragDropEffects.Copy : DragDropEffects.None;
     }
 
@@ -322,13 +328,17 @@ public partial class MainWindow : Window
     private async void ContentRoot_OnDrop(object? sender, DragEventArgs e)
     {
         SetDropOverlayVisible(false);
-        if (DialogService.IsDialogOpen || !HasFiles(e)) return;
-        var filePaths = (e.DataTransfer.TryGetFiles() ?? [])
-            .Select(f => f.TryGetLocalPath())
-            .Where(p => !string.IsNullOrEmpty(p))
-            .Select(p => p!)
-            .ToArray();
-        if (filePaths.Length == 0) return;
+        e.Handled = true;
+        if (DialogService.IsDialogOpen) return;
+        // Read before the first await: the platform data of a drop is only valid during the event
+        var filePaths = DroppedFiles.GetLocalPaths(e.DataTransfer);
+        if (filePaths.Length == 0)
+        {
+            SnackbarController.SendSnackbar(LocManager.GetOrDefault("No files could be read from the drop",
+                "MainWindow", "Global", "DropNoFiles"));
+            return;
+        }
+
         e.DragEffects = DragDropEffects.Copy;
         if (ViewModel is { } mainVm)
         {

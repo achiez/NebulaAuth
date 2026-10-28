@@ -8,7 +8,7 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<AssemblyVersion>1.8.5</AssemblyVersion>
+		<AssemblyVersion>2.0.0</AssemblyVersion>
 		<ApplicationIcon>Theme\lock.ico</ApplicationIcon>
 		<SatelliteResourceLanguages>en;ru;ua</SatelliteResourceLanguages>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>

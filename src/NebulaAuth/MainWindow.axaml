@@ -268,8 +268,9 @@
             <dialogHost:DialogHost.PopupPositioner>
                 <nebulaAuth:PixelAlignedDialogPositioner HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16" />
             </dialogHost:DialogHost.PopupPositioner>
-            <!-- Drop target for mafiles (drag and drop, disabled while a dialog is open: see MainWindow.axaml.cs) -->
-            <Panel x:Name="ContentRoot" DragDrop.AllowDrop="True">
+            <!-- Drop target for mafiles (drag and drop, disabled while a dialog is open: see MainWindow.axaml.cs).
+                 Transparent background: every point of the window is a target, also between controls -->
+            <Panel x:Name="ContentRoot" DragDrop.AllowDrop="True" Background="Transparent">
                 <!-- Background layer: image (Settings.BackgroundMode: Default = embedded image, Custom = ./Background.png,
                      Color = no image), BackgroundOpacity, BackgroundBlur and the black "gamma" overlay (BackgroundGamma) -->
                 <Panel x:Name="BackgroundLayer" IsHitTestVisible="False" ClipToBounds="True">
@@ -336,6 +337,10 @@
                                               Command="{Binding RefreshSessionCommand}" />
                                     <MenuItem Header="{Tr MainWindow.Menu.Account.LoginAgain}"
                                               Command="{Binding LoginAgainCommand}" />
+                                    <MenuItem Header="{Tr MainWindow.Menu.Account.OpenInBrowser}"
+                                              Command="{Binding OpenInBrowserCommand}"
+                                              CommandParameter="{Binding SelectedMafile}"
+                                              IsEnabled="{Binding IsMafileSelected}" />
                                 </MenuItem>
                             </Menu>
 

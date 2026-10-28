@@ -22,12 +22,14 @@ public partial class MainVM
     /// <summary>
     ///     MainWindow, NEBULA_MAIN_DEMO=confirmations: realistic fake confirmations (every template
     ///     type) with placeholder avatars / item icons embedded in Debug builds (Demo/Assets, no network).
-    ///     Confirm/cancel of these items fails with the usual error snackbar.
+    ///     Confirm/cancel of these items fails with the usual error snackbar. <paramref name="readme" />: the three
+    ///     confirmations of the README screenshot (grouped listings, a trade, an account recovery).
     /// </summary>
-    internal void ShowDemoConfirmations()
+    internal void ShowDemoConfirmations(bool readme = false)
     {
         const string ASSETS = "avares://NebulaAuth/DevTools/Demo/Assets/";
-        var now = DateTime.Now;
+        // The README screenshot shows afternoon times whenever it is taken
+        var now = readme ? DateTime.Today.AddHours(18).AddMinutes(20) : DateTime.Now;
 
         MarketConfirmation Listing(long id, string name, string price, string image, int minutesAgo)
         {
@@ -50,7 +52,7 @@ public partial class MainVM
             },
             new TradeConfirmation(9, 9, 9, "Trade offer")
             {
-                UserName = "kseniya_s", IsReceiveNothing = true, Time = now.AddMinutes(-26),
+                UserName = "trader_42", IsReceiveNothing = true, Time = now.AddMinutes(-26),
                 UserAvatarUri = ASSETS + "avatar-2.png"
             },
             Listing(5, "Sticker | Crown (Foil)", "610,00€", "item-sticker.png", 64),
@@ -59,6 +61,7 @@ public partial class MainVM
             new PurchaseConfirmation(8, 8, 8, "Purchase") {Time = now.AddMinutes(-310)},
             new Confirmation(10, 10, 99, 10, ConfirmationType.Unknown, "Unknown type") {Time = now.AddMinutes(-400)}
         ];
+        if (readme) demo = [demo[0], demo[1], demo[4]];
         _confirmationsLoadedForMafile = SelectedMafile;
         OnPropertyChanged(nameof(ConfirmationsVisible));
         Confirmations.Clear();

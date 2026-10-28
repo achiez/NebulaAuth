@@ -50,12 +50,12 @@ jobs:
       suffix: ${{ steps.ver.outputs.suffix }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -183,15 +183,15 @@ jobs:
       RID: ${{ matrix.rid }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
@@ -212,11 +212,13 @@ jobs:
           done
 
       - name: Previous release (base of the delta package)
-        # First 2.x release / new channel: there is nothing to download, the release gets a full package only
-        continue-on-error: true
+        # The feeds are committed to master after a release (the tag may not contain them). No feed / no full package:
+        # first release of the channel, full package only. A listed release that can't be fetched fails the build.
         run: |
-          vpk download http --url "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/master/NebulaAuth/feeds" \
-            --channel "$CHANNEL" --allowEmptyChannel -o releases
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin master
+          git show "FETCH_HEAD:NebulaAuth/feeds/releases.$CHANNEL.json" > previous-feed.json 2>/dev/null || rm -f previous-feed.json
+          python .github/scripts/fetch_previous.py --feed previous-feed.json --channel "$CHANNEL" --version "$VERSION" --out releases
 
       - name: Pack with Velopack
         run: |
@@ -232,13 +234,14 @@ jobs:
               ARGS+=(--mainExe NebulaAuth --icon src/NebulaAuth/Theme/icon.png)
               ;;
             osx-*)
-              # TODO(macOS signing): no Developer ID yet, so the .app is not signed or notarized (vpk only logs a
-              # warning). Apple Silicon requires at least an ad-hoc signature for every executable; the .NET SDK signs
-              # the apphost ad-hoc, but whether the bundle as modified by vpk (UpdateMac, Info.plist) still starts and
-              # updates must be checked on real Intel and Apple Silicon Macs (Gatekeeper, /Applications, user folder)
-              # before promising in-app updates. If it does not, add ad-hoc signing (--signAppIdentity "-") and verify.
+              # Ad-hoc signature of the whole bundle ("-": no Developer ID yet, not notarized). vpk signs the finished
+              # .app (UpdateMac and Info.plist included) with --deep, hardened runtime and its default .NET entitlements
+              # (allow-jit, allow-unsigned-executable-memory, disable-library-validation) before the portable ZIP and
+              # the full / delta packages are built, so every package holds the same sealed bundle. An unsealed bundle
+              # (only the linker signature of the apphost) is reported as "damaged" by Gatekeeper.
+              # TODO(macOS notarization): a Developer ID + --notaryProfile removes the "unidentified developer" prompt.
               # TODO(macOS icon): add an .icns and pass --icon.
-              ARGS+=(--mainExe NebulaAuth --noInst)
+              ARGS+=(--mainExe NebulaAuth --noInst --signAppIdentity "-")
               ;;
           esac
           vpk pack "${ARGS[@]}"
@@ -247,7 +250,7 @@ jobs:
         if: startsWith(matrix.rid, 'linux')
         run: |
           set -euo pipefail
-          SRC=$(jq -r '.[] | select(.Type == "Portable") | .RelativeFileName' "releases/assets.$CHANNEL.json")
+          SRC=$(jq -r '.[] | select(.Type == "Portable") | .RelativeFileName' "releases/assets.$CHANNEL.json" | tr -d '\r')
           DST="NebulaAuth-$CHANNEL.AppImage"
           if [ "$SRC" != "$DST" ]; then
             mv "releases/$SRC" "releases/$DST"
@@ -259,15 +262,33 @@ jobs:
       - name: Verify packages
         run: python .github/scripts/verify_package.py --releases-dir releases --channel "$CHANNEL" --rid "$RID" --version "$VERSION"
 
-      - name: macOS signature diagnostics
+      - name: Verify the macOS signature
+        # The .app of the portable ZIP must carry a sealed signature (resources, Info.plist). The full package can't
+        # keep the extended attributes holding the signatures of the .NET assemblies in Contents/MacOS, so it must
+        # instead contain exactly the same files (Mach-O signatures are embedded: verify_mac_full.py).
         if: startsWith(matrix.rid, 'osx')
-        continue-on-error: true
         run: |
-          ZIP=$(jq -r '.[] | select(.Type == "Portable") | .RelativeFileName' "releases/assets.$CHANNEL.json")
+          set -euo pipefail
+          check_bundle() {
+            local app="$1"
+            codesign --verify --deep --strict --verbose=2 "$app"
+            local info
+            info=$(codesign -dv --verbose=2 "$app" 2>&1)
+            echo "$info"
+            if ! grep -q '^Sealed Resources version=' <<< "$info"; then
+              echo "::error::$app: the bundle resources are not sealed"; exit 1
+            fi
+            if grep -q '^Info.plist=not bound' <<< "$info"; then
+              echo "::error::$app: Info.plist is not bound to the signature"; exit 1
+            fi
+          }
+          ZIP=$(jq -r '.[] | select(.Type == "Portable") | .RelativeFileName' "releases/assets.$CHANNEL.json" | tr -d '\r')
           mkdir -p macapp && ditto -x -k "releases/$ZIP" macapp
           APP=$(find macapp -maxdepth 1 -name '*.app' | head -n 1)
-          codesign -dv --verbose=2 "$APP" || true
-          codesign --verify --deep --strict --verbose=2 "$APP" || true
+          [ -n "$APP" ] || { echo "::error::no .app in $ZIP"; exit 1; }
+          check_bundle "$APP"
+          FULL=$(jq -r '.[] | select(.Type == "Full") | .RelativeFileName' "releases/assets.$CHANNEL.json" | tr -d '\r')
+          python .github/scripts/verify_mac_full.py --app "$APP" --nupkg "releases/$FULL"
 
       - name: Legacy 1.x update package
         # AutoUpdater.NET of 1.x downloads NebulaAuth.<version>.zip (update.xml) and unpacks it over the 1.x folder:
@@ -275,7 +296,7 @@ jobs:
         if: matrix.rid == 'win-x64' && needs.prepare.outputs.beta == 'false'
         run: |
           set -euo pipefail
-          ZIP=$(jq -r '.[] | select(.Type == "Portable") | .RelativeFileName' "releases/assets.$CHANNEL.json")
+          ZIP=$(jq -r '.[] | select(.Type == "Portable") | .RelativeFileName' "releases/assets.$CHANNEL.json" | tr -d '\r')
           cp "releases/$ZIP" "releases/NebulaAuth.$VERSION.zip"
           cmp "releases/$ZIP" "releases/NebulaAuth.$VERSION.zip"
 
@@ -284,7 +305,7 @@ jobs:
           set -euo pipefail
           mkdir -p "dist/$CHANNEL"
           # Only this version's files: the previous full package was downloaded just to build the delta
-          for f in $(jq -r '.[].RelativeFileName' "releases/assets.$CHANNEL.json"); do
+          for f in $(jq -r '.[].RelativeFileName' "releases/assets.$CHANNEL.json" | tr -d '\r'); do
             cp "releases/$f" "dist/$CHANNEL/"
           done
           cp "releases/releases.$CHANNEL.json" "releases/assets.$CHANNEL.json" "dist/$CHANNEL/"
@@ -292,7 +313,7 @@ jobs:
           ls -la "dist/$CHANNEL"
 
       - name: Upload
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: pkg-${{ env.CHANNEL }}
           path: dist/
@@ -313,13 +334,13 @@ jobs:
       GH_TOKEN: ${{ github.token }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ secrets.PAT_TOKEN }}
 
       - name: Download packages
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           pattern: pkg-*
           path: dist
@@ -353,14 +374,18 @@ jobs:
           printf '%s\n' "$FEED_SIGNING_KEY" > "$RUNNER_TEMP/feed.pem"
           openssl ec -in "$RUNNER_TEMP/feed.pem" -pubout -out feed.pub.pem 2>/dev/null
           PUBLISHED=$(date -u +%Y-%m-%dT%H:%M:%S+00:00)
-          mkdir -p feeds
+          mkdir -p feeds previous
+          # The committed feeds (version history, delta chains) are on master, not necessarily in the tagged commit
+          git fetch --no-tags origin master
           for dir in dist/*/; do
             CHANNEL=$(basename "$dir")
+            git show "FETCH_HEAD:NebulaAuth/feeds/releases.$CHANNEL.json" > "previous/releases.$CHANNEL.json" 2>/dev/null \
+              || rm -f "previous/releases.$CHANNEL.json"
             python3 .github/scripts/build_feed.py \
               --channel "$CHANNEL" --version "$VERSION" --releases-dir "$dir" \
               --asset-base-url "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/" \
               --release-url "https://github.com/$GITHUB_REPOSITORY/releases/tag/$TAG" \
-              --previous "NebulaAuth/feeds/releases.$CHANNEL.json" \
+              --previous "previous/releases.$CHANNEL.json" \
               --published "$PUBLISHED" \
               --out "feeds/releases.$CHANNEL.json"
             openssl dgst -sha256 -sign "$RUNNER_TEMP/feed.pem" -out "feeds/releases.$CHANNEL.json.der" "feeds/releases.$CHANNEL.json"
@@ -376,11 +401,25 @@ jobs:
           set -euo pipefail
           JSON="changelog/$VERSION.json"
           jq -r '.changes[] | "- **\(.type):** \(.text)" + (if .link then " (\(.link))" else "" end)' "$JSON" > notes.md
-          {
-            echo ""
-            echo "Windows: \`NebulaAuth-win-x64${SUFFIX}-Portable.zip\` (unpack anywhere, start \`NebulaAuth.exe\`). macOS: \`NebulaAuth-osx-*-Portable.zip\`. Linux: \`NebulaAuth-linux-x64${SUFFIX}.AppImage\`."
-            echo "SHA-256 checksums: \`SHA256SUMS.txt\`."
-          } >> notes.md
+          cat >> notes.md <<EOF
+
+          ### Download
+
+          | System | File |
+          |---|---|
+          | Windows x64 | \`NebulaAuth-win-x64${SUFFIX}-Portable.zip\` |
+          | macOS, Apple Silicon (M1 and newer) | \`NebulaAuth-osx-arm64${SUFFIX}-Portable.zip\` |
+          | macOS, Intel | \`NebulaAuth-osx-x64${SUFFIX}-Portable.zip\` |
+          | Linux x64 | \`NebulaAuth-linux-x64${SUFFIX}.AppImage\` |
+
+          - **Windows:** unpack the archive into any folder and run \`NebulaAuth.exe\`.
+          - **macOS:** unpack, move \`NebulaAuth.app\` to Applications and open it. On the first launch macOS cannot verify the developer: open System Settings → Privacy & Security and click **Open Anyway**.
+          - **Linux:** make the file executable (\`chmod +x\`) and run it.
+
+          Already on 2.x? NebulaAuth updates itself, nothing to download.
+
+          SHA-256 checksums of all files: \`SHA256SUMS.txt\`.
+          EOF
           # HTML changelog for the update dialog of 1.x (update.xml <changelog>)
           jq -r '
             "<!DOCTYPE html>",
@@ -484,7 +523,7 @@ jobs:
 
       - name: Keep the signed feeds as an artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: feeds
           path: feeds/
