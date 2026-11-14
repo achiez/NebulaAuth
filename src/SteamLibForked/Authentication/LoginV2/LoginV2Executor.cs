@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SteamLib.Abstractions;
-using SteamLib.Api;
 using SteamLib.Api.Services;
 using SteamLib.Core;
 using SteamLib.Core.StatusCodes;
@@ -59,8 +58,7 @@ public class LoginV2Executor //FIXME: logs
         var client = executor.HttpClient;
         var logger = options.Logger;
 
-        var header = await SteamGlobalApi.GetSessionIdFromLoginPage(client, cancellationToken);
-        var sessionId = header.SessionId;
+        var sessionId = SessionIdGenerator.Generate();
 
         var rsgMsg = new GetPasswordRSAPublicKey_Request
         {

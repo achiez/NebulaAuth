@@ -1,0 +1,10 @@
+{
+  "version": "2.0.1",
+  "date": "2026-11-14",
+  "changes": [
+    {
+      "type": "FIX",
+      "text": "Fixed Steam login failing after Steam changed its login page"
+    }
+  ]
+}
