@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-  <version>2.0.0</version>
-  <url>https://github.com/achiez/NebulaAuth/releases/download/v2.0.0/NebulaAuth.2.0.0.zip</url>
-  <changelog>https://achiez.github.io/NebulaAuth/changelog/2.0.0.html</changelog>
+  <version>2.0.1</version>
+  <url>https://github.com/achiez/NebulaAuth/releases/download/v2.0.1/NebulaAuth.2.0.1.zip</url>
+  <changelog>https://achiez.github.io/NebulaAuth/changelog/2.0.1.html</changelog>
   <mandatory>false</mandatory>
-  <checksum algorithm="SHA256">965d15f46ff4d87bf99d938fd99c42a8e2b8d161af9d1daf4df8c263fd54d9b0</checksum>
+  <checksum algorithm="SHA256">8cdd79d175347780ea40f9b95877d1f2993ecbeedda4ca6f5f8b110dda2b72e6</checksum>
 </item>
