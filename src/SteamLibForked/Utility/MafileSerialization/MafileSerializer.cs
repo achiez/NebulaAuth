@@ -23,7 +23,8 @@ public partial class MafileSerializer
 
     public DeserializedMafileData Deserialize(string json)
     {
-        var j = JObject.Parse(json);
+        // Decoding bytes with Encoding.GetString keeps the UTF-8 BOM, and Newtonsoft rejects it
+        var j = JObject.Parse(json.TrimStart('﻿'));
 
         var unusedProperties = j.Properties().ToDictionary(x => x.Name, x => x);
         var versionToken = GetToken(j, SIGNATURE_PROPERTY_NAME);
